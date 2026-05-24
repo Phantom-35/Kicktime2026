@@ -154,18 +154,22 @@ function Stream({
   }
   return (
     <div className="space-y-3">
-      {matches.map((m, i) => (
-        <motion.div
-          key={m.id}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.04 }}
-        >
-          <MatchCard match={m} onClick={() => onSelect(m)} indicator={indicator}>
-            {footer?.(m)}
-          </MatchCard>
-        </motion.div>
-      ))}
+      <AnimatePresence initial={false}>
+        {matches.map((m) => (
+          <motion.div
+            key={m.id}
+            layout
+            initial={{ opacity: 0, y: 16, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 380, damping: 32 }}
+          >
+            <MatchCard match={m} onClick={() => onSelect(m)} indicator={indicator}>
+              {footer?.(m)}
+            </MatchCard>
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }
