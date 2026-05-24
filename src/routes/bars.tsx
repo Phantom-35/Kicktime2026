@@ -4,6 +4,7 @@ import { BARS, BAR_CITIES } from "@/data/bars";
 import { MATCHES } from "@/data/matches";
 import { getTeam } from "@/data/teams";
 import { useAppStore } from "@/store/app-store";
+import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { categorizeMatches } from "@/lib/categorize";
 import { getLocalParts } from "@/lib/time";
 import { Switch } from "@/components/ui/switch";
@@ -19,14 +20,16 @@ const RADII = [5, 10, 25, 50] as const;
 
 function BarsPage() {
   const state = useAppStore();
+  const matches = useMatchStore(selectMatchList);
+  const now = useMatchStore((s) => s.now);
   const [onlyNext, setOnlyNext] = useState(false);
   const [city, setCity] = useState<string>("München");
   const [radius, setRadius] = useState<number>(25);
 
   const nextPerfectId = useMemo(() => {
-    const cats = categorizeMatches(state);
+    const cats = categorizeMatches({ ...state, matches, now });
     return cats.perfect[0]?.id;
-  }, [state]);
+  }, [state, matches, now]);
 
   const bars = useMemo(() => {
     let list = BARS.filter((b) => b.city === city && b.distanceKm <= radius);
