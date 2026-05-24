@@ -3,7 +3,7 @@ import { MATCHES, type Match } from "@/data/matches";
 
 export type MatchStatus = "scheduled" | "live" | "finished";
 
-export type RuntimeMatch = Omit<Match, "status"> & {
+export type RuntimeMatch = Match & {
   status: MatchStatus;
   liveScore?: { a: number; b: number };
   matchMinute?: number;
