@@ -1,9 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, CalendarDays, MapPin, Settings as SettingsIcon } from "lucide-react";
+import { Home, CalendarDays, MapPin, Settings as SettingsIcon, ListOrdered } from "lucide-react";
 
 const tabs = [
   { to: "/", label: "Dashboard", icon: Home },
-  { to: "/spiele", label: "Alle Spiele", icon: CalendarDays },
+  { to: "/spiele", label: "Spiele", icon: CalendarDays },
+  { to: "/tabellen", label: "Tabellen", icon: ListOrdered },
   { to: "/bars", label: "Gastro", icon: MapPin },
   { to: "/profil", label: "Profil", icon: SettingsIcon },
 ] as const;
@@ -12,7 +13,7 @@ export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
     <nav className="sticky bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
-      <ul className="grid grid-cols-4">
+      <ul className="grid grid-cols-5">
         {tabs.map(({ to, label, icon: Icon }) => {
           const active = pathname === to;
           return (
