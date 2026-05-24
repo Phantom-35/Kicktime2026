@@ -399,6 +399,7 @@ function AvailabilityStep({
       <TimeRange
         label="Unter der Woche"
         value={availability.weekday}
+        allowOverflow
         onChange={(w) => setAvailability({ ...availability, weekday: w })}
         presets={[
           { label: "Feierabend", range: { start: 17, end: 23.5 } },
