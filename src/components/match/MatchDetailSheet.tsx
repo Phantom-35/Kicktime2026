@@ -10,6 +10,19 @@ import { getLocalParts } from "@/lib/time";
 import { Tv, Cloud, Plane, MapPin } from "lucide-react";
 import { toast } from "sonner";
 
+function getBroadcasterUrl(broadcaster: string): string {
+  switch (broadcaster) {
+    case "MagentaTV":
+      return "https://www.magentatv.de";
+    case "ARD":
+      return "https://www.ardmediathek.de";
+    case "ZDF":
+      return "https://www.zdf.de";
+    default:
+      return "https://www.google.com/search?q=" + encodeURIComponent(broadcaster + " live stream");
+  }
+}
+
 export function MatchDetailSheet({
   match, open, onOpenChange,
 }: {
