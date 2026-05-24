@@ -49,6 +49,10 @@ export const useAppStore = create<State & Actions>()(
       spoilerProtection: true,
       isOnboarded: false,
       alarms: {},
+      theme: "dark",
+      pushEnabled: false,
+
+
 
       setTimezone: (tz) => set({ userTimezone: tz }),
       toggleFavorite: (code) =>
