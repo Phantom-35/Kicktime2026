@@ -90,7 +90,28 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const onboarded = useAppStore((s) => s.isOnboarded);
   const theme = useAppStore((s) => s.theme);
-  if (typeof document !== "undefined") {
+  useThemeClass(theme);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <div className="min-h-screen w-full flex justify-center bg-background">
+        <div className="relative w-full max-w-md min-h-screen flex flex-col bg-background shadow-2xl md:my-4 md:rounded-3xl md:overflow-hidden md:min-h-[calc(100vh-2rem)] md:border md:border-border">
+          <AppHeader />
+          <main className="flex-1 overflow-y-auto">
+            {onboarded ? <Outlet /> : <OnboardingFlow />}
+          </main>
+          {onboarded && <BottomNav />}
+        </div>
+      </div>
+      <Toaster theme={theme} position="top-center" richColors />
+    </QueryClientProvider>
+  );
+}
+
+function useThemeClass(theme: "dark" | "light") {
+  if (typeof window === "undefined") return;
+  // useLayoutEffect-ish but safe on the client only; runs after render.
+  // Using a plain effect via React import would also work; this keeps it inline.
+  React.useEffect(() => {
     const root = document.documentElement;
     if (theme === "light") {
       root.classList.remove("dark");
@@ -99,8 +120,8 @@ function RootComponent() {
       root.classList.remove("light");
       root.classList.add("dark");
     }
-  }
-  return (
+  }, [theme]);
+}
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen w-full flex justify-center bg-background">
         <div className="relative w-full max-w-md min-h-screen flex flex-col bg-background shadow-2xl md:my-4 md:rounded-3xl md:overflow-hidden md:min-h-[calc(100vh-2rem)] md:border md:border-border">
