@@ -15,7 +15,8 @@ type State = {
 
 type Actions = {
   setTimezone: (tz: string) => void;
-  toggleTeam: (code: string) => void; // none -> fav -> interesting -> none
+  toggleFavorite: (code: string) => void;
+  toggleInteresting: (code: string) => void;
   setAvailability: (a: State["availability"]) => void;
   setSpoiler: (v: boolean) => void;
   setOnboarded: (v: boolean) => void;
@@ -46,20 +47,27 @@ export const useAppStore = create<State & Actions>()(
       alarms: {},
 
       setTimezone: (tz) => set({ userTimezone: tz }),
-      toggleTeam: (code) =>
+      toggleFavorite: (code) =>
         set((s) => {
           const isFav = s.favoriteTeams.includes(code);
-          const isInt = s.interestingTeams.includes(code);
-          if (!isFav && !isInt) {
-            return { favoriteTeams: [...s.favoriteTeams, code] };
-          }
           if (isFav) {
-            return {
-              favoriteTeams: s.favoriteTeams.filter((c) => c !== code),
-              interestingTeams: [...s.interestingTeams, code],
-            };
+            return { favoriteTeams: s.favoriteTeams.filter((c) => c !== code) };
           }
-          return { interestingTeams: s.interestingTeams.filter((c) => c !== code) };
+          return {
+            favoriteTeams: [...s.favoriteTeams, code],
+            interestingTeams: s.interestingTeams.filter((c) => c !== code),
+          };
+        }),
+      toggleInteresting: (code) =>
+        set((s) => {
+          const isInt = s.interestingTeams.includes(code);
+          if (isInt) {
+            return { interestingTeams: s.interestingTeams.filter((c) => c !== code) };
+          }
+          return {
+            interestingTeams: [...s.interestingTeams, code],
+            favoriteTeams: s.favoriteTeams.filter((c) => c !== code),
+          };
         }),
       setAvailability: (a) => set({ availability: a }),
       setSpoiler: (v) => set({ spoilerProtection: v }),
