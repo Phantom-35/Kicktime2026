@@ -96,6 +96,54 @@ function ProfilPage() {
         </div>
       </Card>
 
+      <Card icon={s.theme === "light" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />} title="Design-Modus">
+        <div className="flex items-center justify-between">
+          <div className="pr-3">
+            <p className="text-xs font-medium">
+              {s.theme === "light" ? "Hell" : "Dunkel"}
+            </p>
+            <p className="text-[11px] text-muted-foreground">
+              {s.theme === "light"
+                ? "Heller Hintergrund mit dunklem Text."
+                : "Stadion-Nacht-Look mit Pitch-Green."}
+            </p>
+          </div>
+          <Switch
+            checked={s.theme === "light"}
+            onCheckedChange={(v) => {
+              s.setTheme(v ? "light" : "dark");
+              toast(v ? "Light-Mode aktiviert" : "Dark-Mode aktiviert");
+            }}
+          />
+        </div>
+      </Card>
+
+      <Card icon={<Bell className="h-4 w-4" />} title="Push-Benachrichtigungen">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground pr-3">
+            Match-Erinnerungen 15 Minuten vor Anpfiff.
+          </p>
+          <Switch
+            checked={s.pushEnabled}
+            onCheckedChange={async (v) => {
+              s.setPushEnabled(v);
+              if (v) {
+                try {
+                  if (typeof Notification !== "undefined" && Notification.permission !== "granted") {
+                    await Notification.requestPermission();
+                  }
+                } catch { /* noop */ }
+                toast.success("Push aktiviert", { description: "Wir wecken dich rechtzeitig." });
+              } else {
+                toast("Push deaktiviert");
+              }
+            }}
+          />
+        </div>
+      </Card>
+
+
+
 
       <Button
         variant="destructive"
