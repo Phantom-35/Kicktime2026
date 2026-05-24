@@ -62,32 +62,37 @@ export function OnboardingFlow() {
         </div>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={step}
-          initial={{ opacity: 0, x: 24 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -24 }}
-          transition={{ duration: 0.25 }}
-          className="flex-1"
-        >
-          {step === 0 && <WelcomeStep onStart={() => setStep(1)} />}
-          {step === 1 && (
-            <TimezoneStep value={userTimezone} onChange={setTimezone} />
-          )}
-          {step === 2 && (
-            <TeamsStep
-              favoriteTeams={favoriteTeams}
-              interestingTeams={interestingTeams}
-              toggleFavorite={toggleFavorite}
-              toggleInteresting={toggleInteresting}
-            />
-          )}
-          {step === 3 && (
-            <AvailabilityStep availability={availability} setAvailability={setAvailability} />
-          )}
-        </motion.div>
-      </AnimatePresence>
+      <div className="flex-1 flex flex-col justify-center">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -24 }}
+            transition={{ duration: 0.25 }}
+          >
+            {step === 0 && <WelcomeStep onStart={() => setStep(1)} />}
+            {step === 1 && (
+              <StepCard>
+                <TimezoneStep value={userTimezone} onChange={setTimezone} />
+              </StepCard>
+            )}
+            {step === 2 && (
+              <TeamsStep
+                favoriteTeams={favoriteTeams}
+                interestingTeams={interestingTeams}
+                toggleFavorite={toggleFavorite}
+                toggleInteresting={toggleInteresting}
+              />
+            )}
+            {step === 3 && (
+              <StepCard>
+                <AvailabilityStep availability={availability} setAvailability={setAvailability} />
+              </StepCard>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
       {step > 0 && (
         <div className="pt-5 flex gap-2">
@@ -116,6 +121,14 @@ export function OnboardingFlow() {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function StepCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-border/60 bg-card/60 backdrop-blur p-6 shadow-xl">
+      {children}
     </div>
   );
 }
@@ -378,15 +391,21 @@ function AvailabilityStep({
 }) {
   return (
     <div>
-      <Clock className="h-10 w-10 text-primary mb-3" />
+      <Clock className="h-9 w-9 text-primary mb-3" />
       <h2 className="text-2xl font-bold mb-1">Deine Zeitfenster</h2>
-      <p className="text-sm text-muted-foreground mb-6">
+      <p className="text-sm text-muted-foreground mb-5">
         Wann hast du Zeit, live zu schauen?
       </p>
       <TimeRange
         label="Unter der Woche"
         value={availability.weekday}
+        allowOverflow
         onChange={(w) => setAvailability({ ...availability, weekday: w })}
+        presets={[
+          { label: "Feierabend", range: { start: 17, end: 23.5 } },
+          { label: "Ganztägig", range: { start: 0, end: 24 } },
+          { label: "Nachtaktiv", range: { start: 20, end: 4 } },
+        ]}
       />
       <div className="h-4" />
       <TimeRange
@@ -394,35 +413,90 @@ function AvailabilityStep({
         value={availability.weekend}
         onChange={(w) => setAvailability({ ...availability, weekend: w })}
         allowOverflow
+        presets={[
+          { label: "Tag & Abend", range: { start: 12, end: 23.5 } },
+          { label: "Ganztägig", range: { start: 10, end: 2 } },
+          { label: "Nachtaktiv", range: { start: 20, end: 4 } },
+        ]}
       />
     </div>
   );
 }
 
 function TimeRange({
-  label, value, onChange, allowOverflow,
+  label, value, onChange, allowOverflow, presets,
 }: {
   label: string;
   value: { start: number; end: number };
   onChange: (w: { start: number; end: number }) => void;
   allowOverflow?: boolean;
+  presets?: { label: string; range: { start: number; end: number } }[];
 }) {
   const max = allowOverflow ? 28 : 24;
-  const endDisplay = value.end < value.start && allowOverflow ? value.end + 24 : value.end;
+  const endDisplay =
+    allowOverflow && value.end < value.start ? value.end + 24 : value.end;
+  const normalizedEnd = value.end > 24 ? value.end - 24 : value.end;
+  const isOverflow = allowOverflow && endDisplay > 24;
+
+  const applyPreset = (range: { start: number; end: number }) => {
+    onChange(range);
+  };
+
   return (
-    <div className="rounded-xl bg-card border border-border p-4">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-medium">{label}</span>
-        <span className="text-sm tabular-nums text-primary font-semibold">
-          {formatHourLabel(value.start)} – {formatHourLabel(value.end > 24 ? value.end - 24 : value.end)}
-          {allowOverflow && endDisplay > 24 ? " +1" : ""}
-        </span>
+    <div className="rounded-2xl bg-background/40 border border-border p-4">
+      <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+        {label}
       </div>
+      <div className="text-2xl font-bold tabular-nums text-primary mb-4 flex items-baseline gap-2">
+        <span>⏰</span>
+        <span>
+          {formatHourLabel(value.start)} – {formatHourLabel(normalizedEnd)}
+        </span>
+        {isOverflow && (
+          <span className="text-xs font-medium text-muted-foreground">+1 Tag</span>
+        )}
+      </div>
+
       <Slider
         min={0} max={max} step={0.5}
         value={[value.start, endDisplay]}
-        onValueChange={([s, e]) => onChange({ start: s, end: e > 24 ? e - 24 : e })}
+        onValueChange={([s, e]) => {
+          if (s === e) return;
+          const start = Math.min(s, e);
+          const end = Math.max(s, e);
+          onChange({ start, end: end > 24 ? end - 24 : end });
+        }}
+        minStepsBetweenThumbs={1}
+        className="my-2"
       />
+
+      <div className="flex justify-between text-[10px] text-muted-foreground tabular-nums mt-1 mb-3 px-0.5">
+        <span>00</span><span>06</span><span>12</span><span>18</span>
+        <span>{allowOverflow ? "+04" : "24"}</span>
+      </div>
+
+      {presets && (
+        <div className="flex flex-wrap gap-1.5">
+          {presets.map((p) => {
+            const active =
+              p.range.start === value.start && p.range.end === value.end;
+            return (
+              <button
+                key={p.label}
+                onClick={() => applyPreset(p.range)}
+                className={`text-[11px] font-medium px-2.5 py-1.5 rounded-full border transition-colors ${
+                  active
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card border-border text-muted-foreground hover:text-foreground hover:border-primary/50"
+                }`}
+              >
+                {p.label} ({formatHourLabel(p.range.start)}–{formatHourLabel(p.range.end)})
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
+
