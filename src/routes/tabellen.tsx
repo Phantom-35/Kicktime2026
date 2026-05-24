@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Radio, Square } from "lucide-react";
-import { MATCHES, type Match } from "@/data/matches";
 import { TEAMS, getTeam } from "@/data/teams";
 import {
   calculateTableStandings,
@@ -10,62 +9,67 @@ import {
   type LiveScores,
 } from "@/lib/standings";
 import { Button } from "@/components/ui/button";
+import { useMatchStore, selectMatchList } from "@/store/match-store";
 
 export const Route = createFileRoute("/tabellen")({ component: TabellenPage });
 
-// Pick a handful of matches to drive the live simulation. We pretend these
-// kick off the moment the user hits "Live-Simulation starten" and tick goals
-// roughly every 4 seconds.
 const SIM_MATCH_IDS = ["m4", "m1", "m5", "m6"]; // GER, MEX, NED, ESP
 
 function TabellenPage() {
+  const matches = useMatchStore(selectMatchList);
+  const applyLiveUpdate = useMatchStore((s) => s.applyLiveUpdate);
   const [activeGroup, setActiveGroup] = useState<string>("E");
   const [simRunning, setSimRunning] = useState(false);
-  const [live, setLive] = useState<LiveScores>({});
   const [tick, setTick] = useState(0);
   const tickRef = useRef<number | null>(null);
 
-  // Seed live scores at 0:0 when sim starts; clear when stopped.
   useEffect(() => {
     if (!simRunning) {
-      setLive({});
+      for (const id of SIM_MATCH_IDS) {
+        applyLiveUpdate(id, { status: "scheduled", liveScore: undefined, matchMinute: undefined });
+      }
       if (tickRef.current) window.clearInterval(tickRef.current);
       tickRef.current = null;
       return;
     }
-    setLive(
-      Object.fromEntries(SIM_MATCH_IDS.map((id) => [id, { a: 0, b: 0 }]))
-    );
-    tickRef.current = window.setInterval(() => {
-      setTick((t) => t + 1);
-    }, 3500);
+    for (const id of SIM_MATCH_IDS) {
+      applyLiveUpdate(id, { status: "live", liveScore: { a: 0, b: 0 }, matchMinute: 1 });
+    }
+    tickRef.current = window.setInterval(() => setTick((t) => t + 1), 3500);
     return () => {
       if (tickRef.current) window.clearInterval(tickRef.current);
     };
-  }, [simRunning]);
+  }, [simRunning, applyLiveUpdate]);
 
-  // Each tick: randomly add a goal to one of the live matches.
   useEffect(() => {
     if (!simRunning || tick === 0) return;
-    setLive((prev) => {
-      const next = { ...prev };
-      const id = SIM_MATCH_IDS[Math.floor(Math.random() * SIM_MATCH_IDS.length)];
-      const cur = next[id] ?? { a: 0, b: 0 };
-      const side: "a" | "b" = Math.random() < 0.5 ? "a" : "b";
-      next[id] = { ...cur, [side]: cur[side] + 1 };
-      return next;
+    const id = SIM_MATCH_IDS[Math.floor(Math.random() * SIM_MATCH_IDS.length)];
+    const m = useMatchStore.getState().matches[id];
+    if (!m) return;
+    const cur = m.liveScore ?? { a: 0, b: 0 };
+    const side: "a" | "b" = Math.random() < 0.5 ? "a" : "b";
+    applyLiveUpdate(id, {
+      liveScore: { ...cur, [side]: cur[side] + 1 },
+      matchMinute: Math.min(90, (m.matchMinute ?? 0) + Math.floor(Math.random() * 12) + 3),
     });
-  }, [tick, simRunning]);
+  }, [tick, simRunning, applyLiveUpdate]);
+
+  const live: LiveScores = useMemo(() => {
+    const out: LiveScores = {};
+    for (const m of matches) if (m.status === "live" && m.liveScore) out[m.id] = m.liveScore;
+    return out;
+  }, [matches]);
 
   const liveMatchesForGroup = useMemo(
-    () => MATCHES.filter((m) => m.group === activeGroup && live[m.id]),
-    [activeGroup, live]
+    () => matches.filter((m) => m.group === activeGroup && m.status === "live"),
+    [activeGroup, matches]
   );
 
   const standings = useMemo(
-    () => calculateTableStandings(activeGroup, MATCHES, live),
-    [activeGroup, live]
+    () => calculateTableStandings(activeGroup, matches, live),
+    [activeGroup, matches, live]
   );
+
 
   return (
     <div className="p-4 pb-24 relative">
