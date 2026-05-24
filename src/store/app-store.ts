@@ -11,6 +11,8 @@ type State = {
   spoilerProtection: boolean;
   isOnboarded: boolean;
   alarms: Record<string, boolean>;
+  theme: "dark" | "light";
+  pushEnabled: boolean;
 };
 
 type Actions = {
@@ -22,6 +24,8 @@ type Actions = {
   setOnboarded: (v: boolean) => void;
   toggleAlarm: (id: string) => void;
   resetOnboarding: () => void;
+  setTheme: (t: "dark" | "light") => void;
+  setPushEnabled: (v: boolean) => void;
 };
 
 const detectTz = () => {
@@ -45,6 +49,10 @@ export const useAppStore = create<State & Actions>()(
       spoilerProtection: true,
       isOnboarded: false,
       alarms: {},
+      theme: "dark",
+      pushEnabled: false,
+
+
 
       setTimezone: (tz) => set({ userTimezone: tz }),
       toggleFavorite: (code) =>
@@ -81,6 +89,8 @@ export const useAppStore = create<State & Actions>()(
           interestingTeams: [],
           alarms: {},
         }),
+      setTheme: (t) => set({ theme: t }),
+      setPushEnabled: (v) => set({ pushEnabled: v }),
     }),
     { name: "kicktime-2026" }
   )

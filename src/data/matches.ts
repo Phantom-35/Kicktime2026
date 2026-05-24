@@ -10,7 +10,7 @@ export type Match = {
   hostCountry: "USA" | "MEX" | "CAN";
   utcTimestamp: string;
   broadcaster: Broadcaster;
-  status: "scheduled" | "finished";
+  status: "scheduled" | "live" | "finished";
   score?: { a: number; b: number };
   travelDistanceTeamA: string;
   travelDistanceTeamB: string;

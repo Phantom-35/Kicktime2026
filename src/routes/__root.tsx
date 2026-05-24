@@ -89,6 +89,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const onboarded = useAppStore((s) => s.isOnboarded);
+  const theme = useAppStore((s) => s.theme);
+  if (typeof document !== "undefined") {
+    const root = document.documentElement;
+    if (theme === "light") {
+      root.classList.remove("dark");
+      root.classList.add("light");
+    } else {
+      root.classList.remove("light");
+      root.classList.add("dark");
+    }
+  }
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen w-full flex justify-center bg-background">
@@ -100,7 +111,7 @@ function RootComponent() {
           {onboarded && <BottomNav />}
         </div>
       </div>
-      <Toaster theme="dark" position="top-center" richColors />
+      <Toaster theme={theme} position="top-center" richColors />
     </QueryClientProvider>
   );
 }
