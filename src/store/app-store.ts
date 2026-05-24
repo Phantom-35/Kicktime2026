@@ -89,6 +89,8 @@ export const useAppStore = create<State & Actions>()(
           interestingTeams: [],
           alarms: {},
         }),
+      setTheme: (t) => set({ theme: t }),
+      setPushEnabled: (v) => set({ pushEnabled: v }),
     }),
     { name: "kicktime-2026" }
   )
