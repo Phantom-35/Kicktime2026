@@ -11,6 +11,8 @@ type State = {
   spoilerProtection: boolean;
   isOnboarded: boolean;
   alarms: Record<string, boolean>;
+  theme: "dark" | "light";
+  pushEnabled: boolean;
 };
 
 type Actions = {
@@ -22,6 +24,8 @@ type Actions = {
   setOnboarded: (v: boolean) => void;
   toggleAlarm: (id: string) => void;
   resetOnboarding: () => void;
+  setTheme: (t: "dark" | "light") => void;
+  setPushEnabled: (v: boolean) => void;
 };
 
 const detectTz = () => {
