@@ -109,10 +109,8 @@ function RootComponent() {
 }
 
 function useThemeClass(theme: "dark" | "light") {
-  if (typeof window === "undefined") return;
-  // useLayoutEffect-ish but safe on the client only; runs after render.
-  // Using a plain effect via React import would also work; this keeps it inline.
-  React.useEffect(() => {
+  useEffect(() => {
+    if (typeof document === "undefined") return;
     const root = document.documentElement;
     if (theme === "light") {
       root.classList.remove("dark");
