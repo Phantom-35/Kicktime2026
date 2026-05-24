@@ -38,7 +38,7 @@ export function OnboardingFlow() {
     true;
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] flex-col px-5 py-5">
+    <div className="flex flex-col px-5 py-5">
       {/* Progress bar */}
       <div className="mb-5">
         <div className="flex items-center gap-1.5 mb-2">
@@ -62,7 +62,7 @@ export function OnboardingFlow() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center">
+      <div>
         <AnimatePresence mode="wait">
           <motion.div
             key={step}

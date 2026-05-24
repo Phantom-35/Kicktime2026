@@ -16,7 +16,7 @@ type Params = {
   userTimezone: string;
 };
 
-const NOW = new Date("2026-06-20T12:00:00Z").getTime();
+const NOW = new Date("2026-06-10T12:00:00Z").getTime();
 
 export function categorizeMatches(p: Params): Categorized {
   const perfect: Match[] = [];
