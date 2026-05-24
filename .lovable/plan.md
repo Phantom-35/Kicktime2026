@@ -1,77 +1,63 @@
-## 1. Timezone step layout (`src/components/onboarding/OnboardingFlow.tsx`)
+## 1. Live-ready match store (foundation for everything else)
 
-Restructure Step 1 so the content is a single compact vertical stack inside one card — no `flex-1`, no `justify-between`, no spacer divs between the dropdown and the "Weiter" button.
+Create `src/store/match-store.ts` (Zustand) as the single source of truth for match runtime state. Seeds from `MATCHES` once, then exposes:
 
-Order inside the card:
-1. Icon
-2. Title "Wähle deine Zeitzone"
-3. Description
-4. Timezone Select dropdown
-5. "Weiter" button (full-width, directly beneath the dropdown, `mt-4`)
+- `matches: Record<string, RuntimeMatch>` where `RuntimeMatch` extends `Match` with `status: "scheduled" | "live" | "finished"`, `liveScore?: {a:number;b:number}`, `matchMinute?: number`.
+- `now: number` — a "current time" cursor that drives the rolling dashboard. Initialized to the existing demo `NOW` (`2026-06-10T12:00:00Z`) so the current Perfect/Night/Missed split keeps working.
+- Actions designed to map 1:1 to a future sports-API payload:
+  - `applyLiveUpdate(id, { liveScore, matchMinute, status })`
+  - `finishMatch(id, finalScore)`
+  - `tickClock(ms)` — advances `now`, auto-transitions matches whose kickoff has passed to `"live"`, and matches whose kickoff+110min has passed to `"finished"` (using `liveScore` as final if present).
+  - `replaceAll(payload)` — drop-in for a future real API fetch.
 
-Remove any `min-h-screen` / `flex-col justify-between` pattern on this step. The step container becomes a top-aligned `space-y-4` block under the progress bar. Apply the same compact pattern to Step 0/3 only if needed for visual consistency; otherwise leave them.
+Refactor `src/lib/categorize.ts` to take `matches` and `now` as parameters instead of importing `MATCHES` and the hardcoded `NOW`. `src/lib/standings.ts` already accepts matches + live scores, so it stays — but `tabellen.tsx` switches from local `useState` live scores to the shared store so live status is consistent across tabs.
 
-## 2. Remove fake scores / finished matches (`src/data/matches.ts`)
+## 2. Rolling dashboard with "Nachrücken"
 
-- Set every match's `status` to `"scheduled"`.
-- Delete all `score` fields.
-- Drop the artificial `NOW = 2026-06-20` reference assumption from sample data (the constant in `src/lib/categorize.ts` stays — it's the engine's "now" anchor; we'll re-anchor it to pre-tournament, e.g. `2026-06-10T12:00:00Z`, so all new matches register as upcoming and the "Missed" bucket is naturally empty until simulation).
-- `MatchCard` already hides the score when `status !== "finished"`, so no UI change needed.
+`src/routes/index.tsx`:
 
-## 3. Real WM 2026 teams (`src/data/teams.ts`)
+- Subscribe to `useMatchStore`. Pass `matches` and `now` into `categorizeMatches`.
+- Add a small dev/demo clock control (a single hidden-by-default "⏭ Zeit vorspulen 2h" button at the bottom of the page) that calls `tickClock` so the rolling behavior is visible without waiting for real time. In production this is replaced by `setInterval(() => tickClock(60_000), 60_000)` plus the real API feed.
+- Both `Stream` lists already use `AnimatePresence` per item. Add `layout` to each `motion.div` and an `exit={{ opacity: 0, y: -8, scale: 0.97 }}` so finished matches slide out of Perfect/Night and the next ones rise from below. The Missed list gets the same treatment for incoming entries (`initial={{ y: 8 }}`).
+- No category cap — the master schedule flows continuously. As matches finish they leave Perfect/Night and appear at the top of Missed.
 
-Replace `TEAMS` with the 48 officially-listed nations in the 12-group layout below. Italy, Egypt-as-D, etc. are removed/relocated. Tier assignment: keep tier 1 for traditional top nations (GER, FRA, ESP, ENG, POR, ARG, BRA, NED, BEL), tier 2 for solid contenders (CRO, URU, COL, MEX, USA, SUI, JPN, MAR, SEN, AUT, SWE, NOR), tier 3 for the rest. Flags via emoji; new codes added where missing (RSA, BIH, HAI, CUW, COD, CPV, IRQ, JOR, ALG).
+## 3. Match card metadata polish
 
-Groups:
-- A: MEX, RSA, KOR, CZE
-- B: CAN, BIH, QAT, SUI
-- C: BRA, MAR, HAI, SCO
-- D: USA, PAR, AUS, TUR
-- E: GER, CUW, CIV, ECU
-- F: NED, JPN, SWE, TUN
-- G: BEL, EGY, IRN, NZL
-- H: ESP, CPV, KSA, URU
-- I: FRA, SEN, IRQ, NOR
-- J: ARG, ALG, AUT, JOR
-- K: POR, COD, UZB, COL
-- L: ENG, CRO, GHA, PAN
+`src/components/match/MatchCard.tsx`: replace the top-right timestamp with a pill:
 
-Update `PRIORITY_CODES` order (unchanged set: GER, ITA→remove, ARG, BRA, FRA, ESP, ENG, POR, NED, CRO, BEL, SUI, AUT, USA). New list: GER, ARG, BRA, FRA, ESP, ENG, POR, NED, CRO, BEL, SUI, AUT, USA, MEX. Drop ITA.
+```tsx
+<span className="text-sm font-semibold tabular-nums text-foreground bg-muted/60 border border-border/60 rounded-full px-2.5 py-1">
+  {local.fullStr}
+</span>
+```
 
-`getTeam` and `getSortedTeams` helpers stay as-is.
+For matches that are currently `"live"`, swap the pill for a red pulsing variant showing `{matchMinute}'` and the live score next to (or replacing) the central VS block.
 
-## 4. Real sample matches (`src/data/matches.ts`)
+## 4. Profile: Theme + Notifications
 
-Replace `MATCHES` with the 10 marquee fixtures below, all `status: "scheduled"`, no `score`. UTC timestamps spread across morning / afternoon / deep-night Europe/Berlin to exercise the time-window engine.
+Extend `src/store/app-store.ts` with `theme: "dark" | "light"` (default `"dark"`) and `pushEnabled: boolean` (default `false`), plus setters. Persist them with the existing `kicktime-2026` key.
 
-| # | Match | Group | Stadium / City | UTC | DE local | Broadcaster |
-|---|---|---|---|---|---|---|
-| 1 | MEX – RSA (Opening) | A | Estadio Azteca, Mexiko-Stadt | 2026-06-11T23:00:00Z | 01:00 | ARD |
-| 2 | USA – PAR | D | SoFi Stadium, Los Angeles | 2026-06-13T20:00:00Z | 22:00 | MagentaTV |
-| 3 | BRA – MAR | C | Hard Rock Stadium, Miami | 2026-06-14T19:00:00Z | 21:00 | ZDF |
-| 4 | GER – CUW | E | MetLife Stadium, New York | 2026-06-14T22:00:00Z | 00:00 | ARD |
-| 5 | NED – JPN | F | BMO Field, Toronto | 2026-06-14T16:00:00Z | 18:00 | MagentaTV |
-| 6 | ESP – CPV | H | AT&T Stadium, Dallas | 2026-06-15T18:00:00Z | 20:00 | ARD |
-| 7 | FRA – SEN | I | Mercedes-Benz Stadium, Atlanta | 2026-06-16T13:00:00Z | 15:00 | ZDF |
-| 8 | ENG – CRO | L | Gillette Stadium, Boston | 2026-06-17T18:00:00Z | 20:00 | MagentaTV |
-| 9 | POR – COD | K | Levi's Stadium, San Francisco | 2026-06-17T03:00:00Z | 05:00 | ARD |
-| 10 | ARG – ALG | J | Arrowhead Stadium, Kansas City | 2026-06-17T22:00:00Z | 00:00 | ZDF |
+Add a small `ThemeProvider` effect in `src/routes/__root.tsx` that toggles the `dark` class on `document.documentElement` based on `theme`.
 
-Each match keeps the existing `Match` shape (travel distances, weather forecast as plausible strings).
+`src/styles.css`: add `:root.light { … }` overrides — off-white background (`oklch(0.985 0.003 250)`), dark slate foreground, lighter card/muted/border tokens, keep the pitch-green primary. The existing `@custom-variant dark (&:is(.dark *))` plus the new `.light` class on `<html>` give us a clean switch without touching components.
 
-## 5. Standings (`src/data/groups.ts`)
+`src/routes/profil.tsx`: add two new Cards above the destructive reset button:
 
-Reset all `MOCK_STATS` to zero (pre-tournament). Simplest: change `MOCK_STATS` to `{}` so every team renders 0/0/0/0 0:0 0pts in standings. Keeps the standings UI working without showing fake results.
+- **Design-Modus** — segmented toggle (Dark / Hell) using a `Switch` with `Moon`/`Sun` icons.
+- **Push-Benachrichtigungen** — `Switch` bound to `pushEnabled`; on enable, call `Notification.requestPermission()` (best-effort, swallow errors) and `toast.success("Push aktiviert")`.
 
-## 6. Categorizer anchor (`src/lib/categorize.ts`)
+## Files
 
-Move `NOW` to `2026-06-10T12:00:00Z` so all sample matches are upcoming, missed bucket is empty, and "Perfect / Nachtschicht" buckets correctly populate from the new schedule.
+- new: `src/store/match-store.ts`
+- edit: `src/lib/categorize.ts` (accept matches+now as params)
+- edit: `src/routes/index.tsx` (use match store, rolling list, demo clock control)
+- edit: `src/components/match/MatchCard.tsx` (timestamp pill + live state)
+- edit: `src/routes/tabellen.tsx` (use shared live state from match store)
+- edit: `src/store/app-store.ts` (theme + pushEnabled)
+- edit: `src/routes/__root.tsx` (apply theme class)
+- edit: `src/styles.css` (`.light` token set)
+- edit: `src/routes/profil.tsx` (two new toggle cards)
 
-## Files touched
-- `src/components/onboarding/OnboardingFlow.tsx` (Step 1 only)
-- `src/data/teams.ts`
-- `src/data/matches.ts`
-- `src/data/groups.ts`
-- `src/lib/categorize.ts`
+## Out of scope
 
-No store, no routing, no UI-token changes.
+No real network calls — the store just exposes the API shape so a future feed can drop in. No changes to onboarding, bars, or match detail sheet.
