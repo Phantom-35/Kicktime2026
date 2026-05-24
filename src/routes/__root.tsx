@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -90,16 +91,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const onboarded = useAppStore((s) => s.isOnboarded);
   const theme = useAppStore((s) => s.theme);
-  if (typeof document !== "undefined") {
-    const root = document.documentElement;
-    if (theme === "light") {
-      root.classList.remove("dark");
-      root.classList.add("light");
-    } else {
-      root.classList.remove("light");
-      root.classList.add("dark");
-    }
-  }
+  useThemeClass(theme);
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen w-full flex justify-center bg-background">
@@ -114,4 +106,18 @@ function RootComponent() {
       <Toaster theme={theme} position="top-center" richColors />
     </QueryClientProvider>
   );
+}
+
+function useThemeClass(theme: "dark" | "light") {
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const root = document.documentElement;
+    if (theme === "light") {
+      root.classList.remove("dark");
+      root.classList.add("light");
+    } else {
+      root.classList.remove("light");
+      root.classList.add("dark");
+    }
+  }, [theme]);
 }
