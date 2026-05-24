@@ -64,19 +64,38 @@ function ProfilPage() {
             const fav = s.favoriteTeams.includes(t.code);
             const intg = s.interestingTeams.includes(t.code);
             return (
-              <button
-                key={t.code}
-                onClick={() => s.toggleTeam(t.code)}
-                className={`rounded-lg border-2 p-2 flex flex-col items-center active:scale-95 transition-all
-                  ${fav ? "border-primary bg-primary/10" : intg ? "border-accent bg-accent/10" : "border-border"}`}
-              >
-                <span className="text-xl">{t.flag}</span>
-                <span className="text-[9px] font-semibold leading-tight mt-0.5">{t.code}</span>
-              </button>
+              <div key={t.code} className="flex flex-col items-center gap-1">
+                <div
+                  className={`w-full rounded-lg border-2 p-2 flex flex-col items-center transition-all
+                    ${fav ? "border-primary bg-primary/10" : intg ? "border-accent bg-accent/10" : "border-border"}`}
+                >
+                  <span className="text-xl">{t.flag}</span>
+                  <span className="text-[9px] font-semibold leading-tight mt-0.5">{t.code}</span>
+                </div>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => s.toggleFavorite(t.code)}
+                    className={`h-5 w-5 rounded-md flex items-center justify-center active:scale-90 transition
+                      ${fav ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                    aria-label="Favorit"
+                  >
+                    <span className="text-[10px]">★</span>
+                  </button>
+                  <button
+                    onClick={() => s.toggleInteresting(t.code)}
+                    className={`h-5 w-5 rounded-md flex items-center justify-center active:scale-90 transition
+                      ${intg ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}
+                    aria-label="Interessant"
+                  >
+                    <span className="text-[10px]">🔔</span>
+                  </button>
+                </div>
+              </div>
             );
           })}
         </div>
       </Card>
+
 
       <Button
         variant="destructive"
