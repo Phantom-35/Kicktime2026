@@ -8,7 +8,20 @@ import { getGroupStandings } from "@/data/groups";
 import { useAppStore } from "@/store/app-store";
 import { getLocalParts } from "@/lib/time";
 import { Tv, Cloud, Plane, MapPin } from "lucide-react";
-import { toast } from "sonner";
+
+
+function getBroadcasterUrl(broadcaster: string): string {
+  switch (broadcaster) {
+    case "MagentaTV":
+      return "https://www.magentatv.de";
+    case "ARD":
+      return "https://www.ardmediathek.de";
+    case "ZDF":
+      return "https://www.zdf.de";
+    default:
+      return "https://www.google.com/search?q=" + encodeURIComponent(broadcaster + " live stream");
+  }
+}
 
 export function MatchDetailSheet({
   match, open, onOpenChange,
@@ -41,16 +54,19 @@ export function MatchDetailSheet({
         <div className="mt-5 space-y-5">
           {/* Broadcaster */}
           <div className="rounded-2xl border border-border bg-card p-4">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
               <Tv className="h-3.5 w-3.5" /> Live im TV
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 w-full">
               <span className="text-2xl font-black tracking-tight text-primary">
                 {match.broadcaster}
               </span>
               <Button
-                onClick={() => toast.success(`${match.broadcaster} Stream wird geöffnet…`)}
-                className="h-10 font-semibold"
+                onClick={() => {
+                  const url = getBroadcasterUrl(match.broadcaster);
+                  window.open(url, "_blank", "noopener,noreferrer");
+                }}
+                className="h-11 w-full font-semibold"
               >
                 Jetzt Live-Stream öffnen
               </Button>
