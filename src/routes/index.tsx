@@ -5,19 +5,26 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useAppStore } from "@/store/app-store";
+import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { categorizeMatches } from "@/lib/categorize";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { toast } from "sonner";
-import { CalendarPlus, BellRing, Play, Sparkles } from "lucide-react";
+import { CalendarPlus, BellRing, Play, Sparkles, FastForward } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Dashboard });
 
 function Dashboard() {
   const state = useAppStore();
-  const cats = useMemo(() => categorizeMatches(state), [state]);
+  const matches = useMatchStore(selectMatchList);
+  const now = useMatchStore((s) => s.now);
+  const tickClock = useMatchStore((s) => s.tickClock);
+  const cats = useMemo(
+    () => categorizeMatches({ ...state, matches, now }),
+    [state, matches, now]
+  );
   const [selected, setSelected] = useState<Match | null>(null);
 
   return (
