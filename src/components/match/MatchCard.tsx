@@ -26,8 +26,8 @@ export function MatchCard({
       onClick={onClick}
       className="rounded-2xl border border-border bg-card p-4 active:scale-[0.98] transition-transform cursor-pointer"
     >
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-1.5">
+      <div className="flex items-center justify-between mb-3 gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
             Gruppe {match.group}
           </span>
@@ -37,8 +37,17 @@ export function MatchCard({
           {indicator === "night" && (
             <span className="text-accent text-xs" title="Nachtschicht">🌙</span>
           )}
+          {match.status === "live" && (
+            <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/15 border border-destructive/40 rounded-full px-2 py-0.5">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75 animate-ping" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-destructive" />
+              </span>
+              Live {match.matchMinute ?? 0}'
+            </span>
+          )}
         </div>
-        <span className="text-[11px] text-muted-foreground tabular-nums">
+        <span className="shrink-0 text-sm font-semibold tabular-nums text-foreground bg-muted/60 border border-border/60 rounded-full px-2.5 py-1">
           {local.fullStr}
         </span>
       </div>
@@ -46,7 +55,11 @@ export function MatchCard({
       <div className="flex items-center justify-between gap-3">
         <TeamSide flag={a.flag} name={a.name} />
         <div className="text-center">
-          {match.status === "finished" && match.score ? (
+          {match.status === "live" && match.liveScore ? (
+            <div className="text-xl font-bold tabular-nums text-destructive">
+              {match.liveScore.a} : {match.liveScore.b}
+            </div>
+          ) : match.status === "finished" && match.score ? (
             <div className={`text-xl font-bold tabular-nums ${hideScore ? "blur-md select-none" : ""}`}>
               {match.score.a} : {match.score.b}
             </div>
