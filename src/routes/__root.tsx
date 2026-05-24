@@ -122,17 +122,3 @@ function useThemeClass(theme: "dark" | "light") {
     }
   }, [theme]);
 }
-    <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen w-full flex justify-center bg-background">
-        <div className="relative w-full max-w-md min-h-screen flex flex-col bg-background shadow-2xl md:my-4 md:rounded-3xl md:overflow-hidden md:min-h-[calc(100vh-2rem)] md:border md:border-border">
-          <AppHeader />
-          <main className="flex-1 overflow-y-auto">
-            {onboarded ? <Outlet /> : <OnboardingFlow />}
-          </main>
-          {onboarded && <BottomNav />}
-        </div>
-      </div>
-      <Toaster theme={theme} position="top-center" richColors />
-    </QueryClientProvider>
-  );
-}
