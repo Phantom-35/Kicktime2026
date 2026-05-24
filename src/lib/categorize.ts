@@ -1,12 +1,13 @@
-import { MATCHES, type Match } from "@/data/matches";
+import type { Match } from "@/data/matches";
 import { getTeam } from "@/data/teams";
 import { matchInAvailability } from "./time";
 import type { Window } from "@/store/app-store";
+import type { RuntimeMatch } from "@/store/match-store";
 
 export type Categorized = {
-  perfect: Match[];
-  nightShift: Match[];
-  missed: Match[];
+  perfect: RuntimeMatch[];
+  nightShift: RuntimeMatch[];
+  missed: RuntimeMatch[];
 };
 
 type Params = {
@@ -14,16 +15,16 @@ type Params = {
   interestingTeams: string[];
   availability: { weekday: Window; weekend: Window };
   userTimezone: string;
+  matches: RuntimeMatch[];
+  now: number;
 };
 
-const NOW = new Date("2026-06-10T12:00:00Z").getTime();
-
 export function categorizeMatches(p: Params): Categorized {
-  const perfect: Match[] = [];
-  const nightShift: Match[] = [];
-  const missed: Match[] = [];
+  const perfect: RuntimeMatch[] = [];
+  const nightShift: RuntimeMatch[] = [];
+  const missed: RuntimeMatch[] = [];
 
-  for (const m of MATCHES) {
+  for (const m of p.matches) {
     const involvesFav =
       p.favoriteTeams.includes(m.teamA) || p.favoriteTeams.includes(m.teamB);
     const involvesInt =
@@ -33,9 +34,9 @@ export function categorizeMatches(p: Params): Categorized {
       getTeam(m.teamA).tier === 1 && getTeam(m.teamB).tier === 1;
     const inWindow = matchInAvailability(m.utcTimestamp, p.userTimezone, p.availability);
     const kickoff = new Date(m.utcTimestamp).getTime();
-    const isPast = kickoff < NOW || m.status === "finished";
+    const isPast = m.status === "finished" || kickoff < p.now - 110 * 60 * 1000;
 
-    if (isPast) {
+    if (isPast || m.status === "finished") {
       if (involvesAny) missed.push(m);
       continue;
     }
@@ -54,14 +55,14 @@ export function categorizeMatches(p: Params): Categorized {
   };
 }
 
-export function isPerfectFor(m: Match, p: Params) {
+export function isPerfectFor(m: Match, p: Omit<Params, "matches" | "now">) {
   const involvesAny =
     p.favoriteTeams.includes(m.teamA) || p.favoriteTeams.includes(m.teamB) ||
     p.interestingTeams.includes(m.teamA) || p.interestingTeams.includes(m.teamB);
   return involvesAny && matchInAvailability(m.utcTimestamp, p.userTimezone, p.availability);
 }
 
-export function isNightShift(m: Match, p: Params) {
+export function isNightShift(m: Match, p: Omit<Params, "matches" | "now">) {
   const inWindow = matchInAvailability(m.utcTimestamp, p.userTimezone, p.availability);
   const isMarquee = getTeam(m.teamA).tier === 1 && getTeam(m.teamB).tier === 1;
   const involvesFav = p.favoriteTeams.includes(m.teamA) || p.favoriteTeams.includes(m.teamB);
