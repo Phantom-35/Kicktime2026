@@ -8,7 +8,7 @@ import { getGroupStandings } from "@/data/groups";
 import { useAppStore } from "@/store/app-store";
 import { getLocalParts } from "@/lib/time";
 import { Tv, Cloud, Plane, MapPin } from "lucide-react";
-import { toast } from "sonner";
+
 
 function getBroadcasterUrl(broadcaster: string): string {
   switch (broadcaster) {
