@@ -4,6 +4,11 @@ import { getLocalParts } from "@/lib/time";
 import { useAppStore } from "@/store/app-store";
 import { Tv, MapPin } from "lucide-react";
 
+type MatchLike = Match & {
+  liveScore?: { a: number; b: number };
+  matchMinute?: number;
+};
+
 export function MatchCard({
   match,
   onClick,
@@ -11,7 +16,7 @@ export function MatchCard({
   hideScore,
   children,
 }: {
-  match: Match;
+  match: MatchLike;
   onClick?: () => void;
   indicator?: "perfect" | "night" | null;
   hideScore?: boolean;
