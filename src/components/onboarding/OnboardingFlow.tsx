@@ -62,32 +62,37 @@ export function OnboardingFlow() {
         </div>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={step}
-          initial={{ opacity: 0, x: 24 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -24 }}
-          transition={{ duration: 0.25 }}
-          className="flex-1"
-        >
-          {step === 0 && <WelcomeStep onStart={() => setStep(1)} />}
-          {step === 1 && (
-            <TimezoneStep value={userTimezone} onChange={setTimezone} />
-          )}
-          {step === 2 && (
-            <TeamsStep
-              favoriteTeams={favoriteTeams}
-              interestingTeams={interestingTeams}
-              toggleFavorite={toggleFavorite}
-              toggleInteresting={toggleInteresting}
-            />
-          )}
-          {step === 3 && (
-            <AvailabilityStep availability={availability} setAvailability={setAvailability} />
-          )}
-        </motion.div>
-      </AnimatePresence>
+      <div className="flex-1 flex flex-col justify-center">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -24 }}
+            transition={{ duration: 0.25 }}
+          >
+            {step === 0 && <WelcomeStep onStart={() => setStep(1)} />}
+            {step === 1 && (
+              <StepCard>
+                <TimezoneStep value={userTimezone} onChange={setTimezone} />
+              </StepCard>
+            )}
+            {step === 2 && (
+              <TeamsStep
+                favoriteTeams={favoriteTeams}
+                interestingTeams={interestingTeams}
+                toggleFavorite={toggleFavorite}
+                toggleInteresting={toggleInteresting}
+              />
+            )}
+            {step === 3 && (
+              <StepCard>
+                <AvailabilityStep availability={availability} setAvailability={setAvailability} />
+              </StepCard>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
       {step > 0 && (
         <div className="pt-5 flex gap-2">
@@ -116,6 +121,14 @@ export function OnboardingFlow() {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function StepCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-border/60 bg-card/60 backdrop-blur p-6 shadow-xl">
+      {children}
     </div>
   );
 }
