@@ -116,6 +116,12 @@ export const useMatchStore = create<State & Actions>((set) => ({
   resetMatches: () => set({ matches: seed(), now: DEMO_NOW }),
 }));
 
+let cachedMatchesRecord: State["matches"] | undefined;
+let cachedMatchList: RuntimeMatch[] = [];
+
 export function selectMatchList(s: State): RuntimeMatch[] {
-  return Object.values(s.matches);
+  if (s.matches === cachedMatchesRecord) return cachedMatchList;
+  cachedMatchesRecord = s.matches;
+  cachedMatchList = Object.values(s.matches);
+  return cachedMatchList;
 }
