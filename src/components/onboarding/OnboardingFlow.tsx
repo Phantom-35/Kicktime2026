@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "@tanstack/react-router";
 import { useAppStore } from "@/store/app-store";
 import { getSortedTeams, PRIORITY_CODES, type Team } from "@/data/teams";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ const STEP_LABELS = ["Start", "Zeitzone", "Teams", "Zeitfenster"];
 
 export function OnboardingFlow() {
   const [step, setStep] = useState(0);
+  const navigate = useNavigate();
   const {
     userTimezone, setTimezone,
     favoriteTeams, interestingTeams,
@@ -113,7 +115,10 @@ export function OnboardingFlow() {
             </Button>
           ) : (
             <Button
-              onClick={() => setOnboarded(true)}
+              onClick={() => {
+                setOnboarded(true);
+                navigate({ to: "/", replace: true });
+              }}
               className="flex-1 h-12 font-semibold"
             >
               WM-Planer starten ⚽
