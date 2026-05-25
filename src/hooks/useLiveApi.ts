@@ -3,8 +3,9 @@ import { useAppStore } from "@/store/app-store";
 import {
   applyLiveFixturesToStore,
   fetchLiveWorldCupData,
-  hasApiKey,
+  isLiveDataEnabled,
 } from "@/services/footballApi";
+
 
 /**
  * Polls API-Football for live fixture updates and merges them into the
