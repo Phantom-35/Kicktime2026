@@ -13,6 +13,9 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
 import { useAppStore } from "@/store/app-store";
+import { useLiveClock } from "@/hooks/useLiveClock";
+import { useLiveSimulation } from "@/hooks/useLiveSimulation";
+import { useLiveApi } from "@/hooks/useLiveApi";
 
 import appCss from "../styles.css?url";
 
@@ -92,6 +95,9 @@ function RootComponent() {
   const onboarded = useAppStore((s) => s.isOnboarded);
   const theme = useAppStore((s) => s.theme);
   useThemeClass(theme);
+  useLiveClock();
+  useLiveSimulation();
+  useLiveApi();
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen w-full flex justify-center bg-background">
