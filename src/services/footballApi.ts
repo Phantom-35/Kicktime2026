@@ -117,18 +117,9 @@ function mapStatus(s: string): LiveFixture["status"] {
   return "live"; // 1H, HT, 2H, ET, BT, P, LIVE
 }
 
-/** German display name → team code lookup. Cached. */
-let nameIndex: Record<string, string> | null = null;
+/** German display name → team code lookup. Built once below. */
+let nameIndex: Record<string, string> = {};
 function nameToCode(name: string): string | null {
-  if (!nameIndex) {
-    nameIndex = {};
-    // Match by both German display name and English-ish canonical names.
-    // We compare lowercased to be tolerant of casing differences.
-    for (const t of (await import("@/data/teams")).TEAMS ?? []) {
-      // placeholder — replaced at runtime below
-      nameIndex[t.name.toLowerCase()] = t.code;
-    }
-  }
   return nameIndex[name.toLowerCase()] ?? null;
 }
 
