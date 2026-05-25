@@ -97,29 +97,6 @@ function TabellenPage() {
       {/* Standings table */}
       <GroupCard group={activeGroup} standings={standings} />
 
-      {/* Floating sim button */}
-      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-20">
-        <Button
-          onClick={() => setSimRunning((v) => !v)}
-          className={`rounded-full shadow-lg h-11 px-5 ${
-            simRunning
-              ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-              : "bg-primary text-primary-foreground"
-          }`}
-        >
-          {simRunning ? (
-            <>
-              <Square className="h-4 w-4 mr-2 fill-current" />
-              Live-Simulation stoppen
-            </>
-          ) : (
-            <>
-              <Radio className="h-4 w-4 mr-2" />
-              🔴 Live-Simulation starten
-            </>
-          )}
-        </Button>
-      </div>
     </div>
   );
 }
