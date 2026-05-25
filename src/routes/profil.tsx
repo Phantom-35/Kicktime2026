@@ -9,7 +9,8 @@ import {
 import { formatHourLabel } from "@/lib/time";
 import { TEAMS } from "@/data/teams";
 import { toast } from "sonner";
-import { RotateCcw, Eye, Globe, Clock, Users, Moon, Sun, Bell } from "lucide-react";
+import { RotateCcw, Eye, Globe, Clock, Users, Moon, Sun, Bell, FlaskConical, KeyRound } from "lucide-react";
+import { hasApiKey } from "@/services/footballApi";
 
 const TIMEZONES = [
   "Europe/Berlin", "Europe/London", "Europe/Madrid",
