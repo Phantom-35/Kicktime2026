@@ -24,13 +24,13 @@ type Actions = {
   applyLiveUpdate: (id: string, u: LiveUpdate) => void;
   finishMatch: (id: string, finalScore: { a: number; b: number }) => void;
   tickClock: (deltaMs: number) => void;
+  syncWithRealTime: () => void;
   setNow: (ts: number) => void;
   replaceAll: (payload: RuntimeMatch[]) => void;
   resetMatches: () => void;
 };
 
-const DEMO_NOW = new Date("2026-06-10T12:00:00Z").getTime();
-const MATCH_DURATION_MS = 110 * 60 * 1000;
+const MATCH_DURATION_MS = 115 * 60 * 1000; // 90 min + halftime + stoppage
 
 function seed(): Record<string, RuntimeMatch> {
   const out: Record<string, RuntimeMatch> = {};
@@ -46,7 +46,7 @@ function seed(): Record<string, RuntimeMatch> {
  */
 export const useMatchStore = create<State & Actions>((set) => ({
   matches: seed(),
-  now: DEMO_NOW,
+  now: Date.now(),
 
   applyLiveUpdate: (id, u) =>
     set((s) => {
@@ -80,28 +80,13 @@ export const useMatchStore = create<State & Actions>((set) => ({
   tickClock: (deltaMs) =>
     set((s) => {
       const now = s.now + deltaMs;
-      const next: Record<string, RuntimeMatch> = { ...s.matches };
-      for (const id in next) {
-        const m = next[id];
-        const kickoff = new Date(m.utcTimestamp).getTime();
-        const endsAt = kickoff + MATCH_DURATION_MS;
-        if (m.status === "finished") continue;
-        if (now >= endsAt) {
-          const finalScore =
-            m.liveScore ?? m.score ?? {
-              a: Math.floor(Math.random() * 4),
-              b: Math.floor(Math.random() * 4),
-            };
-          next[id] = { ...m, status: "finished", score: finalScore, liveScore: undefined, matchMinute: undefined };
-        } else if (now >= kickoff && m.status === "scheduled") {
-          const minute = Math.min(90, Math.floor((now - kickoff) / 60000));
-          next[id] = { ...m, status: "live", matchMinute: minute, liveScore: m.liveScore ?? { a: 0, b: 0 } };
-        } else if (m.status === "live") {
-          const minute = Math.min(90, Math.floor((now - kickoff) / 60000));
-          next[id] = { ...m, matchMinute: minute };
-        }
-      }
-      return { now, matches: next };
+      return { now, matches: rollMatches(s.matches, now) };
+    }),
+
+  syncWithRealTime: () =>
+    set((s) => {
+      const now = Date.now();
+      return { now, matches: rollMatches(s.matches, now) };
     }),
 
   setNow: (ts) => set({ now: ts }),
@@ -113,8 +98,43 @@ export const useMatchStore = create<State & Actions>((set) => ({
       return { matches: next };
     }),
 
-  resetMatches: () => set({ matches: seed(), now: DEMO_NOW }),
+  resetMatches: () => set({ matches: seed(), now: Date.now() }),
 }));
+
+/**
+ * Pure helper: advance match statuses according to wall-clock `now`.
+ * - kickoff reached → "live"
+ * - kickoff + 115 min reached → "finished" (auto-final score uses last
+ *   live score if present, otherwise 0:0 so the dashboard moves on).
+ */
+function rollMatches(
+  matches: Record<string, RuntimeMatch>,
+  now: number
+): Record<string, RuntimeMatch> {
+  let changed = false;
+  const next: Record<string, RuntimeMatch> = { ...matches };
+  for (const id in next) {
+    const m = next[id];
+    if (m.status === "finished") continue;
+    const kickoff = new Date(m.utcTimestamp).getTime();
+    const endsAt = kickoff + MATCH_DURATION_MS;
+    if (now >= endsAt) {
+      const finalScore = m.liveScore ?? m.score ?? { a: 0, b: 0 };
+      next[id] = { ...m, status: "finished", score: finalScore, liveScore: undefined, matchMinute: undefined };
+      changed = true;
+    } else if (now >= kickoff) {
+      const minute = Math.min(90, Math.max(1, Math.floor((now - kickoff) / 60000)));
+      if (m.status !== "live") {
+        next[id] = { ...m, status: "live", matchMinute: minute, liveScore: m.liveScore ?? { a: 0, b: 0 } };
+        changed = true;
+      } else if (m.matchMinute !== minute) {
+        next[id] = { ...m, matchMinute: minute };
+        changed = true;
+      }
+    }
+  }
+  return changed ? next : matches;
+}
 
 let cachedMatchesRecord: State["matches"] | undefined;
 let cachedMatchList: RuntimeMatch[] = [];
