@@ -3,8 +3,9 @@ import { useAppStore } from "@/store/app-store";
 import {
   applyLiveFixturesToStore,
   fetchLiveWorldCupData,
-  hasApiKey,
+  isLiveDataEnabled,
 } from "@/services/footballApi";
+
 
 /**
  * Polls API-Football for live fixture updates and merges them into the
@@ -15,7 +16,7 @@ export function useLiveApi(intervalMs = 30_000): void {
   const simulating = useAppStore((s) => s.devSimulateLive);
 
   useEffect(() => {
-    if (simulating || !hasApiKey()) return;
+    if (simulating || !isLiveDataEnabled()) return;
 
     let cancelled = false;
     const run = async () => {
