@@ -9,7 +9,8 @@ import {
 import { formatHourLabel } from "@/lib/time";
 import { TEAMS } from "@/data/teams";
 import { toast } from "sonner";
-import { RotateCcw, Eye, Globe, Clock, Users, Moon, Sun, Bell } from "lucide-react";
+import { RotateCcw, Eye, Globe, Clock, Users, Moon, Sun, Bell, FlaskConical, KeyRound } from "lucide-react";
+import { hasApiKey } from "@/services/footballApi";
 
 const TIMEZONES = [
   "Europe/Berlin", "Europe/London", "Europe/Madrid",
@@ -142,6 +143,35 @@ function ProfilPage() {
         </div>
       </Card>
 
+      <Card icon={<FlaskConical className="h-4 w-4" />} title="Entwickler-Modus: Live-Daten simulieren">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground pr-3">
+            Tickt Live-Scores für das Spiel, das der echten Uhrzeit am nächsten liegt –
+            ideal, um Dashboard & Tabellen-Animationen jetzt schon zu testen. Aus = echte
+            API-Football-Daten (sobald das Turnier läuft).
+          </p>
+          <Switch
+            checked={s.devSimulateLive}
+            onCheckedChange={(v) => {
+              s.setDevSimulateLive(v);
+              toast(v ? "Live-Simulation aktiv" : "Live-Simulation aus");
+            }}
+          />
+        </div>
+        {import.meta.env.DEV && !hasApiKey() && (
+          <div className="mt-3 rounded-xl border border-accent/40 bg-accent/10 p-3 text-[11px] leading-relaxed">
+            <div className="flex items-center gap-1.5 font-semibold text-accent mb-1">
+              <KeyRound className="h-3.5 w-3.5" /> API-Football-Key fehlt
+            </div>
+            <p className="text-muted-foreground">
+              Lege in <span className="font-mono">Project Settings → Environment Variables</span>{" "}
+              die Variable <span className="font-mono text-foreground">VITE_API_FOOTBALL_KEY</span>{" "}
+              an. Solange kein Key gesetzt ist, läuft die App mit unserem lokalen Fixture-Plan
+              weiter.
+            </p>
+          </div>
+        )}
+      </Card>
 
 
 

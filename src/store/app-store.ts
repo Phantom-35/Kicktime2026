@@ -13,6 +13,7 @@ type State = {
   alarms: Record<string, boolean>;
   theme: "dark" | "light";
   pushEnabled: boolean;
+  devSimulateLive: boolean;
 };
 
 type Actions = {
@@ -26,6 +27,7 @@ type Actions = {
   resetOnboarding: () => void;
   setTheme: (t: "dark" | "light") => void;
   setPushEnabled: (v: boolean) => void;
+  setDevSimulateLive: (v: boolean) => void;
 };
 
 const detectTz = () => {
@@ -51,6 +53,8 @@ export const useAppStore = create<State & Actions>()(
       alarms: {},
       theme: "dark",
       pushEnabled: false,
+      devSimulateLive: false,
+
 
 
 
@@ -91,6 +95,7 @@ export const useAppStore = create<State & Actions>()(
         }),
       setTheme: (t) => set({ theme: t }),
       setPushEnabled: (v) => set({ pushEnabled: v }),
+      setDevSimulateLive: (v) => set({ devSimulateLive: v }),
     }),
     { name: "kicktime-2026" }
   )

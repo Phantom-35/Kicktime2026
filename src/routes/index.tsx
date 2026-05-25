@@ -12,7 +12,7 @@ import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { toast } from "sonner";
-import { CalendarPlus, BellRing, Play, Sparkles, FastForward } from "lucide-react";
+import { CalendarPlus, BellRing, Play, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Dashboard });
 
@@ -20,7 +20,6 @@ function Dashboard() {
   const state = useAppStore();
   const matches = useMatchStore(selectMatchList);
   const now = useMatchStore((s) => s.now);
-  const tickClock = useMatchStore((s) => s.tickClock);
   const cats = useMemo(
     () => categorizeMatches({ ...state, matches, now }),
     [state, matches, now]
@@ -106,20 +105,6 @@ function Dashboard() {
       </Tabs>
 
       <MatchDetailSheet match={selected} open={!!selected} onOpenChange={(v) => !v && setSelected(null)} />
-
-      <div className="mt-6 flex justify-center">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            tickClock(2 * 60 * 60 * 1000);
-            toast("Zeit +2h", { description: "Live-Schedule rückt nach." });
-          }}
-          className="h-8 text-xs gap-1.5 border-dashed opacity-60 hover:opacity-100"
-        >
-          <FastForward className="h-3 w-3" /> Demo: Zeit +2h vorspulen
-        </Button>
-      </div>
     </div>
   );
 }
