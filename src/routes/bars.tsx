@@ -127,11 +127,7 @@ function BarsPage() {
                   const local = getLocalParts(m.utcTimestamp, state.userTimezone);
                   return (
                     <div key={m.id} className="text-xs flex items-center justify-between rounded-lg bg-muted/40 px-2.5 py-1.5">
-                      <span className="flex items-center gap-1.5">
-                        <Flag code={a.code} emoji={a.flag} size={14} /> {a.name}
-                        <span className="text-muted-foreground">–</span>
-                        <Flag code={bt.code} emoji={bt.flag} size={14} /> {bt.name}
-                      </span>
+                      <span>{a.flag} {a.name} – {bt.flag} {bt.name}</span>
                       <span className="tabular-nums text-muted-foreground">{local.timeStr}</span>
                     </div>
                   );
