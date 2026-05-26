@@ -96,9 +96,9 @@ function BarsPage() {
 
       <div className="space-y-3">
         {bars.map((b) => {
-          const matches = (allMatches as Match[])
-            .filter((m) => b.matchIds.includes(m.id))
-            .sort((x, y) => new Date(x.utcTimestamp).getTime() - new Date(y.utcTimestamp).getTime())
+          const barMatches = matches
+            .filter((m: Match) => b.matchIds.includes(m.id))
+            .sort((x: Match, y: Match) => new Date(x.utcTimestamp).getTime() - new Date(y.utcTimestamp).getTime())
             .slice(0, 3);
           return (
             <div key={b.id} className="rounded-2xl border border-border bg-card p-4">
@@ -121,7 +121,7 @@ function BarsPage() {
                 <div className="text-[10px] uppercase text-muted-foreground flex items-center gap-1">
                   <Tv className="h-3 w-3" /> Zeigt u.a.
                 </div>
-                {matches.map((m) => {
+                {barMatches.map((m) => {
                   const a = getTeam(m.teamA), bt = getTeam(m.teamB);
                   const local = getLocalParts(m.utcTimestamp, state.userTimezone);
                   return (
