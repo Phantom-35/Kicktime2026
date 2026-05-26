@@ -1,6 +1,5 @@
 import { getTeam } from "@/data/teams";
 import type { Match } from "@/data/matches";
-import { Flag } from "@/components/match/Flag";
 import { getLocalParts } from "@/lib/time";
 import { useAppStore } from "@/store/app-store";
 import { Tv, MapPin } from "lucide-react";
