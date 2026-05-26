@@ -14,6 +14,8 @@ export type Match = {
   hostCountry: "USA" | "MEX" | "CAN";
   utcTimestamp: string;
   broadcaster: Broadcaster;
+  /** All broadcasters showing this match. MagentaTV holds full WM rights; ARD/ZDF only show GER matches, the opener and the final. */
+  broadcasters?: Broadcaster[];
   status: "scheduled" | "live" | "finished";
   score?: { a: number; b: number };
   /** Travel tip for the host city (airport, transit). */
