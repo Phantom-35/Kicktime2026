@@ -58,18 +58,28 @@ export function MatchDetailSheet({
               <Tv className="h-3.5 w-3.5" /> Live im TV
             </div>
             <div className="flex flex-col gap-3 w-full">
-              <span className="text-2xl font-black tracking-tight text-primary">
-                {match.broadcaster}
-              </span>
-              <Button
-                onClick={() => {
-                  const url = getBroadcasterUrl(match.broadcaster);
-                  window.open(url, "_blank", "noopener,noreferrer");
-                }}
-                className="h-11 w-full font-semibold"
-              >
-                Jetzt Live-Stream öffnen
-              </Button>
+              <div className="flex flex-wrap items-center gap-2">
+                {(match.broadcasters ?? [match.broadcaster]).map((bc) => (
+                  <span
+                    key={bc}
+                    className="text-lg font-black tracking-tight text-primary bg-primary/10 border border-primary/30 rounded-lg px-3 py-1"
+                  >
+                    {bc}
+                  </span>
+                ))}
+              </div>
+              {(match.broadcasters ?? [match.broadcaster]).map((bc) => (
+                <Button
+                  key={bc}
+                  variant={bc === "MagentaTV" ? "default" : "outline"}
+                  onClick={() => {
+                    window.open(getBroadcasterUrl(bc), "_blank", "noopener,noreferrer");
+                  }}
+                  className="h-11 w-full font-semibold"
+                >
+                  {bc} öffnen
+                </Button>
+              ))}
             </div>
           </div>
 
