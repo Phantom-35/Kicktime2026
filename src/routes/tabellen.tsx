@@ -151,7 +151,7 @@ function GroupCard({
                   </span>
                 </span>
                 <span className="flex items-center gap-2 min-w-0">
-                  <Flag code={team.code} emoji={team.flag} size={18} />
+                  <span className="text-base leading-none">{team.flag}</span>
                   <span className="truncate font-medium">{team.name}</span>
                 </span>
                 <span className="text-right tabular-nums text-muted-foreground">
