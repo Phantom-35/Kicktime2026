@@ -4,6 +4,10 @@ export type Team = {
   flag: string;
   group: string;
   tier: 1 | 2 | 3;
+  /** True for bracket slot placeholders like "A2"/"B3" used only in the schedule JSON. */
+  isPlaceholder?: boolean;
+  /** ISO 3166-1 alpha-2 code used for flagcdn.com lookups. */
+  iso2?: string;
 };
 
 // Official 48 nations of the FIFA World Cup 2026 (12 groups of 4).
