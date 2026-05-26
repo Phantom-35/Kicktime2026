@@ -72,6 +72,9 @@ export const useMatchStore = create<State & Actions>((set) => ({
             ...(u.liveScore !== undefined ? { liveScore: u.liveScore } : {}),
             ...(u.matchMinute !== undefined ? { matchMinute: u.matchMinute } : {}),
             ...(u.status !== undefined ? { status: u.status } : {}),
+            ...(u.utcTimestamp !== undefined ? { utcTimestamp: u.utcTimestamp } : {}),
+            ...(u.stadium !== undefined ? { stadium: u.stadium } : {}),
+            ...(u.city !== undefined ? { city: u.city } : {}),
           },
         },
       };
