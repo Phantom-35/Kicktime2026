@@ -83,9 +83,36 @@ export const TEAMS: Team[] = [
       flag: "🏳️",
       group: g,
       tier: 3 as const,
+      isPlaceholder: true,
     }))
   ),
 ];
+
+/** ISO 3166-1 alpha-2 codes for flagcdn.com lookups, keyed by our internal team code. */
+export const TEAM_ISO2: Record<string, string> = {
+  MEX: "mx", RSA: "za", KOR: "kr", CZE: "cz",
+  CAN: "ca", BIH: "ba", QAT: "qa", SUI: "ch",
+  BRA: "br", MAR: "ma", HAI: "ht", SCO: "gb-sct",
+  USA: "us", PAR: "py", AUS: "au", TUR: "tr",
+  GER: "de", CUW: "cw", CIV: "ci", ECU: "ec",
+  NED: "nl", JPN: "jp", SWE: "se", TUN: "tn",
+  BEL: "be", EGY: "eg", IRN: "ir", NZL: "nz",
+  ESP: "es", CPV: "cv", KSA: "sa", URU: "uy",
+  FRA: "fr", SEN: "sn", IRQ: "iq", NOR: "no",
+  ARG: "ar", ALG: "dz", AUT: "at", JOR: "jo",
+  POR: "pt", COD: "cd", UZB: "uz", COL: "co",
+  ENG: "gb-eng", CRO: "hr", GHA: "gh", PAN: "pa",
+  ITA: "it",
+};
+
+// Attach iso2 onto each entry that has one.
+for (const t of TEAMS) {
+  const iso = TEAM_ISO2[t.code];
+  if (iso) t.iso2 = iso;
+}
+
+/** Only the 48 real FIFA 2026 nations — excludes bracket-slot placeholders. */
+export const REAL_TEAMS: Team[] = TEAMS.filter((t) => !t.isPlaceholder);
 
 export const getTeam = (code: string): Team => {
   const t = TEAMS.find((x) => x.code === code);
@@ -103,13 +130,14 @@ const PRIORITY_INDEX = new Map(PRIORITY_CODES.map((c, i) => [c, i] as const));
 
 export function getSortedTeams(): Team[] {
   const priority = PRIORITY_CODES
-    .map((c) => TEAMS.find((t) => t.code === c))
+    .map((c) => REAL_TEAMS.find((t) => t.code === c))
     .filter((t): t is Team => Boolean(t))
     .sort((a, b) => PRIORITY_INDEX.get(a.code)! - PRIORITY_INDEX.get(b.code)!);
-  const rest = TEAMS
+  const rest = REAL_TEAMS
     .filter((t) => !PRIORITY_INDEX.has(t.code))
     .sort((a, b) => a.name.localeCompare(b.name, "de"));
   return [...priority, ...rest];
 }
 
 export const isPriorityTeam = (code: string) => PRIORITY_INDEX.has(code);
+
