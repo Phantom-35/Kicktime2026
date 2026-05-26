@@ -379,7 +379,7 @@ function TeamChip({
           {isFav ? "⭐" : "🔔"}
         </span>
       )}
-      <Flag code={team.code} emoji={team.flag} size={28} className="mt-0.5" />
+      <span className="text-2xl leading-none mt-0.5">{team.flag}</span>
       <span className="text-[10.5px] font-semibold leading-tight text-center line-clamp-2">
         {team.name}
       </span>
