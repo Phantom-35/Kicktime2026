@@ -13,6 +13,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { MapPin, Clock, Tv } from "lucide-react";
+import { Flag } from "@/components/match/Flag";
 
 export const Route = createFileRoute("/bars")({ component: BarsPage });
 
