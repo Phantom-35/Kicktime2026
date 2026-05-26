@@ -43,11 +43,12 @@ const MATCH_DURATION_MS = 115 * 60 * 1000;
  */
 function seed(): Record<string, RuntimeMatch> {
   const out: Record<string, RuntimeMatch> = {};
-  for (const raw of scheduleJson as Array<Omit<Match, "status">>) {
+  for (const raw of scheduleJson as Array<Omit<Match, "status"> & { broadcasters?: Broadcaster[] }>) {
     const m: RuntimeMatch = {
       ...raw,
       stage: raw.stage as MatchStage,
       broadcaster: raw.broadcaster as Broadcaster,
+      broadcasters: raw.broadcasters as Broadcaster[] | undefined,
       hostCountry: raw.hostCountry as Match["hostCountry"],
       status: "scheduled",
     };
