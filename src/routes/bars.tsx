@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { BARS, BAR_CITIES } from "@/data/bars";
-import { MATCHES } from "@/data/matches";
+import type { Match } from "@/data/matches";
 import { getTeam } from "@/data/teams";
 import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
@@ -96,7 +96,7 @@ function BarsPage() {
 
       <div className="space-y-3">
         {bars.map((b) => {
-          const matches = MATCHES
+          const matches = (allMatches as Match[])
             .filter((m) => b.matchIds.includes(m.id))
             .sort((x, y) => new Date(x.utcTimestamp).getTime() - new Date(y.utcTimestamp).getTime())
             .slice(0, 3);
