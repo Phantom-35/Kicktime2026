@@ -68,9 +68,26 @@ export const TEAMS: Team[] = [
   { code: "CRO", name: "Kroatien", flag: "🇭🇷", group: "L", tier: 2 },
   { code: "GHA", name: "Ghana", flag: "🇬🇭", group: "L", tier: 3 },
   { code: "PAN", name: "Panama", flag: "🇵🇦", group: "L", tier: 3 },
+  // Italien — used in the official 2026 group-stage schedule (Gruppe K Slot 1).
+  { code: "ITA", name: "Italien", flag: "🇮🇹", group: "K", tier: 1 },
+  // Platzhalter-Slots für die offiziellen FIFA-Gruppenslots (A2..L4),
+  // bevor die finalen Auslosungen / Playoffs gespielt sind.
+  ...(["A","B","C","D","E","F","G","H","I","J","K","L"] as const).flatMap((g) =>
+    ([2,3,4] as const).map((n) => ({
+      code: `${g}${n}`,
+      name: `Gruppe ${g} · Platz ${n}`,
+      flag: "🏳️",
+      group: g,
+      tier: 3 as const,
+    }))
+  ),
 ];
 
-export const getTeam = (code: string) => TEAMS.find((t) => t.code === code)!;
+export const getTeam = (code: string): Team => {
+  const t = TEAMS.find((x) => x.code === code);
+  if (t) return t;
+  return { code, name: code, flag: "🏳️", group: "?", tier: 3 };
+};
 
 // Priority order for European football audience — shown first in selectors.
 export const PRIORITY_CODES = [
