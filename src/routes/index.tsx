@@ -29,7 +29,6 @@ function Dashboard() {
   return (
     <div className="p-4 pb-6">
       <div className="mb-4">
-        <p className="text-xs text-muted-foreground">{state.userTimezone}</p>
         <h2 className="text-xl font-bold flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-accent" />
           Dein WM-Tag
