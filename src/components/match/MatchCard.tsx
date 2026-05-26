@@ -59,7 +59,7 @@ export function MatchCard({
       </div>
 
       <div className="flex items-center justify-between gap-3">
-        <TeamSide flag={a.flag} name={a.name} />
+        <TeamSide code={a.code} emoji={a.flag} name={a.name} />
         <div className="text-center">
           {match.status === "live" && match.liveScore ? (
             <div className="text-xl font-bold tabular-nums text-destructive">
@@ -73,7 +73,7 @@ export function MatchCard({
             <div className="text-xs font-medium text-muted-foreground">VS</div>
           )}
         </div>
-        <TeamSide flag={b.flag} name={b.name} align="right" />
+        <TeamSide code={b.code} emoji={b.flag} name={b.name} align="right" />
       </div>
 
       <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
