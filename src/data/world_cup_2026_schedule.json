@@ -1,6 +1,6 @@
 [
   {
-    "id": "m-001",
+    "id": "m1",
     "teamA": "MEX",
     "teamB": "RSA",
     "group": "A",
@@ -15,11 +15,12 @@
       "MagentaTV",
       "ARD"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: MEX · Metro Línea 5",
     "weatherForecast": "Mild, 21°C, Höhenluft"
   },
   {
-    "id": "m-002",
+    "id": "m2",
     "teamA": "KOR",
     "teamB": "CZE",
     "group": "A",
@@ -33,11 +34,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: GDL · Macrobús",
-    "weatherForecast": "Warm, 24°C, trocken"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: GDL · Mietwagen empfohlen",
+    "weatherForecast": "Warm, 26°C, Höhenklima"
   },
   {
-    "id": "m-003",
+    "id": "m3",
     "teamA": "CAN",
     "teamB": "BIH",
     "group": "B",
@@ -51,11 +53,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: YYZ · TTC Streetcar 509",
-    "weatherForecast": "Mild, 23°C, frisch"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: YYZ · UP Express",
+    "weatherForecast": "Mild, 22°C, Brise"
   },
   {
-    "id": "m-004",
+    "id": "m4",
     "teamA": "USA",
     "teamB": "PAR",
     "group": "D",
@@ -69,11 +72,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: LAX · Shuttle",
-    "weatherForecast": "Warm, 24°C, sonnig"
+    "weatherForecast": "Warm, 26°C, sonnig"
   },
   {
-    "id": "m-005",
+    "id": "m5",
     "teamA": "HAI",
     "teamB": "SCO",
     "group": "C",
@@ -87,11 +91,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: BOS · Commuter Rail",
     "weatherForecast": "Warm, 25°C, schwül"
   },
   {
-    "id": "m-006",
+    "id": "m6",
     "teamA": "AUS",
     "teamB": "TUR",
     "group": "D",
@@ -105,11 +110,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: YVR · SkyTrain Stadium",
-    "weatherForecast": "Mild, 20°C, Regenrisiko"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: YVR · SkyTrain",
+    "weatherForecast": "Kühl, 20°C, gelegentlicher Regen"
   },
   {
-    "id": "m-007",
+    "id": "m7",
     "teamA": "BRA",
     "teamB": "MAR",
     "group": "C",
@@ -123,17 +129,18 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: EWR/JFK · NJ Transit",
-    "weatherForecast": "Warm, 26°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: EWR · NJ Transit",
+    "weatherForecast": "Warm, 27°C, schwül"
   },
   {
-    "id": "m-008",
+    "id": "m8",
     "teamA": "QAT",
     "teamB": "SUI",
     "group": "B",
     "stage": "group",
     "matchday": 1,
-    "stadium": "Levi's Stadium",
+    "stadium": "Levi’s Stadium",
     "city": "San Francisco",
     "hostCountry": "USA",
     "utcTimestamp": "2026-06-13T23:59:00Z",
@@ -141,11 +148,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: SJC · VTA Light Rail",
-    "weatherForecast": "Mild, 23°C, sonnig"
+    "weatherForecast": "Mild, 24°C, sonnig"
   },
   {
-    "id": "m-009",
+    "id": "m9",
     "teamA": "CIV",
     "teamB": "ECU",
     "group": "E",
@@ -159,11 +167,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: PHL · SEPTA Broad St",
-    "weatherForecast": "Warm, 27°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: PHL · SEPTA Linie",
+    "weatherForecast": "Warm, 28°C, schwül"
   },
   {
-    "id": "m-010",
+    "id": "m10",
     "teamA": "GER",
     "teamB": "CUW",
     "group": "E",
@@ -178,11 +187,12 @@
       "MagentaTV",
       "ARD"
     ],
-    "travelInfo": "Flughafen: IAH · MetroRail",
-    "weatherForecast": "Heiß, 33°C, sehr schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: IAH · Metro Red Line",
+    "weatherForecast": "Sehr heiß, 33°C, schwül"
   },
   {
-    "id": "m-011",
+    "id": "m11",
     "teamA": "NED",
     "teamB": "JPN",
     "group": "F",
@@ -196,11 +206,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: DFW · TRE",
-    "weatherForecast": "Heiß, 34°C, trocken"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: DFW · DART",
+    "weatherForecast": "Sehr heiß, 34°C, trocken"
   },
   {
-    "id": "m-012",
+    "id": "m12",
     "teamA": "SWE",
     "teamB": "TUN",
     "group": "F",
@@ -214,11 +225,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MTY · Metrorrey",
-    "weatherForecast": "Heiß, 32°C, trocken"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MTY · Uber/Taxi",
+    "weatherForecast": "Heiß, 30°C, trocken"
   },
   {
-    "id": "m-013",
+    "id": "m13",
     "teamA": "ESP",
     "teamB": "CPV",
     "group": "H",
@@ -232,11 +244,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: DFW · TRE",
-    "weatherForecast": "Heiß, 34°C, trocken"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: DFW · DART",
+    "weatherForecast": "Sehr heiß, 34°C, trocken"
   },
   {
-    "id": "m-014",
+    "id": "m14",
     "teamA": "FRA",
     "teamB": "SEN",
     "group": "I",
@@ -250,11 +263,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: EWR/JFK · NJ Transit",
-    "weatherForecast": "Warm, 26°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: EWR · NJ Transit",
+    "weatherForecast": "Warm, 27°C, schwül"
   },
   {
-    "id": "m-015",
+    "id": "m15",
     "teamA": "KSA",
     "teamB": "URU",
     "group": "H",
@@ -268,11 +282,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: PHL · SEPTA Broad St",
-    "weatherForecast": "Warm, 27°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: PHL · SEPTA Linie",
+    "weatherForecast": "Warm, 28°C, schwül"
   },
   {
-    "id": "m-016",
+    "id": "m16",
     "teamA": "IRQ",
     "teamB": "NOR",
     "group": "I",
@@ -286,11 +301,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: SEA · Link Light Rail",
-    "weatherForecast": "Mild, 22°C, trocken"
+    "weatherForecast": "Mild, 22°C, mild"
   },
   {
-    "id": "m-017",
+    "id": "m17",
     "teamA": "ARG",
     "teamB": "ALG",
     "group": "J",
@@ -304,17 +320,18 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MCI · Shuttle",
-    "weatherForecast": "Warm, 29°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MCI · Bus / Mietwagen",
+    "weatherForecast": "Heiß, 30°C, schwül"
   },
   {
-    "id": "m-018",
+    "id": "m18",
     "teamA": "POR",
     "teamB": "COD",
     "group": "K",
     "stage": "group",
     "matchday": 1,
-    "stadium": "Levi's Stadium",
+    "stadium": "Levi’s Stadium",
     "city": "San Francisco",
     "hostCountry": "USA",
     "utcTimestamp": "2026-06-16T18:00:00Z",
@@ -322,11 +339,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: SJC · VTA Light Rail",
-    "weatherForecast": "Mild, 23°C, sonnig"
+    "weatherForecast": "Mild, 24°C, sonnig"
   },
   {
-    "id": "m-019",
+    "id": "m19",
     "teamA": "AUT",
     "teamB": "JOR",
     "group": "J",
@@ -340,11 +358,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: YVR · SkyTrain Stadium",
-    "weatherForecast": "Mild, 20°C, Regenrisiko"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: YVR · SkyTrain",
+    "weatherForecast": "Kühl, 20°C, gelegentlicher Regen"
   },
   {
-    "id": "m-020",
+    "id": "m20",
     "teamA": "UZB",
     "teamB": "COL",
     "group": "K",
@@ -358,11 +377,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: SEA · Link Light Rail",
-    "weatherForecast": "Mild, 22°C, trocken"
+    "weatherForecast": "Mild, 22°C, mild"
   },
   {
-    "id": "m-021",
+    "id": "m21",
     "teamA": "ENG",
     "teamB": "CRO",
     "group": "L",
@@ -376,11 +396,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: BOS · Commuter Rail",
     "weatherForecast": "Warm, 25°C, schwül"
   },
   {
-    "id": "m-022",
+    "id": "m22",
     "teamA": "BEL",
     "teamB": "EGY",
     "group": "G",
@@ -394,11 +415,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MIA · Tri-Rail",
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MIA · Metrorail",
     "weatherForecast": "Heiß, 31°C, tropisch"
   },
   {
-    "id": "m-023",
+    "id": "m23",
     "teamA": "IRN",
     "teamB": "NZL",
     "group": "G",
@@ -412,11 +434,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 28°C, schwül"
+    "weatherForecast": "Warm, 29°C, schwül"
   },
   {
-    "id": "m-024",
+    "id": "m24",
     "teamA": "GHA",
     "teamB": "PAN",
     "group": "L",
@@ -430,11 +453,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MTY · Metrorrey",
-    "weatherForecast": "Heiß, 32°C, trocken"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MTY · Uber/Taxi",
+    "weatherForecast": "Heiß, 30°C, trocken"
   },
   {
-    "id": "m-025",
+    "id": "m25",
     "teamA": "MEX",
     "teamB": "KOR",
     "group": "A",
@@ -448,11 +472,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: MEX · Metro Línea 5",
     "weatherForecast": "Mild, 21°C, Höhenluft"
   },
   {
-    "id": "m-026",
+    "id": "m26",
     "teamA": "CZE",
     "teamB": "RSA",
     "group": "A",
@@ -466,11 +491,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 28°C, schwül"
+    "weatherForecast": "Warm, 29°C, schwül"
   },
   {
-    "id": "m-027",
+    "id": "m27",
     "teamA": "CAN",
     "teamB": "QAT",
     "group": "B",
@@ -484,11 +510,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: YYZ · TTC Streetcar 509",
-    "weatherForecast": "Mild, 23°C, frisch"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: YYZ · UP Express",
+    "weatherForecast": "Mild, 22°C, Brise"
   },
   {
-    "id": "m-028",
+    "id": "m28",
     "teamA": "SUI",
     "teamB": "BIH",
     "group": "B",
@@ -502,11 +529,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: PHL · SEPTA Broad St",
-    "weatherForecast": "Warm, 27°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: PHL · SEPTA Linie",
+    "weatherForecast": "Warm, 28°C, schwül"
   },
   {
-    "id": "m-029",
+    "id": "m29",
     "teamA": "BRA",
     "teamB": "HAI",
     "group": "C",
@@ -520,11 +548,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MIA · Tri-Rail",
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MIA · Metrorail",
     "weatherForecast": "Heiß, 31°C, tropisch"
   },
   {
-    "id": "m-030",
+    "id": "m30",
     "teamA": "SCO",
     "teamB": "MAR",
     "group": "C",
@@ -538,17 +567,18 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: IAH · MetroRail",
-    "weatherForecast": "Heiß, 33°C, sehr schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: IAH · Metro Red Line",
+    "weatherForecast": "Sehr heiß, 33°C, schwül"
   },
   {
-    "id": "m-031",
+    "id": "m31",
     "teamA": "USA",
     "teamB": "TUR",
     "group": "D",
     "stage": "group",
     "matchday": 2,
-    "stadium": "Levi's Stadium",
+    "stadium": "Levi’s Stadium",
     "city": "San Francisco",
     "hostCountry": "USA",
     "utcTimestamp": "2026-06-19T21:00:00Z",
@@ -556,11 +586,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: SJC · VTA Light Rail",
-    "weatherForecast": "Mild, 23°C, sonnig"
+    "weatherForecast": "Mild, 24°C, sonnig"
   },
   {
-    "id": "m-032",
+    "id": "m32",
     "teamA": "AUS",
     "teamB": "PAR",
     "group": "D",
@@ -574,11 +605,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: BOS · Commuter Rail",
     "weatherForecast": "Warm, 25°C, schwül"
   },
   {
-    "id": "m-033",
+    "id": "m33",
     "teamA": "GER",
     "teamB": "CIV",
     "group": "E",
@@ -593,17 +625,18 @@
       "MagentaTV",
       "ARD"
     ],
-    "travelInfo": "Flughafen: PHL · SEPTA Broad St",
-    "weatherForecast": "Warm, 27°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: PHL · SEPTA Linie",
+    "weatherForecast": "Warm, 28°C, schwül"
   },
   {
-    "id": "m-034",
+    "id": "m34",
     "teamA": "ECU",
     "teamB": "CUW",
     "group": "E",
     "stage": "group",
     "matchday": 2,
-    "stadium": "Levi's Stadium",
+    "stadium": "Levi’s Stadium",
     "city": "San Francisco",
     "hostCountry": "USA",
     "utcTimestamp": "2026-06-20T18:00:00Z",
@@ -611,11 +644,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: SJC · VTA Light Rail",
-    "weatherForecast": "Mild, 23°C, sonnig"
+    "weatherForecast": "Mild, 24°C, sonnig"
   },
   {
-    "id": "m-035",
+    "id": "m35",
     "teamA": "NED",
     "teamB": "SWE",
     "group": "F",
@@ -629,11 +663,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: YYZ · TTC Streetcar 509",
-    "weatherForecast": "Mild, 23°C, frisch"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: YYZ · UP Express",
+    "weatherForecast": "Mild, 22°C, Brise"
   },
   {
-    "id": "m-036",
+    "id": "m36",
     "teamA": "TUN",
     "teamB": "JPN",
     "group": "F",
@@ -647,11 +682,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MTY · Metrorrey",
-    "weatherForecast": "Heiß, 32°C, trocken"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MTY · Uber/Taxi",
+    "weatherForecast": "Heiß, 30°C, trocken"
   },
   {
-    "id": "m-037",
+    "id": "m37",
     "teamA": "ESP",
     "teamB": "KSA",
     "group": "H",
@@ -665,11 +701,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MCI · Shuttle",
-    "weatherForecast": "Warm, 29°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MCI · Bus / Mietwagen",
+    "weatherForecast": "Heiß, 30°C, schwül"
   },
   {
-    "id": "m-038",
+    "id": "m38",
     "teamA": "URU",
     "teamB": "CPV",
     "group": "H",
@@ -683,11 +720,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: SEA · Link Light Rail",
-    "weatherForecast": "Mild, 22°C, trocken"
+    "weatherForecast": "Mild, 22°C, mild"
   },
   {
-    "id": "m-039",
+    "id": "m39",
     "teamA": "FRA",
     "teamB": "IRQ",
     "group": "I",
@@ -701,11 +739,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: PHL · SEPTA Broad St",
-    "weatherForecast": "Warm, 27°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: PHL · SEPTA Linie",
+    "weatherForecast": "Warm, 28°C, schwül"
   },
   {
-    "id": "m-040",
+    "id": "m40",
     "teamA": "NOR",
     "teamB": "SEN",
     "group": "I",
@@ -719,11 +758,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MIA · Tri-Rail",
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MIA · Metrorail",
     "weatherForecast": "Heiß, 31°C, tropisch"
   },
   {
-    "id": "m-041",
+    "id": "m41",
     "teamA": "ARG",
     "teamB": "AUT",
     "group": "J",
@@ -737,11 +777,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: DFW · TRE",
-    "weatherForecast": "Heiß, 34°C, trocken"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: DFW · DART",
+    "weatherForecast": "Sehr heiß, 34°C, trocken"
   },
   {
-    "id": "m-042",
+    "id": "m42",
     "teamA": "JOR",
     "teamB": "ALG",
     "group": "J",
@@ -755,11 +796,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: YVR · SkyTrain Stadium",
-    "weatherForecast": "Mild, 20°C, Regenrisiko"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: YVR · SkyTrain",
+    "weatherForecast": "Kühl, 20°C, gelegentlicher Regen"
   },
   {
-    "id": "m-043",
+    "id": "m43",
     "teamA": "POR",
     "teamB": "UZB",
     "group": "K",
@@ -773,11 +815,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: DFW · TRE",
-    "weatherForecast": "Heiß, 34°C, trocken"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: DFW · DART",
+    "weatherForecast": "Sehr heiß, 34°C, trocken"
   },
   {
-    "id": "m-044",
+    "id": "m44",
     "teamA": "COL",
     "teamB": "COD",
     "group": "K",
@@ -791,11 +834,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 28°C, schwül"
+    "weatherForecast": "Warm, 29°C, schwül"
   },
   {
-    "id": "m-045",
+    "id": "m45",
     "teamA": "ENG",
     "teamB": "GHA",
     "group": "L",
@@ -809,11 +853,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: SEA · Link Light Rail",
-    "weatherForecast": "Mild, 22°C, trocken"
+    "weatherForecast": "Mild, 22°C, mild"
   },
   {
-    "id": "m-046",
+    "id": "m46",
     "teamA": "PAN",
     "teamB": "CRO",
     "group": "L",
@@ -827,11 +872,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: LAX · Shuttle",
-    "weatherForecast": "Warm, 24°C, sonnig"
+    "weatherForecast": "Warm, 26°C, sonnig"
   },
   {
-    "id": "m-047",
+    "id": "m47",
     "teamA": "BEL",
     "teamB": "IRN",
     "group": "G",
@@ -845,11 +891,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: EWR/JFK · NJ Transit",
-    "weatherForecast": "Warm, 26°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: EWR · NJ Transit",
+    "weatherForecast": "Warm, 27°C, schwül"
   },
   {
-    "id": "m-048",
+    "id": "m48",
     "teamA": "EGY",
     "teamB": "NZL",
     "group": "G",
@@ -863,11 +910,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: PHL · SEPTA Broad St",
-    "weatherForecast": "Warm, 27°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: PHL · SEPTA Linie",
+    "weatherForecast": "Warm, 28°C, schwül"
   },
   {
-    "id": "m-049",
+    "id": "m49",
     "teamA": "CZE",
     "teamB": "MEX",
     "group": "A",
@@ -881,11 +929,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: MEX · Metro Línea 5",
     "weatherForecast": "Mild, 21°C, Höhenluft"
   },
   {
-    "id": "m-050",
+    "id": "m50",
     "teamA": "RSA",
     "teamB": "KOR",
     "group": "A",
@@ -899,11 +948,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MTY · Metrorrey",
-    "weatherForecast": "Heiß, 32°C, trocken"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MTY · Uber/Taxi",
+    "weatherForecast": "Heiß, 30°C, trocken"
   },
   {
-    "id": "m-051",
+    "id": "m51",
     "teamA": "SUI",
     "teamB": "CAN",
     "group": "B",
@@ -917,11 +967,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: YYZ · TTC Streetcar 509",
-    "weatherForecast": "Mild, 23°C, frisch"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: YYZ · UP Express",
+    "weatherForecast": "Mild, 22°C, Brise"
   },
   {
-    "id": "m-052",
+    "id": "m52",
     "teamA": "BIH",
     "teamB": "QAT",
     "group": "B",
@@ -935,11 +986,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: BOS · Commuter Rail",
     "weatherForecast": "Warm, 25°C, schwül"
   },
   {
-    "id": "m-053",
+    "id": "m53",
     "teamA": "SCO",
     "teamB": "BRA",
     "group": "C",
@@ -953,11 +1005,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MIA · Tri-Rail",
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MIA · Metrorail",
     "weatherForecast": "Heiß, 31°C, tropisch"
   },
   {
-    "id": "m-054",
+    "id": "m54",
     "teamA": "MAR",
     "teamB": "HAI",
     "group": "C",
@@ -971,11 +1024,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 28°C, schwül"
+    "weatherForecast": "Warm, 29°C, schwül"
   },
   {
-    "id": "m-055",
+    "id": "m55",
     "teamA": "TUR",
     "teamB": "USA",
     "group": "D",
@@ -989,11 +1043,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: EWR/JFK · NJ Transit",
-    "weatherForecast": "Warm, 26°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: EWR · NJ Transit",
+    "weatherForecast": "Warm, 27°C, schwül"
   },
   {
-    "id": "m-056",
+    "id": "m56",
     "teamA": "AUS",
     "teamB": "PAR",
     "group": "D",
@@ -1007,11 +1062,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: PHL · SEPTA Broad St",
-    "weatherForecast": "Warm, 27°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: PHL · SEPTA Linie",
+    "weatherForecast": "Warm, 28°C, schwül"
   },
   {
-    "id": "m-057",
+    "id": "m57",
     "teamA": "ECU",
     "teamB": "GER",
     "group": "E",
@@ -1026,11 +1082,12 @@
       "MagentaTV",
       "ZDF"
     ],
-    "travelInfo": "Flughafen: PHL · SEPTA Broad St",
-    "weatherForecast": "Warm, 27°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: PHL · SEPTA Linie",
+    "weatherForecast": "Warm, 28°C, schwül"
   },
   {
-    "id": "m-058",
+    "id": "m58",
     "teamA": "CUW",
     "teamB": "CIV",
     "group": "E",
@@ -1044,11 +1101,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: IAH · MetroRail",
-    "weatherForecast": "Heiß, 33°C, sehr schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: IAH · Metro Red Line",
+    "weatherForecast": "Sehr heiß, 33°C, schwül"
   },
   {
-    "id": "m-059",
+    "id": "m59",
     "teamA": "TUN",
     "teamB": "NED",
     "group": "F",
@@ -1062,11 +1120,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 28°C, schwül"
+    "weatherForecast": "Warm, 29°C, schwül"
   },
   {
-    "id": "m-060",
+    "id": "m60",
     "teamA": "JPN",
     "teamB": "SWE",
     "group": "F",
@@ -1080,11 +1139,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: BOS · Commuter Rail",
     "weatherForecast": "Warm, 25°C, schwül"
   },
   {
-    "id": "m-061",
+    "id": "m61",
     "teamA": "URU",
     "teamB": "ESP",
     "group": "H",
@@ -1098,11 +1158,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: YYZ · TTC Streetcar 509",
-    "weatherForecast": "Mild, 23°C, frisch"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: YYZ · UP Express",
+    "weatherForecast": "Mild, 22°C, Brise"
   },
   {
-    "id": "m-062",
+    "id": "m62",
     "teamA": "CPV",
     "teamB": "KSA",
     "group": "H",
@@ -1116,11 +1177,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: BOS · Commuter Rail",
     "weatherForecast": "Warm, 25°C, schwül"
   },
   {
-    "id": "m-063",
+    "id": "m63",
     "teamA": "IRQ",
     "teamB": "FRA",
     "group": "I",
@@ -1134,11 +1196,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: EWR/JFK · NJ Transit",
-    "weatherForecast": "Warm, 26°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: EWR · NJ Transit",
+    "weatherForecast": "Warm, 27°C, schwül"
   },
   {
-    "id": "m-064",
+    "id": "m64",
     "teamA": "SEN",
     "teamB": "NOR",
     "group": "I",
@@ -1152,11 +1215,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: PHL · SEPTA Broad St",
-    "weatherForecast": "Warm, 27°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: PHL · SEPTA Linie",
+    "weatherForecast": "Warm, 28°C, schwül"
   },
   {
-    "id": "m-065",
+    "id": "m65",
     "teamA": "JOR",
     "teamB": "ARG",
     "group": "J",
@@ -1170,11 +1234,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: IAH · MetroRail",
-    "weatherForecast": "Heiß, 33°C, sehr schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: IAH · Metro Red Line",
+    "weatherForecast": "Sehr heiß, 33°C, schwül"
   },
   {
-    "id": "m-066",
+    "id": "m66",
     "teamA": "ALG",
     "teamB": "AUT",
     "group": "J",
@@ -1188,11 +1253,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MCI · Shuttle",
-    "weatherForecast": "Warm, 29°C, schwül"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MCI · Bus / Mietwagen",
+    "weatherForecast": "Heiß, 30°C, schwül"
   },
   {
-    "id": "m-067",
+    "id": "m67",
     "teamA": "COL",
     "teamB": "POR",
     "group": "K",
@@ -1206,11 +1272,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MTY · Metrorrey",
-    "weatherForecast": "Heiß, 32°C, trocken"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MTY · Uber/Taxi",
+    "weatherForecast": "Heiß, 30°C, trocken"
   },
   {
-    "id": "m-068",
+    "id": "m68",
     "teamA": "COD",
     "teamB": "UZB",
     "group": "K",
@@ -1224,11 +1291,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: GDL · Macrobús",
-    "weatherForecast": "Warm, 24°C, trocken"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: GDL · Mietwagen empfohlen",
+    "weatherForecast": "Warm, 26°C, Höhenklima"
   },
   {
-    "id": "m-069",
+    "id": "m69",
     "teamA": "PAN",
     "teamB": "ENG",
     "group": "L",
@@ -1242,11 +1310,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: YVR · SkyTrain Stadium",
-    "weatherForecast": "Mild, 20°C, Regenrisiko"
+    "status": "scheduled",
+    "travelInfo": "Flughafen: YVR · SkyTrain",
+    "weatherForecast": "Kühl, 20°C, gelegentlicher Regen"
   },
   {
-    "id": "m-070",
+    "id": "m70",
     "teamA": "CRO",
     "teamB": "GHA",
     "group": "L",
@@ -1260,11 +1329,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: SEA · Link Light Rail",
-    "weatherForecast": "Mild, 22°C, trocken"
+    "weatherForecast": "Mild, 22°C, mild"
   },
   {
-    "id": "m-071",
+    "id": "m71",
     "teamA": "BEL",
     "teamB": "NZL",
     "group": "G",
@@ -1278,11 +1348,12 @@
     "broadcasters": [
       "MagentaTV"
     ],
-    "travelInfo": "Flughafen: MIA · Tri-Rail",
+    "status": "scheduled",
+    "travelInfo": "Flughafen: MIA · Metrorail",
     "weatherForecast": "Heiß, 31°C, tropisch"
   },
   {
-    "id": "m-072",
+    "id": "m72",
     "teamA": "IRN",
     "teamB": "EGY",
     "group": "G",
@@ -1296,7 +1367,8 @@
     "broadcasters": [
       "MagentaTV"
     ],
+    "status": "scheduled",
     "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 28°C, schwül"
+    "weatherForecast": "Warm, 29°C, schwül"
   }
 ]

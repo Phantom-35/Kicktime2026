@@ -34,14 +34,19 @@ function SpielePage() {
   }, [q, matches]);
 
   const grouped = useMemo(() => {
-    const map = new Map<string, Match[]>();
+    // Group strictly by the LOCAL calendar date (browser tz), not by UTC day,
+    // so a 23:59Z kickoff in Berlin appears on the next-day section.
+    const map = new Map<string, { label: string; list: Match[] }>();
     for (const m of filtered) {
-      const day = getLocalParts(m.utcTimestamp, state.userTimezone).dayStr;
-      if (!map.has(day)) map.set(day, []);
-      map.get(day)!.push(m);
+      const parts = getLocalParts(m.utcTimestamp);
+      const key = parts.dayKey;
+      if (!map.has(key)) map.set(key, { label: parts.dayStr, list: [] });
+      map.get(key)!.list.push(m);
     }
-    return Array.from(map.entries());
-  }, [filtered, state.userTimezone]);
+    return Array.from(map.entries())
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([key, v]) => [key, v.label, v.list] as const);
+  }, [filtered]);
 
   return (
     <div className="p-4 pb-6">
@@ -57,9 +62,9 @@ function SpielePage() {
       </div>
 
       <div className="space-y-5">
-        {grouped.map(([day, list]) => (
-          <div key={day}>
-            <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">{day}</div>
+        {grouped.map(([key, label, list]) => (
+          <div key={key}>
+            <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">{label}</div>
             <div className="space-y-2.5">
               {list.map((m) => {
                 const indicator = isPerfectFor(m, state)

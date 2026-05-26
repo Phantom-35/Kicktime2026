@@ -3,21 +3,12 @@ import { useAppStore } from "@/store/app-store";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
 import { formatHourLabel } from "@/lib/time";
 import { REAL_TEAMS as TEAMS } from "@/data/teams";
 
 import { toast } from "sonner";
-import { RotateCcw, Eye, Globe, Clock, Users, Moon, Sun, Bell, FlaskConical, Cloud } from "lucide-react";
+import { RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, FlaskConical, Cloud } from "lucide-react";
 
-
-const TIMEZONES = [
-  "Europe/Berlin", "Europe/London", "Europe/Madrid",
-  "America/New_York", "America/Los_Angeles", "America/Mexico_City",
-  "Asia/Tokyo",
-];
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
@@ -26,15 +17,6 @@ function ProfilPage() {
   return (
     <div className="p-4 pb-6 space-y-5">
       <h2 className="text-xl font-bold">Profil & Einstellungen</h2>
-
-      <Card icon={<Globe className="h-4 w-4" />} title="Zeitzone">
-        <Select value={s.userTimezone} onValueChange={s.setTimezone}>
-          <SelectTrigger className="h-11 bg-muted/40"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {TIMEZONES.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}
-          </SelectContent>
-        </Select>
-      </Card>
 
       <Card icon={<Eye className="h-4 w-4" />} title="Spoiler-Schutz">
         <div className="flex items-center justify-between">

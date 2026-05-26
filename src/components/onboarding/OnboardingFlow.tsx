@@ -5,29 +5,19 @@ import { useAppStore } from "@/store/app-store";
 import { getSortedTeams, PRIORITY_CODES, type Team } from "@/data/teams";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
 import { formatHourLabel } from "@/lib/time";
 import {
-  Globe, Users, Clock, ArrowRight, ArrowLeft, Star, Bell,
+  Users, Clock, ArrowRight, ArrowLeft, Star, Bell,
   EyeOff, Tv, Trophy, Rocket,
 } from "lucide-react";
 
 
-const TIMEZONES = [
-  "Europe/Berlin", "Europe/London", "Europe/Madrid",
-  "America/New_York", "America/Los_Angeles", "America/Mexico_City",
-  "Asia/Tokyo",
-];
-
-const STEP_LABELS = ["Start", "Zeitzone", "Teams", "Zeitfenster"];
+const STEP_LABELS = ["Start", "Teams", "Zeitfenster"];
 
 export function OnboardingFlow() {
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
   const {
-    userTimezone, setTimezone,
     favoriteTeams, interestingTeams,
     toggleFavorite, toggleInteresting,
     availability, setAvailability,
@@ -36,8 +26,7 @@ export function OnboardingFlow() {
 
   const canAdvance =
     step === 0 ? true :
-    step === 1 ? !!userTimezone :
-    step === 2 ? favoriteTeams.length + interestingTeams.length > 0 :
+    step === 1 ? favoriteTeams.length + interestingTeams.length > 0 :
     true;
 
   return (
@@ -76,11 +65,6 @@ export function OnboardingFlow() {
           >
             {step === 0 && <WelcomeStep onStart={() => setStep(1)} />}
             {step === 1 && (
-              <StepCard>
-                <TimezoneStep value={userTimezone} onChange={setTimezone} />
-              </StepCard>
-            )}
-            {step === 2 && (
               <TeamsStep
                 favoriteTeams={favoriteTeams}
                 interestingTeams={interestingTeams}
@@ -88,7 +72,7 @@ export function OnboardingFlow() {
                 toggleInteresting={toggleInteresting}
               />
             )}
-            {step === 3 && (
+            {step === 2 && (
               <StepCard>
                 <AvailabilityStep availability={availability} setAvailability={setAvailability} />
               </StepCard>
@@ -106,7 +90,7 @@ export function OnboardingFlow() {
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          {step < 3 ? (
+          {step < 2 ? (
             <Button
               onClick={() => setStep(step + 1)}
               disabled={!canAdvance}
@@ -214,32 +198,7 @@ function WelcomeStep({ onStart }: { onStart: () => void }) {
   );
 }
 
-/* ---------- Step 1: Timezone ---------- */
-
-function TimezoneStep({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  return (
-    <div>
-      <Globe className="h-10 w-10 text-primary mb-3" />
-      <h2 className="text-2xl font-bold mb-1">Deine Zeitzone</h2>
-      <p className="text-sm text-muted-foreground mb-6">
-        Wir rechnen alle WM-Anstöße in deine lokale Zeit um.
-      </p>
-      <label className="text-xs font-medium text-muted-foreground">Erkannt</label>
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="mt-1.5 h-12">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {TIMEZONES.map((tz) => (
-            <SelectItem key={tz} value={tz}>{tz}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-}
-
-/* ---------- Step 2: Teams (redesigned) ---------- */
+/* ---------- Teams Step ---------- */
 
 function TeamsStep({
   favoriteTeams, interestingTeams, toggleFavorite, toggleInteresting,
