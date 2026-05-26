@@ -207,32 +207,7 @@ function WelcomeStep({ onStart }: { onStart: () => void }) {
   );
 }
 
-/* ---------- Step 1: Timezone ---------- */
-
-function TimezoneStep({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  return (
-    <div>
-      <Globe className="h-10 w-10 text-primary mb-3" />
-      <h2 className="text-2xl font-bold mb-1">Deine Zeitzone</h2>
-      <p className="text-sm text-muted-foreground mb-6">
-        Wir rechnen alle WM-Anstöße in deine lokale Zeit um.
-      </p>
-      <label className="text-xs font-medium text-muted-foreground">Erkannt</label>
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="mt-1.5 h-12">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {TIMEZONES.map((tz) => (
-            <SelectItem key={tz} value={tz}>{tz}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-}
-
-/* ---------- Step 2: Teams (redesigned) ---------- */
+/* ---------- Teams Step ---------- */
 
 function TeamsStep({
   favoriteTeams, interestingTeams, toggleFavorite, toggleInteresting,
