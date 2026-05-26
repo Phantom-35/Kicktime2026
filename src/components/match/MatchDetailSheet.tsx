@@ -43,10 +43,10 @@ export function MatchDetailSheet({
         <SheetHeader className="text-left">
           <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-muted" />
           <SheetTitle className="flex items-center gap-2">
-            <span className="text-2xl">{a.flag}</span>
+            <Flag code={a.code} emoji={a.flag} size={22} />
             <span>{a.name}</span>
             <span className="text-muted-foreground mx-1">vs</span>
-            <span className="text-2xl">{b.flag}</span>
+            <Flag code={b.code} emoji={b.flag} size={22} />
             <span>{b.name}</span>
           </SheetTitle>
           <p className="text-xs text-muted-foreground">{local.fullStr} · Gruppe {match.group}</p>
