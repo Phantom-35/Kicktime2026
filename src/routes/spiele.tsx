@@ -62,9 +62,9 @@ function SpielePage() {
       </div>
 
       <div className="space-y-5">
-        {grouped.map(([day, list]) => (
-          <div key={day}>
-            <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">{day}</div>
+        {grouped.map(([key, label, list]) => (
+          <div key={key}>
+            <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">{label}</div>
             <div className="space-y-2.5">
               {list.map((m) => {
                 const indicator = isPerfectFor(m, state)
