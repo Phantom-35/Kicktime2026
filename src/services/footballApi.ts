@@ -1,22 +1,15 @@
 /**
- * ============================================================================
- *  Live scores service — Supabase Edge Function proxy
- * ============================================================================
+ * Live scores service — Supabase Edge Function proxy.
  *
- *  All live data flows through the Supabase Edge Function `fetch-live-scores`.
- *  The frontend NEVER calls api-football.com directly, so the API key stays
- *  server-side (critical for the iOS bundle).
- *
- *  Setup:
- *   1. Supabase Dashboard → Edge Functions → Secrets → add `API_FOOTBALL_KEY`
- *   2. The function in `supabase/functions/fetch-live-scores/` auto-deploys.
- * ============================================================================
+ * The static FIFA 2026 schedule lives in `src/data/world_cup_2026_schedule.json`
+ * and is seeded into the match store. This service ONLY streams live scores
+ * and merges them into existing fixtures via the team-mapping layer.
  */
 
 import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 import { useMatchStore } from "@/store/match-store";
-import { MATCHES } from "@/data/matches";
-import { TEAMS, getTeam } from "@/data/teams";
+import { apiNameToCode } from "@/utils/teamMapping";
+import { getTeam } from "@/data/teams";
 
 export type LiveFixture = {
   teamA: string;
@@ -36,20 +29,8 @@ export function isLiveDataEnabled(): boolean {
   return isSupabaseConfigured();
 }
 
-/**
- * Calls the Supabase Edge Function and returns normalized live fixtures.
- * Always returns an array — never throws — so the polling loop stays alive
- * even when the function is misconfigured.
- */
 export async function fetchLiveWorldCupData(): Promise<LiveFixture[]> {
-  if (!isLiveDataEnabled()) {
-    if (typeof window !== "undefined") {
-      console.info(
-        "[footballApi] Supabase not configured — using local fixture schedule."
-      );
-    }
-    return [];
-  }
+  if (!isLiveDataEnabled()) return [];
 
   try {
     const { data, error } = await supabase.functions.invoke<{
@@ -77,9 +58,8 @@ function normalize(raw: RawFixture[]): LiveFixture[] {
   for (const r of raw) {
     const homeName = r.teams?.home?.name;
     const awayName = r.teams?.away?.name;
-    if (!homeName || !awayName) continue;
-    const teamA = nameToCode(homeName);
-    const teamB = nameToCode(awayName);
+    const teamA = apiNameToCode(homeName);
+    const teamB = apiNameToCode(awayName);
     if (!teamA || !teamB) continue;
     out.push({
       teamA,
@@ -101,22 +81,17 @@ function mapStatus(s: string): LiveFixture["status"] {
   return "live";
 }
 
-const nameIndex: Record<string, string> = (() => {
-  const out: Record<string, string> = {};
-  for (const t of TEAMS) out[t.name.toLowerCase()] = t.code;
-  return out;
-})();
-
-function nameToCode(name: string): string | null {
-  return nameIndex[name.toLowerCase()] ?? null;
-}
-
-/** Merge live fixtures into the match store, pairing by team-code pair. */
+/**
+ * Merge live fixtures into the match store by pairing on team codes
+ * (order-independent). Live updates flip status, update minute/score, and
+ * finalize the result when the match ends — feeding live standings.
+ */
 export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
   if (fixtures.length === 0) return;
-  const apply = useMatchStore.getState().applyLiveUpdate;
+  const state = useMatchStore.getState();
+  const all = Object.values(state.matches);
   for (const f of fixtures) {
-    const match = MATCHES.find(
+    const match = all.find(
       (m) =>
         (m.teamA === f.teamA && m.teamB === f.teamB) ||
         (m.teamA === f.teamB && m.teamB === f.teamA)
@@ -127,11 +102,15 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
       f.liveScore && flipped
         ? { a: f.liveScore.b, b: f.liveScore.a }
         : f.liveScore;
-    apply(match.id, {
-      status: f.status,
-      liveScore,
-      matchMinute: f.matchMinute,
-    });
+    if (f.status === "finished" && liveScore) {
+      state.finishMatch(match.id, liveScore);
+    } else {
+      state.applyLiveUpdate(match.id, {
+        status: f.status,
+        liveScore,
+        matchMinute: f.matchMinute,
+      });
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { MATCHES, type Match } from "@/data/matches";
+import scheduleJson from "@/data/world_cup_2026_schedule.json";
+import type { Match, MatchStage, Broadcaster } from "@/data/matches";
 
 export type MatchStatus = "scheduled" | "live" | "finished";
 
@@ -30,20 +31,28 @@ type Actions = {
   resetMatches: () => void;
 };
 
-const MATCH_DURATION_MS = 115 * 60 * 1000; // 90 min + halftime + stoppage
+const MATCH_DURATION_MS = 115 * 60 * 1000;
 
+/**
+ * Seed the store from the static FIFA 2026 schedule JSON. This is the single
+ * source of truth for fixture, venue, kickoff and broadcaster data. Live
+ * scores are merged in via `applyLiveUpdate` from `services/footballApi`.
+ */
 function seed(): Record<string, RuntimeMatch> {
   const out: Record<string, RuntimeMatch> = {};
-  for (const m of MATCHES) {
-    out[m.id] = { ...m, status: m.status };
+  for (const raw of scheduleJson as Array<Omit<Match, "status">>) {
+    const m: RuntimeMatch = {
+      ...raw,
+      stage: raw.stage as MatchStage,
+      broadcaster: raw.broadcaster as Broadcaster,
+      hostCountry: raw.hostCountry as Match["hostCountry"],
+      status: "scheduled",
+    };
+    out[m.id] = m;
   }
   return out;
 }
 
-/**
- * Single source of truth for match runtime data. Designed so a real sports
- * API can swap in via `replaceAll` / `applyLiveUpdate` / `finishMatch`.
- */
 export const useMatchStore = create<State & Actions>((set) => ({
   matches: seed(),
   now: Date.now(),
@@ -101,12 +110,6 @@ export const useMatchStore = create<State & Actions>((set) => ({
   resetMatches: () => set({ matches: seed(), now: Date.now() }),
 }));
 
-/**
- * Pure helper: advance match statuses according to wall-clock `now`.
- * - kickoff reached → "live"
- * - kickoff + 115 min reached → "finished" (auto-final score uses last
- *   live score if present, otherwise 0:0 so the dashboard moves on).
- */
 function rollMatches(
   matches: Record<string, RuntimeMatch>,
   now: number

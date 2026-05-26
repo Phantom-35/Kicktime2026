@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { MATCHES, type Match } from "@/data/matches";
+import type { Match } from "@/data/matches";
 import { getTeam } from "@/data/teams";
 import { useAppStore } from "@/store/app-store";
+import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { getLocalParts } from "@/lib/time";
-import { isPerfectFor, isNightShift } from "@/lib/categorize";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { Input } from "@/components/ui/input";
@@ -16,20 +16,21 @@ function SpielePage() {
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<Match | null>(null);
   const state = useAppStore();
+  const matches = useMatchStore(selectMatchList);
 
   const filtered = useMemo(() => {
     const ql = q.trim().toLowerCase();
     const list = ql
-      ? MATCHES.filter((m) => {
+      ? matches.filter((m) => {
           const a = getTeam(m.teamA).name.toLowerCase();
           const b = getTeam(m.teamB).name.toLowerCase();
           return a.includes(ql) || b.includes(ql) || m.city.toLowerCase().includes(ql);
         })
-      : MATCHES;
+      : matches;
     return [...list].sort(
       (a, b) => new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime()
     );
-  }, [q]);
+  }, [q, matches]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, Match[]>();

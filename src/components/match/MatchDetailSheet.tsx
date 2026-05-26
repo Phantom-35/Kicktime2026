@@ -8,6 +8,7 @@ import { getGroupStandings } from "@/data/groups";
 import { useAppStore } from "@/store/app-store";
 import { getLocalParts } from "@/lib/time";
 import { Tv, Cloud, Plane, MapPin } from "lucide-react";
+// Plane icon retained for the travel-info row.
 
 
 function getBroadcasterUrl(broadcaster: string): string {
@@ -77,8 +78,9 @@ export function MatchDetailSheet({
           <div className="grid grid-cols-2 gap-2">
             <Insight icon={<MapPin className="h-4 w-4" />} label="Stadion" value={`${match.stadium}, ${match.city}`} />
             <Insight icon={<Cloud className="h-4 w-4" />} label="Wetter" value={match.weatherForecast} />
-            <Insight icon={<Plane className="h-4 w-4" />} label={`${a.flag} Anreise`} value={match.travelDistanceTeamA} />
-            <Insight icon={<Plane className="h-4 w-4" />} label={`${b.flag} Anreise`} value={match.travelDistanceTeamB} />
+            <div className="col-span-2">
+              <Insight icon={<Plane className="h-4 w-4" />} label="Anreise & Transit" value={match.travelInfo} />
+            </div>
           </div>
 
           {/* Standings */}
