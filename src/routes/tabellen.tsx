@@ -8,6 +8,7 @@ import {
   type LiveScores,
 } from "@/lib/standings";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
+import { Flag } from "@/components/match/Flag";
 
 export const Route = createFileRoute("/tabellen")({ component: TabellenPage });
 
@@ -79,10 +80,10 @@ function TabellenPage() {
               const s = live[m.id]!;
               return (
                 <div key={m.id} className="flex items-center justify-between text-sm">
-                  <span className="truncate">
-                    {getTeam(m.teamA).flag} {getTeam(m.teamA).name}
+                  <span className="truncate flex items-center gap-1.5">
+                    <Flag code={getTeam(m.teamA).code} emoji={getTeam(m.teamA).flag} size={16} /> {getTeam(m.teamA).name}
                     <span className="text-muted-foreground"> vs </span>
-                    {getTeam(m.teamB).flag} {getTeam(m.teamB).name}
+                    <Flag code={getTeam(m.teamB).code} emoji={getTeam(m.teamB).flag} size={16} /> {getTeam(m.teamB).name}
                   </span>
                   <span className="font-mono font-bold tabular-nums">
                     {s.a}:{s.b}
@@ -150,7 +151,7 @@ function GroupCard({
                   </span>
                 </span>
                 <span className="flex items-center gap-2 min-w-0">
-                  <span className="text-base leading-none">{team.flag}</span>
+                  <Flag code={team.code} emoji={team.flag} size={18} />
                   <span className="truncate font-medium">{team.name}</span>
                 </span>
                 <span className="text-right tabular-nums text-muted-foreground">

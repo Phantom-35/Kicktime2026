@@ -8,7 +8,7 @@ import { getGroupStandings } from "@/data/groups";
 import { useAppStore } from "@/store/app-store";
 import { getLocalParts } from "@/lib/time";
 import { Tv, Cloud, Plane, MapPin } from "lucide-react";
-// Plane icon retained for the travel-info row.
+import { Flag } from "@/components/match/Flag";
 
 
 function getBroadcasterUrl(broadcaster: string): string {
@@ -43,10 +43,10 @@ export function MatchDetailSheet({
         <SheetHeader className="text-left">
           <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-muted" />
           <SheetTitle className="flex items-center gap-2">
-            <span className="text-2xl">{a.flag}</span>
+            <Flag code={a.code} emoji={a.flag} size={22} />
             <span>{a.name}</span>
             <span className="text-muted-foreground mx-1">vs</span>
-            <span className="text-2xl">{b.flag}</span>
+            <Flag code={b.code} emoji={b.flag} size={22} />
             <span>{b.name}</span>
           </SheetTitle>
           <p className="text-xs text-muted-foreground">{local.fullStr} · Gruppe {match.group}</p>
@@ -104,7 +104,7 @@ export function MatchDetailSheet({
                   return (
                     <tr key={row.code} className={highlight ? "bg-primary/15" : ""}>
                       <td className="pl-4 py-2 font-medium flex items-center gap-2">
-                        <span>{t.flag}</span> {t.name}
+                        <Flag code={t.code} emoji={t.flag} size={18} /> {t.name}
                       </td>
                       <td className="text-center tabular-nums">{row.played}</td>
                       <td className="text-center tabular-nums">{row.gf - row.ga}</td>

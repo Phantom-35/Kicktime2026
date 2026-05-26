@@ -1,5 +1,6 @@
 import { getTeam } from "@/data/teams";
 import type { Match } from "@/data/matches";
+import { Flag } from "@/components/match/Flag";
 import { getLocalParts } from "@/lib/time";
 import { useAppStore } from "@/store/app-store";
 import { Tv, MapPin } from "lucide-react";
@@ -58,7 +59,7 @@ export function MatchCard({
       </div>
 
       <div className="flex items-center justify-between gap-3">
-        <TeamSide flag={a.flag} name={a.name} />
+        <TeamSide code={a.code} emoji={a.flag} name={a.name} />
         <div className="text-center">
           {match.status === "live" && match.liveScore ? (
             <div className="text-xl font-bold tabular-nums text-destructive">
@@ -72,7 +73,7 @@ export function MatchCard({
             <div className="text-xs font-medium text-muted-foreground">VS</div>
           )}
         </div>
-        <TeamSide flag={b.flag} name={b.name} align="right" />
+        <TeamSide code={b.code} emoji={b.flag} name={b.name} align="right" />
       </div>
 
       <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
@@ -89,10 +90,10 @@ export function MatchCard({
   );
 }
 
-function TeamSide({ flag, name, align = "left" }: { flag: string; name: string; align?: "left" | "right" }) {
+function TeamSide({ code, emoji, name, align = "left" }: { code: string; emoji: string; name: string; align?: "left" | "right" }) {
   return (
     <div className={`flex-1 flex items-center gap-2 ${align === "right" ? "flex-row-reverse text-right" : ""}`}>
-      <span className="text-2xl">{flag}</span>
+      <Flag code={code} emoji={emoji} size={22} />
       <span className="text-sm font-semibold leading-tight">{name}</span>
     </div>
   );
