@@ -1,68 +1,50 @@
+## Ziel
+Das bestehende Supabase-Projekt **"Kick Time 2026"** (`bbdnnohujyvickhegbuf`) mit der Lovable-App verbinden, ohne Lovable Cloud zu aktivieren. Du behältst volle Kontrolle über das Projekt, der Edge-Function-Code bleibt im Repo.
 
-# Supabase-backed live data refactor
+## Schritt 1 – Build Secrets im Lovable Workspace setzen
+Du legst zwei Build-Time Env-Variablen an (das kann nur du, ich habe darauf keinen Zugriff):
 
-Goal: remove all direct `api-football.com` calls from the frontend and route them through a Supabase Edge Function. The frontend will only ever talk to Supabase, which is what the future iOS build needs.
+1. Im Editor oben links: **Avatar / Workspace-Name → Workspace Settings**
+2. Tab **Build Secrets** (NICHT „Secrets" im Projekt – das sind Runtime-Secrets für Edge Functions, die brauchen wir hier nicht)
+3. Zwei Secrets hinzufügen, exakt diese Namen:
+   - `VITE_SUPABASE_URL` = `https://bbdnnohujyvickhegbuf.supabase.co`
+   - `VITE_SUPABASE_ANON_KEY` = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiZG5ub2h1anl2aWNraGVnYnVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3MTYwMDUsImV4cCI6MjA5NTI5MjAwNX0.TnxGmMWkKcwLBiAM831u68qbJcby2RCHbt_ZHv0t_so`
+4. Speichern → Sandbox neu starten (passiert meist automatisch beim nächsten Build)
 
-Note on architecture: this project runs on TanStack Start, which normally prefers `createServerFn` for server work. For an iOS app that talks directly to Supabase (no TanStack server in front of it), an Edge Function is the right call — it lives next to the data the mobile client will already be using. We accept that tradeoff intentionally.
+## Schritt 2 – Edge Function `fetch-live-scores` manuell deployen
+Da kein Lovable-Cloud-Auto-Deploy läuft, musst du sie selbst hochladen:
 
-## 1. Supabase client
+**Variante A (am einfachsten – Dashboard Copy/Paste):**
+1. https://supabase.com/dashboard/project/bbdnnohujyvickhegbuf/functions
+2. **Create a new function** → Name: `fetch-live-scores`
+3. Den kompletten Inhalt aus `supabase/functions/fetch-live-scores/index.ts` (existiert bereits im Repo) reinkopieren
+4. **Deploy**
 
-- Add dependency: `@supabase/supabase-js`.
-- Create `src/integrations/supabase/client.ts`:
-  - Reads `import.meta.env.VITE_SUPABASE_URL` and `import.meta.env.VITE_SUPABASE_ANON_KEY`.
-  - Exports a single `supabase` browser client with `auth.persistSession` enabled (ready for later iOS auth work).
-  - Throws a clear console error if either env var is missing so we catch config issues early.
+**Variante B (Supabase CLI, falls installiert):**
+```
+supabase link --project-ref bbdnnohujyvickhegbuf
+supabase functions deploy fetch-live-scores
+```
 
-## 2. Edge Function: `fetch-live-scores`
+## Schritt 3 – API-Football-Key in Supabase setzen
+1. https://supabase.com/dashboard/project/bbdnnohujyvickhegbuf/settings/functions
+2. **Edge Function Secrets → Add new secret**
+   - Name: `API_FOOTBALL_KEY`
+   - Value: dein api-football.com Key
+3. Speichern
 
-Create `supabase/functions/fetch-live-scores/index.ts`:
+## Schritt 4 – Verifizierung (mache ich nach deinem Go)
+Sobald du sagst „fertig" prüfe ich:
+- Sind `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` im Build sichtbar?
+- Lädt die App ohne SSR-Crash?
+- Antwortet die Edge Function auf `supabase.functions.invoke('fetch-live-scores')`?
 
-- Standard Deno `serve(...)` handler.
-- CORS preflight (OPTIONS) + permissive `Access-Control-Allow-Origin: *` headers (locked down later when we know the iOS origin).
-- Reads `Deno.env.get("API_FOOTBALL_KEY")`. If missing → 500 with a clear message.
-- Calls `GET https://v3.football.api-sports.io/fixtures?live=all` with `x-apisports-key`.
-- Normalizes the response into the same `LiveFixture[]` shape we already use:
-  ```ts
-  { teamA, teamB, status, liveScore?, matchMinute? }
-  ```
-  (team-code mapping stays in the frontend, since that's where our `TEAMS` catalogue lives — the function just forwards the cleaned JSON.)
-- Returns `{ fixtures: ApiFootballFixture[] }` so the frontend can keep its existing `normalize()` logic.
+Wenn etwas hakt, debugge ich gezielt.
 
-Manual step for you (I'll prompt for this during build):
-1. Supabase Dashboard → Project → **Edge Functions → Secrets** → add `API_FOOTBALL_KEY = <your key>`.
-2. The function is auto-deployed by Lovable Cloud once committed under `supabase/functions/`.
+## Was ich NICHT ändere
+- Keine Code-Änderungen nötig – `src/integrations/supabase/client.ts` liest die Env-Vars schon korrekt.
+- Keine Hardcoded-Keys im Repo (wichtig für späteren iOS-Deploy).
+- Der Developer-Simulator-Toggle in Profil bleibt unverändert.
 
-## 3. Frontend rewire
-
-`src/services/footballApi.ts`:
-- Delete the direct `fetch("https://v3.football.api-sports.io/...")` call and the `VITE_API_FOOTBALL_KEY` reference.
-- Replace `fetchLiveWorldCupData()` with:
-  ```ts
-  const { data, error } = await supabase.functions.invoke('fetch-live-scores')
-  ```
-- Keep the existing `normalize()` + `applyLiveFixturesToStore()` pipeline so the match store contract doesn't change.
-- `hasApiKey()` becomes `isLiveDataEnabled()` — true whenever Supabase is configured. The presence of the API key now lives on the server, so the frontend just assumes the function is wired and gracefully falls back if `invoke` returns an error.
-
-`src/hooks/useLiveApi.ts`:
-- No structural change. It still polls every 30s, still no-ops when `devSimulateLive` is on. Just calls the new service.
-
-`src/routes/profil.tsx`:
-- Remove the dev-only `VITE_API_FOOTBALL_KEY` instructions card.
-- Replace with a short card pointing to Supabase: "Live-Daten laufen über die Edge Function `fetch-live-scores`. API-Schlüssel wird in Supabase → Edge Functions → Secrets als `API_FOOTBALL_KEY` hinterlegt."
-- The developer simulator toggle stays exactly as-is.
-
-## 4. Tabellen / recalculation
-
-No changes needed. `tabellen.tsx` already subscribes to `useMatchStore` via `selectMatchList` and recomputes `calculateTableStandings` on every render. Once the Edge Function pushes new `liveScore` values through `applyLiveFixturesToStore`, points and goal difference update automatically.
-
-## What I'll need from you (during build)
-
-1. Confirm the Supabase integration is in fact connected (so `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are injected). I'll verify by checking the env at build time.
-2. Your `API_FOOTBALL_KEY` — but you set this directly in the Supabase dashboard, never in chat. I'll show you exactly where.
-
-## Files
-
-- New: `src/integrations/supabase/client.ts`, `supabase/functions/fetch-live-scores/index.ts`
-- Edited: `src/services/footballApi.ts`, `src/routes/profil.tsx`
-- Untouched: `src/store/match-store.ts`, `src/hooks/useLiveClock.ts`, `src/hooks/useLiveSimulation.ts`, `src/hooks/useLiveApi.ts`, `src/routes/tabellen.tsx`
-- Removed reference: `VITE_API_FOOTBALL_KEY` (no longer used anywhere)
+## Reihenfolge-Empfehlung
+Schritt 1 zuerst (App lädt dann wieder ohne Crash, auch ohne API-Key). Dann 2 + 3 in beliebiger Reihenfolge. Live-Daten kommen erst beim Turnierstart bzw. wenn die API-Football-Liga aktiv ist – bis dahin kannst du den Simulator-Toggle nutzen.
