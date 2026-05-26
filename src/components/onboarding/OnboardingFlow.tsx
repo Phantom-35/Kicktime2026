@@ -5,23 +5,14 @@ import { useAppStore } from "@/store/app-store";
 import { getSortedTeams, PRIORITY_CODES, type Team } from "@/data/teams";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
 import { formatHourLabel } from "@/lib/time";
 import {
-  Globe, Users, Clock, ArrowRight, ArrowLeft, Star, Bell,
+  Users, Clock, ArrowRight, ArrowLeft, Star, Bell,
   EyeOff, Tv, Trophy, Rocket,
 } from "lucide-react";
 
 
-const TIMEZONES = [
-  "Europe/Berlin", "Europe/London", "Europe/Madrid",
-  "America/New_York", "America/Los_Angeles", "America/Mexico_City",
-  "Asia/Tokyo",
-];
-
-const STEP_LABELS = ["Start", "Zeitzone", "Teams", "Zeitfenster"];
+const STEP_LABELS = ["Start", "Teams", "Zeitfenster"];
 
 export function OnboardingFlow() {
   const [step, setStep] = useState(0);

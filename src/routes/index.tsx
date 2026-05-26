@@ -66,7 +66,7 @@ function Dashboard() {
                   onClick={(e) => {
                     e.stopPropagation();
                     toast.success("Zum Kalender hinzugefügt", {
-                      description: `${getLocalParts(m.utcTimestamp, state.userTimezone).fullStr}`,
+                      description: `${getLocalParts(m.utcTimestamp).fullStr}`,
                     });
                   }}
                 >
@@ -159,10 +159,9 @@ function Stream({
 }
 
 function AlarmRow({ match }: { match: Match }) {
-  const tz = useAppStore((s) => s.userTimezone);
   const armed = useAppStore((s) => !!s.alarms[match.id]);
   const toggle = useAppStore((s) => s.toggleAlarm);
-  const local = getLocalParts(match.utcTimestamp, tz);
+  const local = getLocalParts(match.utcTimestamp);
   // 15 min before kickoff
   const kickoffMin = (parseInt(local.timeStr.split(":")[0], 10) * 60 + parseInt(local.timeStr.split(":")[1], 10)) - 15;
   const wh = String(Math.floor(((kickoffMin + 1440) % 1440) / 60)).padStart(2, "0");
