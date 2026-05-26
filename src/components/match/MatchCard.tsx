@@ -77,7 +77,7 @@ export function MatchCard({
 
       <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
         <span className="flex items-center gap-1">
-          <Tv className="h-3 w-3" /> {match.broadcaster}
+          <Tv className="h-3 w-3" /> {(match.broadcasters ?? [match.broadcaster]).join(" & ")}
         </span>
         <span className="flex items-center gap-1">
           <MapPin className="h-3 w-3" /> {match.city}
