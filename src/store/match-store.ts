@@ -14,6 +14,9 @@ export type LiveUpdate = {
   liveScore?: { a: number; b: number };
   matchMinute?: number;
   status?: MatchStatus;
+  utcTimestamp?: string;
+  stadium?: string;
+  city?: string;
 };
 
 type State = {
