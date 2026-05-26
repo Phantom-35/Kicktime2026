@@ -104,7 +104,7 @@ export function MatchDetailSheet({
                   return (
                     <tr key={row.code} className={highlight ? "bg-primary/15" : ""}>
                       <td className="pl-4 py-2 font-medium flex items-center gap-2">
-                        <span>{t.flag}</span> {t.name}
+                        <Flag code={t.code} emoji={t.flag} size={18} /> {t.name}
                       </td>
                       <td className="text-center tabular-nums">{row.played}</td>
                       <td className="text-center tabular-nums">{row.gf - row.ga}</td>
