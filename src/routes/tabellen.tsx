@@ -80,10 +80,10 @@ function TabellenPage() {
               const s = live[m.id]!;
               return (
                 <div key={m.id} className="flex items-center justify-between text-sm">
-                  <span className="truncate">
-                    {getTeam(m.teamA).flag} {getTeam(m.teamA).name}
+                  <span className="truncate flex items-center gap-1.5">
+                    <Flag code={getTeam(m.teamA).code} emoji={getTeam(m.teamA).flag} size={16} /> {getTeam(m.teamA).name}
                     <span className="text-muted-foreground"> vs </span>
-                    {getTeam(m.teamB).flag} {getTeam(m.teamB).name}
+                    <Flag code={getTeam(m.teamB).code} emoji={getTeam(m.teamB).flag} size={16} /> {getTeam(m.teamB).name}
                   </span>
                   <span className="font-mono font-bold tabular-nums">
                     {s.a}:{s.b}
