@@ -124,7 +124,7 @@ function BarsPage() {
                 </div>
                 {barMatches.map((m) => {
                   const a = getTeam(m.teamA), bt = getTeam(m.teamB);
-                  const local = getLocalParts(m.utcTimestamp, state.userTimezone);
+                  const local = getLocalParts(m.utcTimestamp);
                   return (
                     <div key={m.id} className="text-xs flex items-center justify-between rounded-lg bg-muted/40 px-2.5 py-1.5">
                       <span>{a.flag} {a.name} – {bt.flag} {bt.name}</span>
