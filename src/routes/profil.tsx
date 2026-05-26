@@ -71,7 +71,7 @@ function ProfilPage() {
                   className={`w-full rounded-lg border-2 p-2 flex flex-col items-center transition-all
                     ${fav ? "border-primary bg-primary/10" : intg ? "border-accent bg-accent/10" : "border-border"}`}
                 >
-                  <span className="text-xl">{t.flag}</span>
+                  <Flag code={t.code} emoji={t.flag} size={20} />
                   <span className="text-[9px] font-semibold leading-tight mt-0.5">{t.code}</span>
                 </div>
                 <div className="flex gap-1">
