@@ -8,7 +8,7 @@ import {
   type LiveScores,
 } from "@/lib/standings";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
-import { Flag } from "@/components/match/Flag";
+
 
 export const Route = createFileRoute("/tabellen")({ component: TabellenPage });
 
