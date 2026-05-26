@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { formatHourLabel } from "@/lib/time";
 import { TEAMS } from "@/data/teams";
-import { Flag } from "@/components/match/Flag";
+
 import { toast } from "sonner";
 import { RotateCcw, Eye, Globe, Clock, Users, Moon, Sun, Bell, FlaskConical, Cloud } from "lucide-react";
 
@@ -71,7 +71,7 @@ function ProfilPage() {
                   className={`w-full rounded-lg border-2 p-2 flex flex-col items-center transition-all
                     ${fav ? "border-primary bg-primary/10" : intg ? "border-accent bg-accent/10" : "border-border"}`}
                 >
-                  <Flag code={t.code} emoji={t.flag} size={20} />
+                  <span className="text-xl">{t.flag}</span>
                   <span className="text-[9px] font-semibold leading-tight mt-0.5">{t.code}</span>
                 </div>
                 <div className="flex gap-1">
