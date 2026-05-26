@@ -17,10 +17,17 @@ export type LiveFixture = {
   status: "scheduled" | "live" | "finished";
   liveScore?: { a: number; b: number };
   matchMinute?: number;
+  utcTimestamp?: string;
+  stadium?: string;
+  city?: string;
 };
 
 type RawFixture = {
-  fixture?: { status?: { short?: string; elapsed?: number | null } };
+  fixture?: {
+    date?: string;
+    status?: { short?: string; elapsed?: number | null };
+    venue?: { name?: string | null; city?: string | null };
+  };
   teams?: { home?: { name?: string }; away?: { name?: string } };
   goals?: { home?: number | null; away?: number | null };
 };
@@ -61,6 +68,7 @@ function normalize(raw: RawFixture[]): LiveFixture[] {
     const teamA = apiNameToCode(homeName);
     const teamB = apiNameToCode(awayName);
     if (!teamA || !teamB) continue;
+    const isoDate = r.fixture?.date;
     out.push({
       teamA,
       teamB,
@@ -70,6 +78,9 @@ function normalize(raw: RawFixture[]): LiveFixture[] {
           ? { a: r.goals.home, b: r.goals.away }
           : undefined,
       matchMinute: r.fixture?.status?.elapsed ?? undefined,
+      utcTimestamp: isoDate ? new Date(isoDate).toISOString() : undefined,
+      stadium: r.fixture?.venue?.name ?? undefined,
+      city: r.fixture?.venue?.city ?? undefined,
     });
   }
   return out;
@@ -102,14 +113,18 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
       f.liveScore && flipped
         ? { a: f.liveScore.b, b: f.liveScore.a }
         : f.liveScore;
+    // Force-overwrite authoritative fixture metadata from the live feed
+    // so any stale static value in the store is instantly corrected.
+    state.applyLiveUpdate(match.id, {
+      status: f.status,
+      liveScore,
+      matchMinute: f.matchMinute,
+      utcTimestamp: f.utcTimestamp,
+      stadium: f.stadium,
+      city: f.city,
+    });
     if (f.status === "finished" && liveScore) {
       state.finishMatch(match.id, liveScore);
-    } else {
-      state.applyLiveUpdate(match.id, {
-        status: f.status,
-        liveScore,
-        matchMinute: f.matchMinute,
-      });
     }
   }
 }
