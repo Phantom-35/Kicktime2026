@@ -27,7 +27,6 @@ export function OnboardingFlow() {
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
   const {
-    userTimezone, setTimezone,
     favoriteTeams, interestingTeams,
     toggleFavorite, toggleInteresting,
     availability, setAvailability,
@@ -36,8 +35,7 @@ export function OnboardingFlow() {
 
   const canAdvance =
     step === 0 ? true :
-    step === 1 ? !!userTimezone :
-    step === 2 ? favoriteTeams.length + interestingTeams.length > 0 :
+    step === 1 ? favoriteTeams.length + interestingTeams.length > 0 :
     true;
 
   return (
@@ -76,11 +74,6 @@ export function OnboardingFlow() {
           >
             {step === 0 && <WelcomeStep onStart={() => setStep(1)} />}
             {step === 1 && (
-              <StepCard>
-                <TimezoneStep value={userTimezone} onChange={setTimezone} />
-              </StepCard>
-            )}
-            {step === 2 && (
               <TeamsStep
                 favoriteTeams={favoriteTeams}
                 interestingTeams={interestingTeams}
@@ -88,7 +81,7 @@ export function OnboardingFlow() {
                 toggleInteresting={toggleInteresting}
               />
             )}
-            {step === 3 && (
+            {step === 2 && (
               <StepCard>
                 <AvailabilityStep availability={availability} setAvailability={setAvailability} />
               </StepCard>
@@ -106,7 +99,7 @@ export function OnboardingFlow() {
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          {step < 3 ? (
+          {step < 2 ? (
             <Button
               onClick={() => setStep(step + 1)}
               disabled={!canAdvance}
