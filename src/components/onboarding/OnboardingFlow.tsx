@@ -13,7 +13,7 @@ import {
   Globe, Users, Clock, ArrowRight, ArrowLeft, Star, Bell,
   EyeOff, Tv, Trophy, Rocket,
 } from "lucide-react";
-import { Flag } from "@/components/match/Flag";
+
 
 const TIMEZONES = [
   "Europe/Berlin", "Europe/London", "Europe/Madrid",
