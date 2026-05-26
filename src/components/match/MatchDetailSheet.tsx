@@ -8,7 +8,7 @@ import { getGroupStandings } from "@/data/groups";
 import { useAppStore } from "@/store/app-store";
 import { getLocalParts } from "@/lib/time";
 import { Tv, Cloud, Plane, MapPin } from "lucide-react";
-// Plane icon retained for the travel-info row.
+import { Flag } from "@/components/match/Flag";
 
 
 function getBroadcasterUrl(broadcaster: string): string {
