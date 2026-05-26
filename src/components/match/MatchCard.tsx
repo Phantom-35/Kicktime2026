@@ -90,10 +90,10 @@ export function MatchCard({
   );
 }
 
-function TeamSide({ flag, name, align = "left" }: { flag: string; name: string; align?: "left" | "right" }) {
+function TeamSide({ code, emoji, name, align = "left" }: { code: string; emoji: string; name: string; align?: "left" | "right" }) {
   return (
     <div className={`flex-1 flex items-center gap-2 ${align === "right" ? "flex-row-reverse text-right" : ""}`}>
-      <span className="text-2xl">{flag}</span>
+      <Flag code={code} emoji={emoji} size={22} />
       <span className="text-sm font-semibold leading-tight">{name}</span>
     </div>
   );
