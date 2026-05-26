@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { formatHourLabel } from "@/lib/time";
 import { TEAMS } from "@/data/teams";
+import { Flag } from "@/components/match/Flag";
 import { toast } from "sonner";
 import { RotateCcw, Eye, Globe, Clock, Users, Moon, Sun, Bell, FlaskConical, Cloud } from "lucide-react";
 
