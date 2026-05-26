@@ -7,7 +7,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { formatHourLabel } from "@/lib/time";
-import { TEAMS } from "@/data/teams";
+import { REAL_TEAMS as TEAMS } from "@/data/teams";
 
 import { toast } from "sonner";
 import { RotateCcw, Eye, Globe, Clock, Users, Moon, Sun, Bell, FlaskConical, Cloud } from "lucide-react";
