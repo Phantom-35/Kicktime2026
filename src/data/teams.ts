@@ -117,8 +117,20 @@ export const REAL_TEAMS: Team[] = TEAMS.filter((t) => !t.isPlaceholder);
 export const getTeam = (code: string): Team => {
   const t = TEAMS.find((x) => x.code === code);
   if (t) return t;
+  // KO-Phase Platzhalter-Codes: "W74" = Sieger Spiel 74, "L101" = Verlierer Spiel 101.
+  const ko = code.match(/^([WL])(\d{1,3})$/);
+  if (ko) {
+    const label = ko[1] === "W" ? "Sieger Spiel" : "Verlierer Spiel";
+    return { code, name: `${label} ${ko[2]}`, flag: "🏆", group: "KO", tier: 3, isPlaceholder: true };
+  }
+  // "1A"/"2B"/"3F" = Platzierung in Gruppe vor Auslosung.
+  const rank = code.match(/^([123])([A-L])$/);
+  if (rank) {
+    return { code, name: `${rank[1]}. Gruppe ${rank[2]}`, flag: "🏳️", group: rank[2], tier: 3, isPlaceholder: true };
+  }
   return { code, name: code, flag: "🏳️", group: "?", tier: 3 };
 };
+
 
 // Priority order for European football audience — shown first in selectors.
 export const PRIORITY_CODES = [
