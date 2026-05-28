@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { Match } from "@/data/matches";
 import { isPerfectFor, isNightShift } from "@/lib/categorize";
 import { getTeam } from "@/data/teams";
@@ -9,39 +9,16 @@ import { getLocalParts } from "@/lib/time";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Search, ArrowUp } from "lucide-react";
 
-export const Route = createFileRoute("/spiele")({ component: SpielePage });
 
 function SpielePage() {
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<Match | null>(null);
-  const [showTop, setShowTop] = useState(false);
   const state = useAppStore();
   const spoiler = useAppStore((s) => s.spoilerProtection);
   const matches = useMatchStore(selectMatchList);
-
-  // Find the scrolling ancestor (the <main> in __root) and listen on it.
-  useEffect(() => {
-    const findScroller = (): HTMLElement | Window => {
-      let el: HTMLElement | null = document.querySelector("main");
-      while (el) {
-        const style = window.getComputedStyle(el);
-        if (/(auto|scroll)/.test(style.overflowY)) return el;
-        el = el.parentElement;
-      }
-      return window;
-    };
-    const scroller = findScroller();
-    const getY = () =>
-      scroller === window
-        ? window.scrollY
-        : (scroller as HTMLElement).scrollTop;
-    const onScroll = () => setShowTop(getY() > 400);
-    onScroll();
-    scroller.addEventListener("scroll", onScroll, { passive: true });
-    return () => scroller.removeEventListener("scroll", onScroll);
-  }, []);
 
   const scrollToTop = () => {
     const main = document.querySelector("main");
@@ -51,6 +28,7 @@ function SpielePage() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
+
 
   const filtered = useMemo(() => {
     const ql = q.trim().toLowerCase();
@@ -121,20 +99,24 @@ function SpielePage() {
             Keine Spiele gefunden.
           </p>
         )}
+
+        {grouped.length > 0 && (
+          <div className="pt-4 flex justify-center">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={scrollToTop}
+              className="gap-2 rounded-full"
+            >
+              <ArrowUp className="h-4 w-4" />
+              Nach oben
+            </Button>
+          </div>
+        )}
       </div>
 
       <MatchDetailSheet match={selected} open={!!selected} onOpenChange={(v) => !v && setSelected(null)} />
-
-      {/* Scroll-to-top */}
-      {showTop && (
-        <button
-          onClick={scrollToTop}
-          aria-label="Nach oben"
-          className="fixed bottom-20 right-4 z-40 h-11 w-11 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center active:scale-90 transition-transform"
-        >
-          <ChevronUp className="h-5 w-5" />
-        </button>
-      )}
     </div>
   );
 }
+
