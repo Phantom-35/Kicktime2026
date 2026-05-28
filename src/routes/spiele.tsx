@@ -99,20 +99,24 @@ function SpielePage() {
             Keine Spiele gefunden.
           </p>
         )}
+
+        {grouped.length > 0 && (
+          <div className="pt-4 flex justify-center">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={scrollToTop}
+              className="gap-2 rounded-full"
+            >
+              <ArrowUp className="h-4 w-4" />
+              Nach oben
+            </Button>
+          </div>
+        )}
       </div>
 
       <MatchDetailSheet match={selected} open={!!selected} onOpenChange={(v) => !v && setSelected(null)} />
-
-      {/* Scroll-to-top */}
-      {showTop && (
-        <button
-          onClick={scrollToTop}
-          aria-label="Nach oben"
-          className="fixed bottom-20 right-4 z-40 h-11 w-11 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center active:scale-90 transition-transform"
-        >
-          <ChevronUp className="h-5 w-5" />
-        </button>
-      )}
     </div>
   );
 }
+
