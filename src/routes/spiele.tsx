@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { Match } from "@/data/matches";
 import { isPerfectFor, isNightShift } from "@/lib/categorize";
 import { getTeam } from "@/data/teams";
@@ -9,9 +9,9 @@ import { getLocalParts } from "@/lib/time";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Search, ArrowUp } from "lucide-react";
 
-export const Route = createFileRoute("/spiele")({ component: SpielePage });
 
 function SpielePage() {
   const [q, setQ] = useState("");
