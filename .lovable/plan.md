@@ -1,43 +1,77 @@
-# System Audit — FIFA WM 2026
+# Änderungen
 
-## Audit results (read-only checks)
+## 1. Scroll-To-Top Button (Spiele-Tab)
+- In `src/routes/spiele.tsx`: kleiner runder Button unten rechts (`fixed bottom-20 right-4`, über BottomNav), zeigt einen Pfeil nach oben (`ChevronUp`).
+- Erscheint nur, wenn `window.scrollY > 400` (via `useEffect` + scroll-Listener, state `showTop`).
+- Klick → `window.scrollTo({ top: 0, behavior: "smooth" })`.
 
-### 1. Static data & live API
-- `src/data/world_cup_2026_schedule.json` contains 104 matches, 72 of stage `group`. IDs `m-001`…`m-072` are **complete, no gaps, no duplicates**.
-- Field naming differs from your spec but is internally consistent:
-  - `teamA / teamB` (not `homeTeam / awayTeam`)
-  - `utcTimestamp` (not `utcDateTime`)
-  - `broadcasters` array (not `tv`)
-  - `hostCountry` (not `country`)
-  - All required values are present on every match.
-- Live API path is intact: `services/footballApi.ts` → Supabase Edge Function `fetch-live-scores` → `normalize()` → `applyLiveFixturesToStore()` merges by team-code pair into `match-store`. Edge function currently returns `{fixtures: []}` (off-season), so no live data — merge code is reachable and idempotent.
+## 2. App-Versionsanzeige (Profil-Tab)
+- Version aus `package.json` ist nicht direkt importierbar — stattdessen in `vite.config.ts` `define: { __APP_VERSION__: JSON.stringify(pkg.version) }` einfügen und Typdeklaration in `src/vite-env.d.ts` ergänzen.
+- In `src/routes/profil.tsx` ganz unten, unter dem bestehenden Footer-Text:
+  `KickTime 2026 · v{__APP_VERSION__}` in `text-[10px] text-muted-foreground`.
 
-### 2. Timezone / ISO-8601
-- All 72 `utcTimestamp` values match `^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$` and parse via `new Date()`.
-- `src/lib/time.ts` already delegates to `Intl.DateTimeFormat` (browser TZ + DST). No hardcoded `+1/+2` offsets remain anywhere in `src/`.
-- `userTimezone` still exists in `app-store` and is passed into `getLocalParts(utc, tz)` but the function **ignores** the arg (documented). It's harmless legacy — I'll note it but not rip it out unless you want.
-- `spiele.tsx` groups by `parts.dayKey` (local YYYY-MM-DD), so a 23:59Z kickoff appears on the next day in CEST. Confirmed by inspection.
+## 3. „Alle Daten löschen" (Profil-Tab)
+- Neue Card am Ende vor dem Footer, Titel „Daten zurücksetzen", roter Destructive-Button „Alle Daten löschen".
+- Klick öffnet `AlertDialog` (shadcn) mit Bestätigung.
+- Bei Bestätigung:
+  - `localStorage.removeItem("kicktime-2026")` (Zustand-Persist-Key).
+  - Alle weiteren App-Keys löschen (falls vorhanden, z. B. Match-Store falls persistiert).
+  - `useAppStore.persist.clearStorage()` zusätzlich.
+  - `toast.success("Alle Daten gelöscht — du kannst die App neu starten.")`.
+  - `window.location.reload()` nach ~800 ms, damit Onboarding wieder erscheint.
 
-### 3. TV broadcasting
-- **MagentaTV present on all 72 group matches.**
-- Free-TV: opener `m-001` MEX–RSA → `[MagentaTV, ARD]`. GER games → `m-010` `[MagentaTV, ARD]`, `m-033` `[MagentaTV, ARD, ZDF]`, `m-056` `[MagentaTV, ARD]`. `MatchCard` / `MatchDetailSheet` render the array joined with `&`, so both logos appear side-by-side. ✔
+## 4. Kalender-Eintrag (iOS/Android funktionsfähig)
+- Neue Util `src/lib/calendar.ts` mit `addMatchToCalendar(match)`:
+  - Generiert eine `.ics`-Datei (VCALENDAR/VEVENT) mit:
+    - `DTSTART`/`DTEND` (90 Min Spiel + 15 Min Vorlauf) in UTC (`YYYYMMDDTHHMMSSZ`).
+    - `SUMMARY` = „🏆 {TeamA} vs {TeamB} (Gruppe X)".
+    - `LOCATION` = „{Stadium}, {City}".
+    - `DESCRIPTION` = Sender + Hinweis.
+    - `UID` = match-id.
+  - Erstellt Blob `text/calendar`, triggert Download über versteckten `<a download="match-...ics">`-Klick.
+  - iOS Safari / Android Chrome öffnen `.ics` automatisch im System-Kalender.
+- Ersetzt den bisherigen Toast-Only-Handler im Dashboard-„Zum Kalender hinzufügen"-Button (`src/routes/index.tsx`).
 
-### 4. Missing piece — automated dev validator
-There is no in-app self-test. I'll add one.
+## 5. Wetter-Info entfernen (Match-Detail)
+- In `src/components/match/MatchDetailSheet.tsx`: das Insight-Element „Wetter" entfernen. Grid bleibt 2-spaltig, „Stadion" rückt nach oben links, „Anreise & Transit" bleibt voll-breit.
+- `Cloud`-Icon-Import entfernen.
+- `weatherForecast` im Type `Match` bleibt erhalten (kein Refactor der Daten nötig).
 
-## Plan (single change)
+## 6. Push-Benachrichtigungen zuverlässig (iOS/Android)
+- Web-Push auf iOS funktioniert **nur als installierte PWA** (ab iOS 16.4). Plan:
+  - Service Worker `public/sw.js` registrieren (Notification-Click-Handler).
+  - `public/manifest.webmanifest` ergänzen mit `display: "standalone"`, Icons, Name, Theme-Color.
+  - `<link rel="manifest">` im `__root.tsx` einbinden.
+  - In `src/routes/profil.tsx` beim Aktivieren des Switches:
+    1. `Notification.requestPermission()`.
+    2. Bei `denied` → Toast mit Anleitung (in den Browser-/iOS-Einstellungen erlauben).
+    3. Bei iOS-Browser **außerhalb** der Home-Screen-Installation → Hinweis-Toast: „Auf iPhone: ‚Zum Home-Bildschirm hinzufügen', danach Push aktivieren".
+    4. Service Worker registrieren falls noch nicht.
+  - Lokale Benachrichtigungen (für die 15-Min-Wecker) via `setTimeout` + `registration.showNotification(...)` solange Tab/PWA offen — echtes Server-Push (VAPID) wäre Backend-Arbeit und liegt außerhalb dieses Scopes; das wird im Hinweistext transparent gemacht.
 
-Add `src/lib/scheduleAudit.ts` with `runScheduleAudit()`:
-- Loops all 72 group matches
-- Asserts: id pattern `m-0\d\d`, ISO-8601 Z, `new Date()` valid, required fields non-empty, `MagentaTV` in `broadcasters`, free-TV rule for `m-001/010/033/056`
-- Simulates a mock live payload (`{m-001: {a:1,b:0,status:'live',minute:42}}`), calls `applyLiveUpdate`, reads back from store, asserts merge worked, then `resetMatches()` to roll back
-- Console output: green `✅ SUCCESS: 72/72 matches valid` or red `❌ ERROR …` per failure, grouped
+## 7. Spoiler-Schutz zuverlässig
+- Aktueller Stand: nur `MissedStream` (Dashboard) respektiert `spoilerProtection`.
+- Fix:
+  - `MatchCard` (`hideScore`-Prop): bereits vorhanden → in `spiele.tsx` und `index.tsx` (alle Streams mit `finished`-Spielen) `hideScore={spoiler && match.status === "finished"}` setzen.
+  - `MatchDetailSheet`: falls `match.status === "finished"` und `spoilerProtection` aktiv → Score wird im Sheet ausgeblendet (blur + „Ergebnis aufdecken"-Button lokal im Sheet).
+  - Live-Spiele werden NICHT vom Spoiler-Schutz versteckt (User schaut bewusst zu).
 
-Wire it in `src/routes/__root.tsx` behind `if (import.meta.env.DEV)` inside a `useEffect` so it runs once on app load in dev only — zero impact on production bundle behavior.
+# Technische Details
 
-No data file changes, no removals — current data and logic pass all four audit areas; the only delta is the new validator + one-line dev hook.
+- Keine neuen Dependencies nötig (ICS-Generation und Service Worker handgeschrieben).
+- `AlertDialog` ist bereits via Radix installiert.
+- Memory-Update: keine.
+- Kein DB/API-Touch.
 
-## Summary answers
-1. Static ↔ live merge: **working** (by team-code pair, not match id — that's the existing design since the API doesn't expose FIFA match numbers).
-2. Timezone/date grouping: **flawless** — native Intl, DST-correct, local-day grouping.
-3. Refactors applied during audit: **none required**; the only new code is the optional dev validator described above.
+# Geänderte/neue Dateien
+
+- neu: `src/lib/calendar.ts`
+- neu: `public/sw.js`
+- neu: `public/manifest.webmanifest`
+- bearbeitet: `src/routes/spiele.tsx` (Scroll-Top + Spoiler)
+- bearbeitet: `src/routes/profil.tsx` (Version, Reset, Push-Flow)
+- bearbeitet: `src/routes/index.tsx` (Kalender-Handler + Spoiler in allen Streams)
+- bearbeitet: `src/components/match/MatchDetailSheet.tsx` (Wetter raus, Spoiler im Sheet)
+- bearbeitet: `src/routes/__root.tsx` (Manifest-Link, SW-Registrierung)
+- bearbeitet: `vite.config.ts` (`__APP_VERSION__` define)
+- bearbeitet: `src/vite-env.d.ts` (Typ für `__APP_VERSION__`)
