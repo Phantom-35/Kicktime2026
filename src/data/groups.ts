@@ -15,7 +15,7 @@ export type StandingRow = {
 const MOCK_STATS: Record<string, Partial<StandingRow>> = {};
 
 export function getGroupStandings(group: string): StandingRow[] {
-  return TEAMS.filter((t) => t.group === group)
+  return TEAMS.filter((t) => t.group === group && !t.isPlaceholder)
     .map<StandingRow>((t) => ({
       code: t.code,
       played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0,
