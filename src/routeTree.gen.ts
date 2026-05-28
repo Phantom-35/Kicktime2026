@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TabellenRouteImport } from './routes/tabellen'
-import { Route as SpieleRouteImport } from './routes/spiele'
 import { Route as ProfilRouteImport } from './routes/profil'
 import { Route as BarsRouteImport } from './routes/bars'
 import { Route as IndexRouteImport } from './routes/index'
@@ -18,11 +17,6 @@ import { Route as IndexRouteImport } from './routes/index'
 const TabellenRoute = TabellenRouteImport.update({
   id: '/tabellen',
   path: '/tabellen',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SpieleRoute = SpieleRouteImport.update({
-  id: '/spiele',
-  path: '/spiele',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfilRoute = ProfilRouteImport.update({
@@ -45,14 +39,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bars': typeof BarsRoute
   '/profil': typeof ProfilRoute
-  '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bars': typeof BarsRoute
   '/profil': typeof ProfilRoute
-  '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
 }
 export interface FileRoutesById {
@@ -60,22 +52,20 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/bars': typeof BarsRoute
   '/profil': typeof ProfilRoute
-  '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/bars' | '/profil' | '/spiele' | '/tabellen'
+  fullPaths: '/' | '/bars' | '/profil' | '/tabellen'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bars' | '/profil' | '/spiele' | '/tabellen'
-  id: '__root__' | '/' | '/bars' | '/profil' | '/spiele' | '/tabellen'
+  to: '/' | '/bars' | '/profil' | '/tabellen'
+  id: '__root__' | '/' | '/bars' | '/profil' | '/tabellen'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BarsRoute: typeof BarsRoute
   ProfilRoute: typeof ProfilRoute
-  SpieleRoute: typeof SpieleRoute
   TabellenRoute: typeof TabellenRoute
 }
 
@@ -86,13 +76,6 @@ declare module '@tanstack/react-router' {
       path: '/tabellen'
       fullPath: '/tabellen'
       preLoaderRoute: typeof TabellenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/spiele': {
-      id: '/spiele'
-      path: '/spiele'
-      fullPath: '/spiele'
-      preLoaderRoute: typeof SpieleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profil': {
@@ -123,19 +106,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BarsRoute: BarsRoute,
   ProfilRoute: ProfilRoute,
-  SpieleRoute: SpieleRoute,
   TabellenRoute: TabellenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
