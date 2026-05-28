@@ -16,32 +16,9 @@ import { Search, ArrowUp } from "lucide-react";
 function SpielePage() {
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<Match | null>(null);
-  const [showTop, setShowTop] = useState(false);
   const state = useAppStore();
   const spoiler = useAppStore((s) => s.spoilerProtection);
   const matches = useMatchStore(selectMatchList);
-
-  // Find the scrolling ancestor (the <main> in __root) and listen on it.
-  useEffect(() => {
-    const findScroller = (): HTMLElement | Window => {
-      let el: HTMLElement | null = document.querySelector("main");
-      while (el) {
-        const style = window.getComputedStyle(el);
-        if (/(auto|scroll)/.test(style.overflowY)) return el;
-        el = el.parentElement;
-      }
-      return window;
-    };
-    const scroller = findScroller();
-    const getY = () =>
-      scroller === window
-        ? window.scrollY
-        : (scroller as HTMLElement).scrollTop;
-    const onScroll = () => setShowTop(getY() > 400);
-    onScroll();
-    scroller.addEventListener("scroll", onScroll, { passive: true });
-    return () => scroller.removeEventListener("scroll", onScroll);
-  }, []);
 
   const scrollToTop = () => {
     const main = document.querySelector("main");
@@ -51,6 +28,7 @@ function SpielePage() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
+
 
   const filtered = useMemo(() => {
     const ql = q.trim().toLowerCase();
