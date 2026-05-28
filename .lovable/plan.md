@@ -1,114 +1,63 @@
 ## Ziel
 
-Statischer offizieller WM-2026-Spielplan als JSON in der App, Edge-Function nur noch für Live-Scores. Robuste EN→DE-Übersetzungsschicht, Store seedet aus JSON, Live-Polling matcht per Team-Mapping und triggert Tabellen-Neuberechnung.
+Die App auf den offiziellen FIFA-Spielplan WM 2026 (PDF v17, 10.04.2026) umstellen — alle 104 Matches (72 Gruppe + 32 KO) mit korrekten Zeiten, Stadien und Teams. Die Uhrzeit jedes Nutzers wird automatisch korrekt angezeigt, inkl. Sommer-/Winterzeit-Umstellung.
 
----
+## 1. Daten-Extraktion aus dem PDF
 
-## 1. Statisches Schedule-JSON
+Skript (`scripts/parse_fifa_pdf.ts`, einmalig lokal), das das PDF parst und alle 104 Einträge extrahiert:
+- Match-Nr., Datum, Uhrzeit (ET), Stadt, Stadion, Teams/Slots, Gruppe, Stage
+- Pro Eintrag: `etTimestamp` → `utcTimestamp` via fester ET→UTC-Regel:
+  - Juni/Juli 2026: USA-Ostküste = EDT = UTC−4 → **UTC = ET + 4h**.
+  - Beispiel: Match 6 Vancouver „00:00 ET" am So 14.06 → `2026-06-14T04:00:00Z` (= Sa 21:00 PT lokal Vancouver). ✔
+- KO-Slots als Platzhalter-Codes: `W27`, `W28`, `R32-1`, `R16-1`, `QF1` etc.
 
-**Neu:** `src/data/world_cup_2026_schedule.json` — alle 104 Spiele (72 Gruppenphase + 32 KO).
+Ergebnis: vollständige, regenerierte `src/data/world_cup_2026_schedule.json` (104 Einträge, gleiches Schema wie heute, inkl. `stage`, `matchday`, `hostCountry`, `travelInfo`, `weatherForecast`, `broadcasters`).
 
-Schema pro Eintrag:
-```json
-{
-  "id": "m-001",
-  "teamA": "NED", "teamB": "JPN",
-  "group": "F",
-  "stage": "group",
-  "stadium": "MetLife Stadium",
-  "city": "New York",
-  "hostCountry": "USA",
-  "utcTimestamp": "2026-06-18T20:00:00Z",
-  "broadcaster": "MagentaTV",
-  "travelInfo": "Airport: EWR/JFK, Transit: NJ Transit",
-  "weatherForecast": "Schwül, 28°C"
-}
-```
+## 2. Broadcaster-Regel (unverändert)
 
-- Gruppenphase deckt alle 12 Gruppen A–L × 6 Spiele = 72 Matches ab.
-- KO-Phase (Round of 32, R16, QF, SF, 3rd-place, Final) mit Platzhalter-Codes (`"W-A1"`, `"R32-1"`) + finalem Venue/Datum.
-- Realistische Verteilung über offizielle Host Cities (16 Städte: USA 11, MEX 3, CAN 2) mit passenden Stadien.
-- Broadcaster-Verteilung: ARD/ZDF wechselnd für Free-TV-Highlights, MagentaTV für den Rest (alle 104 Spiele).
-- Travel & Weather pro Host-City zentral kuratiert (z. B. Miami: "Tropisch, 32°C"; Vancouver: "Mild, 22°C"; Mexiko-Stadt: "Mild, 21°C, dünne Luft").
+- `MagentaTV` auf jedem Match (Pay-TV-Rechte komplett).
+- Zusätzlich `ARD` / `ZDF` (alternierend) auf: Eröffnungsspiel, alle GER-Spiele, Halbfinale, Spiel um Platz 3, Finale.
 
-> **Hinweis Genauigkeit:** Der offizielle FIFA-Spielplan ist bekannt (Match-Zeiten/Venues seit Feb 2024 veröffentlicht). Teilnehmer pro Slot werden teils erst nach Qualifikation final — wir verwenden die aktuell bekannten Qualifikanten/Top-Seeds und markieren noch offene Slots klar (z. B. `"AFC-PO1"`). Live-Matching per API-Fixture-ID via Mapping passt das automatisch an, sobald Live-Daten reinkommen.
+## 3. KO-Phase
 
----
+Neu im JSON enthalten: 32 KO-Spiele mit Platzhalter-Team-Codes. Sobald die Live-API echte Namen liefert, wird das Match per `(teamA, teamB)`-Mapping oder Match-Nummer im Store korrigiert (Logik existiert bereits in `services/footballApi.ts`).
 
-## 2. Team-Mapping-Layer
+Anpassung Frontend:
+- `src/data/teams.ts`: KO-Platzhalter-Codes (`W27`, `R16-1`, …) als `isPlaceholder: true` mit Labels wie „Sieger Spiel 27" / „Achtelfinalist 1" ergänzen → werden in `Spiele`-Liste und Detail-Sheet lesbar.
+- `getTeam()` fällt bei unbekannten Codes weich auf den Platzhalter-Namen zurück.
 
-**Neu:** `src/utils/teamMapping.ts`
+## 4. Zeitzonen-Logik (Sommer-/Winterzeit-sicher)
 
-```ts
-export type TeamMapping = {
-  code: string;        // "NED"
-  germanName: string;  // "Niederlande"
-  aliases: string[];   // ["Netherlands", "Holland"]
-};
+Bereits korrekt: `src/lib/time.ts` nutzt `Intl.DateTimeFormat` ohne `timeZone`-Override → der Browser/das OS rechnet die UTC-`Z`-Stempel automatisch in die Nutzer-Zone inkl. DST um. Für Deutschland: Juni/Juli = CEST = UTC+2.
 
-export const TEAM_MAPPINGS: TeamMapping[] = [ ... 48 Einträge ... ];
+Verifikation (Smoke-Tests im Plan-Skript):
+- Eröffnungsspiel MEX vs. Sieger Slot A2, Estadio Azteca, Do 11.06.2026 — laut PDF 19:00 ET → `2026-06-11T23:00:00Z` → Berlin: **Fr 12.06., 01:00 Uhr** (Sommerzeit).
+- Finale MetLife Stadium, So 19.07.2026, 15:00 ET → `2026-07-19T19:00:00Z` → Berlin: **21:00 Uhr**.
 
-// Lookup-Index (lowercase) wird einmal gebaut
-export function apiNameToCode(name: string): string | null;
-export function codeToGermanName(code: string): string;
-```
+Kein Code-Change an `time.ts` nötig. Vorhandene `userTimezone`-Reste in `MatchCard` / `MatchDetailSheet` / Routen werden als unbenutzte Argumente belassen (Signatur bleibt rückwärtskompatibel).
 
-- Aliase decken bekannte API-Football-Varianten ab: "United States"/"USA", "Netherlands"/"Holland", "Ivory Coast"/"Côte d'Ivoire", "Saudi Arabia"/"KSA", "Korea Republic"/"South Korea", "IR Iran"/"Iran", "Czechia"/"Czech Republic", "Türkiye"/"Turkey", "Cape Verde"/"Cabo Verde" usw.
-- Fallback: unbekannter Name → `console.warn("[teamMapping] unmapped:", name)` und Rückgabe `null`; aufrufender Code überspringt das Fixture, App bleibt stabil.
-- `src/data/teams.ts` wird mit `germanName` aus dem Mapping rückwärts-validiert (Build-Time-Konsistenz-Check als Kommentar/Test, kein Hard-Fail).
+## 5. Cleanup & Verifikation
 
----
+- `world_cup_2026_schedule.json` komplett regeneriert (104 Einträge, kein manuelles Edit).
+- Im Preview: Spiele-Tab zeigt 104 Einträge, gruppiert nach lokalem Tag; Tabellen-Tab zeigt 12 Gruppen mit 0:0:0; KO-Phase ist als separate Sektion sichtbar.
+- 3 Stichproben gegen das PDF: Match 1 (MEX, Eröffnung), Match 50 (GER-Spiel falls vorhanden), Match 104 (Finale).
+- TypeScript-Build grün.
 
-## 3. Store seeded aus JSON
+## Technische Details
 
-`src/store/match-store.ts` Änderungen:
+**ET→UTC Regel (Juni/Juli 2026):**
+ET im Juni/Juli ist immer EDT (UTC−4), da die US-DST von März bis November läuft. Es gibt im Turnier-Zeitraum keinen Wechsel — eine einzige `+4h`-Konstante reicht. Die Browser-seitige Rückumrechnung in die Nutzer-Zone übernimmt `Intl` und respektiert sowohl EU-Sommerzeit-Ende (Okt) als auch jede andere Zone weltweit.
 
-- `import schedule from "@/data/world_cup_2026_schedule.json"` (TanStack/Vite unterstützt JSON-Imports nativ).
-- `seed()` mappt JSON-Einträge → `RuntimeMatch` (`status: "scheduled"`).
-- `MATCHES`-Array in `src/data/matches.ts` entfällt; `Match`-Typ bleibt exportiert und wird angepasst:
-  - Neue Felder: `stage`, optional `travelInfo` (ersetzt die zwei `travelDistanceTeamA/B`-Felder, weil API/JSON keine Distanzen liefern und das UI eh nur Travel-Tipp anzeigt).
-- `getLocalParts(utcTimestamp, "Europe/Berlin")` bleibt unverändert — JSON-UTC fließt unverändert durch, NED vs JPN 20:00Z = 22:00 Berlin (CEST) ✔.
-- `MatchCard` und `MatchDetailSheet` lesen weiter aus Store/`Match`-Typ; minimaler UI-Patch: `travelDistanceTeamA/B` → `travelInfo` (an den 1–2 Stellen, wo sie heute gerendert werden — Detail-Sheet).
+**Dateien, die geändert werden:**
+- `src/data/world_cup_2026_schedule.json` — vollständig neu generiert (104 Matches)
+- `src/data/teams.ts` — KO-Platzhalter ergänzen
+- `scripts/parse_fifa_pdf.ts` — neues einmaliges Build-Skript (nicht im App-Bundle)
 
----
-
-## 4. Live-API-Polling via Team-Mapping
-
-`src/services/footballApi.ts`:
-
-- `normalize()` nutzt `apiNameToCode()` aus dem neuen Mapping (ersetzt lokalen `nameIndex`).
-- `applyLiveFixturesToStore()`:
-  1. Übersetzt eingehende EN-Namen → Codes (oder skip + warn).
-  2. Findet Match im Store via `(teamA, teamB)`-Paar (richtungsunabhängig).
-  3. Ruft `applyLiveUpdate(id, { liveScore, matchMinute, status })` auf.
-  4. Bei `status === "finished"` zusätzlich `finishMatch(id, finalScore)`, damit `score` final gesetzt wird.
-- Tabellen: `calculateTableStandings` in `src/lib/standings.ts` liest bereits aus Store-Matches + `liveScores` — wird durch Zustand-Subscription automatisch reaktiv aktualisiert (kein Code-Change nötig).
-- `useLiveApi.ts` Polling-Loop bleibt strukturell gleich; nur die Mapping-Quelle ändert sich.
-
----
-
-## 5. Edge-Function
-
-Keine Änderung. `fetch-live-scores` bleibt mit `?live=all` (während WM relevant — vorher Dev-Simulator). Optional: `?league=1&season=2026&live=all` für Pre-Filter — aber `live=all` ist robuster gegenüber Saison-Mapping-Drift in der API.
-
----
-
-## 6. Cleanup & Verifikation
-
-- `MATCHES`-Array löschen, alle Imports umstellen (Store ist Single Source of Truth).
-- Lokaler `nameIndex` aus `footballApi.ts` raus.
-- TypeScript-Build muss grün sein.
-- Manuelle Checks im Preview:
-  - Spiele-Tab zeigt 104 Einträge, gruppiert, korrekte Berlin-Zeiten.
-  - NED vs JPN: 18.06.2026, 22:00 Uhr, MetLife Stadium, MagentaTV ✔.
-  - Tabellen-Tab: alle 12 Gruppen sichtbar, 0:0:0.
-  - Detail-Sheet zeigt Travel-Info + Wetter.
-  - Dev-Simulator (Profil) triggert Live-Status + Tabellen-Update.
-
----
+**Dateien, die unverändert bleiben:**
+- `src/lib/time.ts` (bereits DST-korrekt)
+- `src/store/match-store.ts`, `src/services/footballApi.ts`, `MatchCard`, `MatchDetailSheet`
 
 ## Risiken
 
-- **Spielplan-Genauigkeit:** Einige Teilnehmer (interkontinentale Playoffs) stehen noch nicht final fest. JSON markiert diese Slots explizit, Live-Matching pro Fixture-ID-Äquivalent (Team-Paar) korrigiert sich automatisch sobald die API echte Namen liefert.
-- **JSON-Größe:** ~104 Einträge × ~250 B ≈ 30 KB — unkritisch im Bundle.
-- **Mapping-Lücken:** Werden als Warnings sichtbar, App crasht nicht.
+- KO-Slot-Namen sind Platzhalter bis Qualifikation/Auslosung final ist — Live-API überschreibt das automatisch.
+- Falls das PDF Spalten enthält, die das Parser-Skript nicht sauber liest, fallen einzelne Matches als „?" auf — wir verifizieren nach dem Lauf eine Match-Count-Summe (= 104) und eine pro-Stadt-Summe gegen das PDF.
