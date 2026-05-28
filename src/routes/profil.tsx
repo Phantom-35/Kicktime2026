@@ -3,12 +3,27 @@ import { useAppStore } from "@/store/app-store";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { formatHourLabel } from "@/lib/time";
 import { REAL_TEAMS as TEAMS } from "@/data/teams";
+import { detectPushSupport, requestPushPermission } from "@/lib/notifications";
 
 import { toast } from "sonner";
-import { RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, FlaskConical, Cloud } from "lucide-react";
+import {
+  RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, FlaskConical, Cloud, Trash2,
+} from "lucide-react";
 
+const APP_VERSION = "1.2.0";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
@@ -110,20 +125,46 @@ function ProfilPage() {
           <Switch
             checked={s.pushEnabled}
             onCheckedChange={async (v) => {
-              s.setPushEnabled(v);
-              if (v) {
-                try {
-                  if (typeof Notification !== "undefined" && Notification.permission !== "granted") {
-                    await Notification.requestPermission();
-                  }
-                } catch { /* noop */ }
-                toast.success("Push aktiviert", { description: "Wir wecken dich rechtzeitig." });
-              } else {
+              if (!v) {
+                s.setPushEnabled(false);
                 toast("Push deaktiviert");
+                return;
+              }
+              const support = detectPushSupport();
+              if (support === "unsupported") {
+                toast.error("Push nicht unterstützt", {
+                  description: "Dein Browser unterstützt keine Web-Benachrichtigungen.",
+                });
+                return;
+              }
+              if (support === "ios-needs-pwa") {
+                toast.error("Auf dem iPhone zuerst zum Home-Bildschirm hinzufügen", {
+                  description:
+                    "Safari → Teilen → 'Zum Home-Bildschirm'. Push funktioniert nur in der installierten App.",
+                  duration: 8000,
+                });
+                return;
+              }
+              const result = await requestPushPermission();
+              if (result === "granted") {
+                s.setPushEnabled(true);
+                toast.success("Push aktiviert", {
+                  description: "Wir wecken dich rechtzeitig vor Anpfiff.",
+                });
+              } else if (result === "denied") {
+                toast.error("Berechtigung verweigert", {
+                  description: "Erlaube Benachrichtigungen in den Browser-Einstellungen.",
+                  duration: 7000,
+                });
+              } else {
+                toast("Berechtigung ausstehend");
               }
             }}
           />
         </div>
+        <p className="mt-2 text-[10px] text-muted-foreground leading-relaxed">
+          iPhone: nur als installierte App (iOS 16.4+). Android/Desktop: direkt im Browser.
+        </p>
       </Card>
 
       <Card icon={<FlaskConical className="h-4 w-4" />} title="Entwickler-Modus: Live-Daten simulieren">
@@ -153,13 +194,10 @@ function ProfilPage() {
             hinterlegt – nie im App-Bundle.
           </p>
         </div>
-
       </Card>
 
-
-
       <Button
-        variant="destructive"
+        variant="outline"
         className="w-full h-12"
         onClick={() => {
           s.resetOnboarding();
@@ -169,8 +207,60 @@ function ProfilPage() {
         <RotateCcw className="h-4 w-4 mr-2" /> Onboarding zurücksetzen
       </Button>
 
+      {/* Danger zone: full data wipe */}
+      <Card icon={<Trash2 className="h-4 w-4" />} title="Alle Daten löschen">
+        <p className="text-xs text-muted-foreground mb-3">
+          Setzt die App vollständig zurück: Favoriten, Wecker, Einstellungen und
+          Onboarding-Status werden entfernt.
+        </p>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" className="w-full h-11">
+              <Trash2 className="h-4 w-4 mr-2" /> Alle Daten löschen
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Wirklich alle Daten löschen?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Diese Aktion kann nicht rückgängig gemacht werden. Alle Favoriten,
+                Wecker und Einstellungen gehen verloren.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  try {
+                    // Zustand persist key + any other app keys
+                    localStorage.removeItem("kicktime-2026");
+                    // Sweep any other lovable/app keys defensively
+                    Object.keys(localStorage)
+                      .filter((k) => k.startsWith("kicktime"))
+                      .forEach((k) => localStorage.removeItem(k));
+                    sessionStorage.clear();
+                  } catch {
+                    /* noop */
+                  }
+                  toast.success("Alle Daten gelöscht", {
+                    description: "Du kannst die App jetzt komplett neu verwenden.",
+                  });
+                  setTimeout(() => window.location.reload(), 900);
+                }}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Ja, alles löschen
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Card>
+
       <p className="text-center text-[10px] text-muted-foreground pt-2">
         KickTime 2026 · Made for football nerds 🇩🇪
+      </p>
+      <p className="text-center text-[10px] text-muted-foreground/70 -mt-3">
+        Version {APP_VERSION}
       </p>
     </div>
   );

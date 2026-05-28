@@ -13,6 +13,7 @@ import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { toast } from "sonner";
 import { CalendarPlus, BellRing, Play, Sparkles } from "lucide-react";
+import { addMatchToCalendar } from "@/lib/calendar";
 
 export const Route = createFileRoute("/")({ component: Dashboard });
 
@@ -65,9 +66,14 @@ function Dashboard() {
                   className="w-full"
                   onClick={(e) => {
                     e.stopPropagation();
-                    toast.success("Zum Kalender hinzugefügt", {
-                      description: `${getLocalParts(m.utcTimestamp).fullStr}`,
-                    });
+                    try {
+                      addMatchToCalendar(m);
+                      toast.success("Kalender wird geöffnet…", {
+                        description: getLocalParts(m.utcTimestamp).fullStr,
+                      });
+                    } catch {
+                      toast.error("Konnte Kalender nicht öffnen");
+                    }
                   }}
                 >
                   <CalendarPlus className="h-4 w-4 mr-1.5" /> Zum Kalender hinzufügen
