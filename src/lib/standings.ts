@@ -26,7 +26,7 @@ export function calculateTableStandings(
   matches: Match[],
   liveScores: LiveScores = {}
 ): StandingRow[] {
-  const teams = TEAMS.filter((t) => t.group === group);
+  const teams = TEAMS.filter((t) => t.group === group && !t.isPlaceholder);
   const rows: Record<string, StandingRow> = {};
   for (const t of teams) {
     rows[t.code] = {
