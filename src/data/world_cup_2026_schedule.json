@@ -1,1374 +1,1988 @@
 [
   {
-    "id": "m1",
-    "teamA": "MEX",
-    "teamB": "RSA",
-    "group": "A",
+    "id": "m-001",
+    "match": 1,
     "stage": "group",
     "matchday": 1,
+    "group": "A",
+    "teamA": "MEX",
+    "teamB": "RSA",
     "stadium": "Estadio Azteca",
     "city": "Mexiko-Stadt",
     "hostCountry": "MEX",
-    "utcTimestamp": "2026-06-11T16:00:00Z",
+    "utcTimestamp": "2026-06-11T19:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV",
       "ARD"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MEX · Metro Línea 5",
-    "weatherForecast": "Mild, 21°C, Höhenluft"
+    "travelInfo": "Flughafen MEX, Metro Linie 2",
+    "weatherForecast": "Mild, ~21°C, dünne Höhenluft (2250 m)."
   },
   {
-    "id": "m2",
+    "id": "m-002",
+    "match": 2,
+    "stage": "group",
+    "matchday": 2,
+    "group": "A",
     "teamA": "KOR",
     "teamB": "CZE",
-    "group": "A",
-    "stage": "group",
-    "matchday": 1,
     "stadium": "Estadio Akron",
     "city": "Guadalajara",
     "hostCountry": "MEX",
-    "utcTimestamp": "2026-06-11T20:00:00Z",
+    "utcTimestamp": "2026-06-12T02:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: GDL · Mietwagen empfohlen",
-    "weatherForecast": "Warm, 26°C, Höhenklima"
+    "travelInfo": "Flughafen GDL, Tren Ligero",
+    "weatherForecast": "Warm, ~28°C, abends Schauer möglich."
   },
   {
-    "id": "m3",
+    "id": "m-003",
+    "match": 3,
+    "stage": "group",
+    "matchday": 3,
+    "group": "B",
     "teamA": "CAN",
     "teamB": "BIH",
-    "group": "B",
-    "stage": "group",
-    "matchday": 1,
     "stadium": "BMO Field",
     "city": "Toronto",
     "hostCountry": "CAN",
-    "utcTimestamp": "2026-06-12T18:00:00Z",
+    "utcTimestamp": "2026-06-12T19:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: YYZ · UP Express",
-    "weatherForecast": "Mild, 22°C, Brise"
+    "travelInfo": "Flughafen YYZ, UP Express & TTC",
+    "weatherForecast": "Mild, ~25°C, gelegentlich windig."
   },
   {
-    "id": "m4",
+    "id": "m-004",
+    "match": 4,
+    "stage": "group",
+    "matchday": 4,
+    "group": "D",
     "teamA": "USA",
     "teamB": "PAR",
-    "group": "D",
-    "stage": "group",
-    "matchday": 1,
     "stadium": "SoFi Stadium",
-    "city": "Los Angeles",
+    "city": "Inglewood",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-12T22:00:00Z",
+    "utcTimestamp": "2026-06-13T01:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: LAX · Shuttle",
-    "weatherForecast": "Warm, 26°C, sonnig"
+    "travelInfo": "Flughafen LAX, Metro K Line",
+    "weatherForecast": "Warm & trocken, ~28°C."
   },
   {
-    "id": "m5",
-    "teamA": "HAI",
-    "teamB": "SCO",
-    "group": "C",
+    "id": "m-006",
+    "match": 6,
     "stage": "group",
-    "matchday": 1,
-    "stadium": "Gillette Stadium",
-    "city": "Boston",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-13T15:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: BOS · Commuter Rail",
-    "weatherForecast": "Warm, 25°C, schwül"
-  },
-  {
-    "id": "m6",
+    "matchday": 6,
+    "group": "D",
     "teamA": "AUS",
     "teamB": "TUR",
-    "group": "D",
-    "stage": "group",
-    "matchday": 1,
     "stadium": "BC Place",
     "city": "Vancouver",
     "hostCountry": "CAN",
-    "utcTimestamp": "2026-06-13T18:00:00Z",
+    "utcTimestamp": "2026-06-13T04:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: YVR · SkyTrain",
-    "weatherForecast": "Kühl, 20°C, gelegentlicher Regen"
+    "travelInfo": "Flughafen YVR, SkyTrain Canada Line",
+    "weatherForecast": "Mild, ~22°C. Pazifikküste, oft bewölkt."
   },
   {
-    "id": "m7",
-    "teamA": "BRA",
-    "teamB": "MAR",
-    "group": "C",
+    "id": "m-008",
+    "match": 8,
     "stage": "group",
-    "matchday": 1,
-    "stadium": "MetLife Stadium",
-    "city": "New York/New Jersey",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-13T21:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: EWR · NJ Transit",
-    "weatherForecast": "Warm, 27°C, schwül"
-  },
-  {
-    "id": "m8",
+    "matchday": 8,
+    "group": "B",
     "teamA": "QAT",
     "teamB": "SUI",
-    "group": "B",
-    "stage": "group",
-    "matchday": 1,
-    "stadium": "Levi’s Stadium",
-    "city": "San Francisco",
+    "stadium": "Levi's Stadium",
+    "city": "Santa Clara",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-13T23:59:00Z",
+    "utcTimestamp": "2026-06-13T19:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: SJC · VTA Light Rail",
-    "weatherForecast": "Mild, 24°C, sonnig"
+    "travelInfo": "Flughafen SFO/SJC, Caltrain & VTA",
+    "weatherForecast": "Mild, ~24°C. Sonnig, abends frisch."
   },
   {
-    "id": "m9",
-    "teamA": "CIV",
-    "teamB": "ECU",
+    "id": "m-007",
+    "match": 7,
+    "stage": "group",
+    "matchday": 7,
+    "group": "C",
+    "teamA": "BRA",
+    "teamB": "MAR",
+    "stadium": "MetLife Stadium",
+    "city": "East Rutherford",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-13T22:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughäfen EWR/JFK/LGA, NJ Transit",
+    "weatherForecast": "Warm, ~28°C, manchmal Gewitter."
+  },
+  {
+    "id": "m-005",
+    "match": 5,
+    "stage": "group",
+    "matchday": 5,
+    "group": "C",
+    "teamA": "HAI",
+    "teamB": "SCO",
+    "stadium": "Gillette Stadium",
+    "city": "Foxborough",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-14T01:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen BOS, MBTA Commuter Rail",
+    "weatherForecast": "Warm, ~26°C, abends frisch."
+  },
+  {
+    "id": "m-010",
+    "match": 10,
+    "stage": "group",
+    "matchday": 10,
     "group": "E",
-    "stage": "group",
-    "matchday": 1,
-    "stadium": "Lincoln Financial Field",
-    "city": "Philadelphia",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-14T15:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: PHL · SEPTA Linie",
-    "weatherForecast": "Warm, 28°C, schwül"
-  },
-  {
-    "id": "m10",
     "teamA": "GER",
     "teamB": "CUW",
-    "group": "E",
-    "stage": "group",
-    "matchday": 1,
     "stadium": "NRG Stadium",
     "city": "Houston",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-14T18:00:00Z",
+    "utcTimestamp": "2026-06-14T17:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV",
       "ARD"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: IAH · Metro Red Line",
-    "weatherForecast": "Sehr heiß, 33°C, schwül"
+    "travelInfo": "Flughafen IAH/HOU, MetroRail Red Line",
+    "weatherForecast": "Schwül, ~33°C, hohe Luftfeuchtigkeit."
   },
   {
-    "id": "m11",
+    "id": "m-011",
+    "match": 11,
+    "stage": "group",
+    "matchday": 11,
+    "group": "F",
     "teamA": "NED",
     "teamB": "JPN",
-    "group": "F",
-    "stage": "group",
-    "matchday": 1,
     "stadium": "AT&T Stadium",
-    "city": "Dallas",
+    "city": "Arlington",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-14T21:00:00Z",
+    "utcTimestamp": "2026-06-14T20:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: DFW · DART",
-    "weatherForecast": "Sehr heiß, 34°C, trocken"
+    "travelInfo": "Flughafen DFW, TRE & Trinity Metro",
+    "weatherForecast": "Sehr heiß, ~35°C."
   },
   {
-    "id": "m12",
-    "teamA": "SWE",
-    "teamB": "TUN",
-    "group": "F",
+    "id": "m-009",
+    "match": 9,
     "stage": "group",
-    "matchday": 1,
-    "stadium": "Estadio BBVA",
-    "city": "Monterrey",
-    "hostCountry": "MEX",
-    "utcTimestamp": "2026-06-14T23:59:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MTY · Uber/Taxi",
-    "weatherForecast": "Heiß, 30°C, trocken"
-  },
-  {
-    "id": "m13",
-    "teamA": "ESP",
-    "teamB": "CPV",
-    "group": "H",
-    "stage": "group",
-    "matchday": 1,
-    "stadium": "AT&T Stadium",
-    "city": "Dallas",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-15T15:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: DFW · DART",
-    "weatherForecast": "Sehr heiß, 34°C, trocken"
-  },
-  {
-    "id": "m14",
-    "teamA": "FRA",
-    "teamB": "SEN",
-    "group": "I",
-    "stage": "group",
-    "matchday": 1,
-    "stadium": "MetLife Stadium",
-    "city": "New York/New Jersey",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-15T18:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: EWR · NJ Transit",
-    "weatherForecast": "Warm, 27°C, schwül"
-  },
-  {
-    "id": "m15",
-    "teamA": "KSA",
-    "teamB": "URU",
-    "group": "H",
-    "stage": "group",
-    "matchday": 1,
+    "matchday": 9,
+    "group": "E",
+    "teamA": "CIV",
+    "teamB": "ECU",
     "stadium": "Lincoln Financial Field",
     "city": "Philadelphia",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-15T21:00:00Z",
+    "utcTimestamp": "2026-06-14T23:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: PHL · SEPTA Linie",
-    "weatherForecast": "Warm, 28°C, schwül"
+    "travelInfo": "Flughafen PHL, SEPTA Broad Street Line",
+    "weatherForecast": "Warm & schwül, ~30°C."
   },
   {
-    "id": "m16",
-    "teamA": "IRQ",
-    "teamB": "NOR",
-    "group": "I",
+    "id": "m-012",
+    "match": 12,
     "stage": "group",
-    "matchday": 1,
-    "stadium": "Lumen Field",
-    "city": "Seattle",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-15T23:59:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: SEA · Link Light Rail",
-    "weatherForecast": "Mild, 22°C, mild"
-  },
-  {
-    "id": "m17",
-    "teamA": "ARG",
-    "teamB": "ALG",
-    "group": "J",
-    "stage": "group",
-    "matchday": 1,
-    "stadium": "Arrowhead Stadium",
-    "city": "Kansas City",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-16T15:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MCI · Bus / Mietwagen",
-    "weatherForecast": "Heiß, 30°C, schwül"
-  },
-  {
-    "id": "m18",
-    "teamA": "POR",
-    "teamB": "COD",
-    "group": "K",
-    "stage": "group",
-    "matchday": 1,
-    "stadium": "Levi’s Stadium",
-    "city": "San Francisco",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-16T18:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: SJC · VTA Light Rail",
-    "weatherForecast": "Mild, 24°C, sonnig"
-  },
-  {
-    "id": "m19",
-    "teamA": "AUT",
-    "teamB": "JOR",
-    "group": "J",
-    "stage": "group",
-    "matchday": 1,
-    "stadium": "BC Place",
-    "city": "Vancouver",
-    "hostCountry": "CAN",
-    "utcTimestamp": "2026-06-16T21:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: YVR · SkyTrain",
-    "weatherForecast": "Kühl, 20°C, gelegentlicher Regen"
-  },
-  {
-    "id": "m20",
-    "teamA": "UZB",
-    "teamB": "COL",
-    "group": "K",
-    "stage": "group",
-    "matchday": 1,
-    "stadium": "Lumen Field",
-    "city": "Seattle",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-16T23:59:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: SEA · Link Light Rail",
-    "weatherForecast": "Mild, 22°C, mild"
-  },
-  {
-    "id": "m21",
-    "teamA": "ENG",
-    "teamB": "CRO",
-    "group": "L",
-    "stage": "group",
-    "matchday": 1,
-    "stadium": "Gillette Stadium",
-    "city": "Boston",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-17T15:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: BOS · Commuter Rail",
-    "weatherForecast": "Warm, 25°C, schwül"
-  },
-  {
-    "id": "m22",
-    "teamA": "BEL",
-    "teamB": "EGY",
-    "group": "G",
-    "stage": "group",
-    "matchday": 1,
-    "stadium": "Hard Rock Stadium",
-    "city": "Miami",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-17T18:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MIA · Metrorail",
-    "weatherForecast": "Heiß, 31°C, tropisch"
-  },
-  {
-    "id": "m23",
-    "teamA": "IRN",
-    "teamB": "NZL",
-    "group": "G",
-    "stage": "group",
-    "matchday": 1,
-    "stadium": "Mercedes-Benz Stadium",
-    "city": "Atlanta",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-17T21:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 29°C, schwül"
-  },
-  {
-    "id": "m24",
-    "teamA": "GHA",
-    "teamB": "PAN",
-    "group": "L",
-    "stage": "group",
-    "matchday": 1,
+    "matchday": 12,
+    "group": "F",
+    "teamA": "SWE",
+    "teamB": "TUN",
     "stadium": "Estadio BBVA",
     "city": "Monterrey",
     "hostCountry": "MEX",
-    "utcTimestamp": "2026-06-17T23:59:00Z",
+    "utcTimestamp": "2026-06-15T02:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MTY · Uber/Taxi",
-    "weatherForecast": "Heiß, 30°C, trocken"
+    "travelInfo": "Flughafen MTY, Metrorrey",
+    "weatherForecast": "Heiß & trocken, ~33°C."
   },
   {
-    "id": "m25",
-    "teamA": "MEX",
-    "teamB": "KOR",
-    "group": "A",
+    "id": "m-014",
+    "match": 14,
     "stage": "group",
-    "matchday": 2,
+    "matchday": 14,
+    "group": "H",
+    "teamA": "ESP",
+    "teamB": "CPV",
+    "stadium": "Mercedes-Benz Stadium",
+    "city": "Atlanta",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-15T16:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen ATL, MARTA Red/Gold Line",
+    "weatherForecast": "Schwül, ~31°C, Nachmittagsschauer."
+  },
+  {
+    "id": "m-016",
+    "match": 16,
+    "stage": "group",
+    "matchday": 16,
+    "group": "G",
+    "teamA": "BEL",
+    "teamB": "EGY",
+    "stadium": "Lumen Field",
+    "city": "Seattle",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-15T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen SEA, Link Light Rail",
+    "weatherForecast": "Mild, ~22°C. Gelegentlich Regen."
+  },
+  {
+    "id": "m-013",
+    "match": 13,
+    "stage": "group",
+    "matchday": 13,
+    "group": "H",
+    "teamA": "KSA",
+    "teamB": "URU",
+    "stadium": "Hard Rock Stadium",
+    "city": "Miami",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-15T22:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MIA, Tri-Rail & Metrorail",
+    "weatherForecast": "Tropisch, ~32°C, kurze Schauer."
+  },
+  {
+    "id": "m-015",
+    "match": 15,
+    "stage": "group",
+    "matchday": 15,
+    "group": "G",
+    "teamA": "IRN",
+    "teamB": "NZL",
+    "stadium": "SoFi Stadium",
+    "city": "Inglewood",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-16T01:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen LAX, Metro K Line",
+    "weatherForecast": "Warm & trocken, ~28°C."
+  },
+  {
+    "id": "m-020",
+    "match": 20,
+    "stage": "group",
+    "matchday": 20,
+    "group": "J",
+    "teamA": "AUT",
+    "teamB": "JOR",
+    "stadium": "Levi's Stadium",
+    "city": "Santa Clara",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-16T04:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen SFO/SJC, Caltrain & VTA",
+    "weatherForecast": "Mild, ~24°C. Sonnig, abends frisch."
+  },
+  {
+    "id": "m-017",
+    "match": 17,
+    "stage": "group",
+    "matchday": 17,
+    "group": "I",
+    "teamA": "FRA",
+    "teamB": "SEN",
+    "stadium": "MetLife Stadium",
+    "city": "East Rutherford",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-16T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughäfen EWR/JFK/LGA, NJ Transit",
+    "weatherForecast": "Warm, ~28°C, manchmal Gewitter."
+  },
+  {
+    "id": "m-018",
+    "match": 18,
+    "stage": "group",
+    "matchday": 18,
+    "group": "I",
+    "teamA": "IRQ",
+    "teamB": "NOR",
+    "stadium": "Gillette Stadium",
+    "city": "Foxborough",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-16T22:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen BOS, MBTA Commuter Rail",
+    "weatherForecast": "Warm, ~26°C, abends frisch."
+  },
+  {
+    "id": "m-019",
+    "match": 19,
+    "stage": "group",
+    "matchday": 19,
+    "group": "J",
+    "teamA": "ARG",
+    "teamB": "ALG",
+    "stadium": "Arrowhead Stadium",
+    "city": "Kansas City",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-17T01:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MCI, KC Streetcar",
+    "weatherForecast": "Warm & schwül, ~30°C, Gewitter möglich."
+  },
+  {
+    "id": "m-023",
+    "match": 23,
+    "stage": "group",
+    "matchday": 23,
+    "group": "K",
+    "teamA": "POR",
+    "teamB": "COD",
+    "stadium": "NRG Stadium",
+    "city": "Houston",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-17T17:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen IAH/HOU, MetroRail Red Line",
+    "weatherForecast": "Schwül, ~33°C, hohe Luftfeuchtigkeit."
+  },
+  {
+    "id": "m-022",
+    "match": 22,
+    "stage": "group",
+    "matchday": 22,
+    "group": "L",
+    "teamA": "ENG",
+    "teamB": "CRO",
+    "stadium": "AT&T Stadium",
+    "city": "Arlington",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-17T20:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen DFW, TRE & Trinity Metro",
+    "weatherForecast": "Sehr heiß, ~35°C."
+  },
+  {
+    "id": "m-021",
+    "match": 21,
+    "stage": "group",
+    "matchday": 21,
+    "group": "L",
+    "teamA": "GHA",
+    "teamB": "PAN",
+    "stadium": "BMO Field",
+    "city": "Toronto",
+    "hostCountry": "CAN",
+    "utcTimestamp": "2026-06-17T23:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen YYZ, UP Express & TTC",
+    "weatherForecast": "Mild, ~25°C, gelegentlich windig."
+  },
+  {
+    "id": "m-024",
+    "match": 24,
+    "stage": "group",
+    "matchday": 24,
+    "group": "K",
+    "teamA": "UZB",
+    "teamB": "COL",
     "stadium": "Estadio Azteca",
     "city": "Mexiko-Stadt",
     "hostCountry": "MEX",
-    "utcTimestamp": "2026-06-18T15:00:00Z",
+    "utcTimestamp": "2026-06-18T02:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MEX · Metro Línea 5",
-    "weatherForecast": "Mild, 21°C, Höhenluft"
+    "travelInfo": "Flughafen MEX, Metro Linie 2",
+    "weatherForecast": "Mild, ~21°C, dünne Höhenluft (2250 m)."
   },
   {
-    "id": "m26",
+    "id": "m-025",
+    "match": 25,
+    "stage": "group",
+    "matchday": 25,
+    "group": "A",
     "teamA": "CZE",
     "teamB": "RSA",
-    "group": "A",
-    "stage": "group",
-    "matchday": 2,
     "stadium": "Mercedes-Benz Stadium",
     "city": "Atlanta",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-18T18:00:00Z",
+    "utcTimestamp": "2026-06-18T16:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 29°C, schwül"
+    "travelInfo": "Flughafen ATL, MARTA Red/Gold Line",
+    "weatherForecast": "Schwül, ~31°C, Nachmittagsschauer."
   },
   {
-    "id": "m27",
-    "teamA": "CAN",
-    "teamB": "QAT",
-    "group": "B",
+    "id": "m-026",
+    "match": 26,
     "stage": "group",
-    "matchday": 2,
-    "stadium": "BMO Field",
-    "city": "Toronto",
-    "hostCountry": "CAN",
-    "utcTimestamp": "2026-06-18T21:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: YYZ · UP Express",
-    "weatherForecast": "Mild, 22°C, Brise"
-  },
-  {
-    "id": "m28",
+    "matchday": 26,
+    "group": "B",
     "teamA": "SUI",
     "teamB": "BIH",
+    "stadium": "SoFi Stadium",
+    "city": "Inglewood",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-18T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen LAX, Metro K Line",
+    "weatherForecast": "Warm & trocken, ~28°C."
+  },
+  {
+    "id": "m-027",
+    "match": 27,
+    "stage": "group",
+    "matchday": 27,
     "group": "B",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "Lincoln Financial Field",
-    "city": "Philadelphia",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-18T23:59:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: PHL · SEPTA Linie",
-    "weatherForecast": "Warm, 28°C, schwül"
-  },
-  {
-    "id": "m29",
-    "teamA": "BRA",
-    "teamB": "HAI",
-    "group": "C",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "Hard Rock Stadium",
-    "city": "Miami",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-19T15:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MIA · Metrorail",
-    "weatherForecast": "Heiß, 31°C, tropisch"
-  },
-  {
-    "id": "m30",
-    "teamA": "SCO",
-    "teamB": "MAR",
-    "group": "C",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "NRG Stadium",
-    "city": "Houston",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-19T18:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: IAH · Metro Red Line",
-    "weatherForecast": "Sehr heiß, 33°C, schwül"
-  },
-  {
-    "id": "m31",
-    "teamA": "USA",
-    "teamB": "TUR",
-    "group": "D",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "Levi’s Stadium",
-    "city": "San Francisco",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-19T21:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: SJC · VTA Light Rail",
-    "weatherForecast": "Mild, 24°C, sonnig"
-  },
-  {
-    "id": "m32",
-    "teamA": "AUS",
-    "teamB": "PAR",
-    "group": "D",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "Gillette Stadium",
-    "city": "Boston",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-19T23:59:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: BOS · Commuter Rail",
-    "weatherForecast": "Warm, 25°C, schwül"
-  },
-  {
-    "id": "m33",
-    "teamA": "GER",
-    "teamB": "CIV",
-    "group": "E",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "Lincoln Financial Field",
-    "city": "Philadelphia",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-20T15:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV",
-      "ARD"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: PHL · SEPTA Linie",
-    "weatherForecast": "Warm, 28°C, schwül"
-  },
-  {
-    "id": "m34",
-    "teamA": "ECU",
-    "teamB": "CUW",
-    "group": "E",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "Levi’s Stadium",
-    "city": "San Francisco",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-20T18:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: SJC · VTA Light Rail",
-    "weatherForecast": "Mild, 24°C, sonnig"
-  },
-  {
-    "id": "m35",
-    "teamA": "NED",
-    "teamB": "SWE",
-    "group": "F",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "BMO Field",
-    "city": "Toronto",
-    "hostCountry": "CAN",
-    "utcTimestamp": "2026-06-20T21:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: YYZ · UP Express",
-    "weatherForecast": "Mild, 22°C, Brise"
-  },
-  {
-    "id": "m36",
-    "teamA": "TUN",
-    "teamB": "JPN",
-    "group": "F",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "Estadio BBVA",
-    "city": "Monterrey",
-    "hostCountry": "MEX",
-    "utcTimestamp": "2026-06-20T23:59:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MTY · Uber/Taxi",
-    "weatherForecast": "Heiß, 30°C, trocken"
-  },
-  {
-    "id": "m37",
-    "teamA": "ESP",
-    "teamB": "KSA",
-    "group": "H",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "Arrowhead Stadium",
-    "city": "Kansas City",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-21T15:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MCI · Bus / Mietwagen",
-    "weatherForecast": "Heiß, 30°C, schwül"
-  },
-  {
-    "id": "m38",
-    "teamA": "URU",
-    "teamB": "CPV",
-    "group": "H",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "Lumen Field",
-    "city": "Seattle",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-21T18:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: SEA · Link Light Rail",
-    "weatherForecast": "Mild, 22°C, mild"
-  },
-  {
-    "id": "m39",
-    "teamA": "FRA",
-    "teamB": "IRQ",
-    "group": "I",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "Lincoln Financial Field",
-    "city": "Philadelphia",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-21T21:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: PHL · SEPTA Linie",
-    "weatherForecast": "Warm, 28°C, schwül"
-  },
-  {
-    "id": "m40",
-    "teamA": "NOR",
-    "teamB": "SEN",
-    "group": "I",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "Hard Rock Stadium",
-    "city": "Miami",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-21T23:59:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MIA · Metrorail",
-    "weatherForecast": "Heiß, 31°C, tropisch"
-  },
-  {
-    "id": "m41",
-    "teamA": "ARG",
-    "teamB": "AUT",
-    "group": "J",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "AT&T Stadium",
-    "city": "Dallas",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-22T15:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: DFW · DART",
-    "weatherForecast": "Sehr heiß, 34°C, trocken"
-  },
-  {
-    "id": "m42",
-    "teamA": "JOR",
-    "teamB": "ALG",
-    "group": "J",
-    "stage": "group",
-    "matchday": 2,
+    "teamA": "CAN",
+    "teamB": "QAT",
     "stadium": "BC Place",
     "city": "Vancouver",
     "hostCountry": "CAN",
-    "utcTimestamp": "2026-06-22T18:00:00Z",
+    "utcTimestamp": "2026-06-18T22:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: YVR · SkyTrain",
-    "weatherForecast": "Kühl, 20°C, gelegentlicher Regen"
+    "travelInfo": "Flughafen YVR, SkyTrain Canada Line",
+    "weatherForecast": "Mild, ~22°C. Pazifikküste, oft bewölkt."
   },
   {
-    "id": "m43",
-    "teamA": "POR",
-    "teamB": "UZB",
-    "group": "K",
+    "id": "m-028",
+    "match": 28,
     "stage": "group",
-    "matchday": 2,
+    "matchday": 28,
+    "group": "A",
+    "teamA": "MEX",
+    "teamB": "KOR",
+    "stadium": "Estadio Akron",
+    "city": "Guadalajara",
+    "hostCountry": "MEX",
+    "utcTimestamp": "2026-06-19T01:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen GDL, Tren Ligero",
+    "weatherForecast": "Warm, ~28°C, abends Schauer möglich."
+  },
+  {
+    "id": "m-032",
+    "match": 32,
+    "stage": "group",
+    "matchday": 32,
+    "group": "D",
+    "teamA": "USA",
+    "teamB": "AUS",
+    "stadium": "Lumen Field",
+    "city": "Seattle",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-19T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen SEA, Link Light Rail",
+    "weatherForecast": "Mild, ~22°C. Gelegentlich Regen."
+  },
+  {
+    "id": "m-030",
+    "match": 30,
+    "stage": "group",
+    "matchday": 30,
+    "group": "C",
+    "teamA": "SCO",
+    "teamB": "MAR",
+    "stadium": "Gillette Stadium",
+    "city": "Foxborough",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-19T22:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen BOS, MBTA Commuter Rail",
+    "weatherForecast": "Warm, ~26°C, abends frisch."
+  },
+  {
+    "id": "m-029",
+    "match": 29,
+    "stage": "group",
+    "matchday": 29,
+    "group": "C",
+    "teamA": "BRA",
+    "teamB": "HAI",
+    "stadium": "Lincoln Financial Field",
+    "city": "Philadelphia",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-20T00:30:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen PHL, SEPTA Broad Street Line",
+    "weatherForecast": "Warm & schwül, ~30°C."
+  },
+  {
+    "id": "m-031",
+    "match": 31,
+    "stage": "group",
+    "matchday": 31,
+    "group": "D",
+    "teamA": "TUR",
+    "teamB": "PAR",
+    "stadium": "Levi's Stadium",
+    "city": "Santa Clara",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-20T03:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen SFO/SJC, Caltrain & VTA",
+    "weatherForecast": "Mild, ~24°C. Sonnig, abends frisch."
+  },
+  {
+    "id": "m-036",
+    "match": 36,
+    "stage": "group",
+    "matchday": 36,
+    "group": "F",
+    "teamA": "TUN",
+    "teamB": "JPN",
+    "stadium": "Estadio BBVA",
+    "city": "Monterrey",
+    "hostCountry": "MEX",
+    "utcTimestamp": "2026-06-20T04:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MTY, Metrorrey",
+    "weatherForecast": "Heiß & trocken, ~33°C."
+  },
+  {
+    "id": "m-035",
+    "match": 35,
+    "stage": "group",
+    "matchday": 35,
+    "group": "F",
+    "teamA": "NED",
+    "teamB": "SWE",
+    "stadium": "NRG Stadium",
+    "city": "Houston",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-20T17:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen IAH/HOU, MetroRail Red Line",
+    "weatherForecast": "Schwül, ~33°C, hohe Luftfeuchtigkeit."
+  },
+  {
+    "id": "m-033",
+    "match": 33,
+    "stage": "group",
+    "matchday": 33,
+    "group": "E",
+    "teamA": "GER",
+    "teamB": "CIV",
+    "stadium": "BMO Field",
+    "city": "Toronto",
+    "hostCountry": "CAN",
+    "utcTimestamp": "2026-06-20T20:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV",
+      "ARD",
+      "ZDF"
+    ],
+    "travelInfo": "Flughafen YYZ, UP Express & TTC",
+    "weatherForecast": "Mild, ~25°C, gelegentlich windig."
+  },
+  {
+    "id": "m-034",
+    "match": 34,
+    "stage": "group",
+    "matchday": 34,
+    "group": "E",
+    "teamA": "ECU",
+    "teamB": "CUW",
+    "stadium": "Arrowhead Stadium",
+    "city": "Kansas City",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-21T00:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MCI, KC Streetcar",
+    "weatherForecast": "Warm & schwül, ~30°C, Gewitter möglich."
+  },
+  {
+    "id": "m-038",
+    "match": 38,
+    "stage": "group",
+    "matchday": 38,
+    "group": "H",
+    "teamA": "ESP",
+    "teamB": "KSA",
+    "stadium": "Mercedes-Benz Stadium",
+    "city": "Atlanta",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-21T16:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen ATL, MARTA Red/Gold Line",
+    "weatherForecast": "Schwül, ~31°C, Nachmittagsschauer."
+  },
+  {
+    "id": "m-039",
+    "match": 39,
+    "stage": "group",
+    "matchday": 39,
+    "group": "G",
+    "teamA": "BEL",
+    "teamB": "IRN",
+    "stadium": "SoFi Stadium",
+    "city": "Inglewood",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-21T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen LAX, Metro K Line",
+    "weatherForecast": "Warm & trocken, ~28°C."
+  },
+  {
+    "id": "m-037",
+    "match": 37,
+    "stage": "group",
+    "matchday": 37,
+    "group": "H",
+    "teamA": "URU",
+    "teamB": "CPV",
+    "stadium": "Hard Rock Stadium",
+    "city": "Miami",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-21T22:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MIA, Tri-Rail & Metrorail",
+    "weatherForecast": "Tropisch, ~32°C, kurze Schauer."
+  },
+  {
+    "id": "m-040",
+    "match": 40,
+    "stage": "group",
+    "matchday": 40,
+    "group": "G",
+    "teamA": "NZL",
+    "teamB": "EGY",
+    "stadium": "BC Place",
+    "city": "Vancouver",
+    "hostCountry": "CAN",
+    "utcTimestamp": "2026-06-22T01:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen YVR, SkyTrain Canada Line",
+    "weatherForecast": "Mild, ~22°C. Pazifikküste, oft bewölkt."
+  },
+  {
+    "id": "m-043",
+    "match": 43,
+    "stage": "group",
+    "matchday": 43,
+    "group": "J",
+    "teamA": "ARG",
+    "teamB": "AUT",
     "stadium": "AT&T Stadium",
-    "city": "Dallas",
+    "city": "Arlington",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-22T17:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen DFW, TRE & Trinity Metro",
+    "weatherForecast": "Sehr heiß, ~35°C."
+  },
+  {
+    "id": "m-042",
+    "match": 42,
+    "stage": "group",
+    "matchday": 42,
+    "group": "I",
+    "teamA": "FRA",
+    "teamB": "IRQ",
+    "stadium": "Lincoln Financial Field",
+    "city": "Philadelphia",
     "hostCountry": "USA",
     "utcTimestamp": "2026-06-22T21:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: DFW · DART",
-    "weatherForecast": "Sehr heiß, 34°C, trocken"
+    "travelInfo": "Flughafen PHL, SEPTA Broad Street Line",
+    "weatherForecast": "Warm & schwül, ~30°C."
   },
   {
-    "id": "m44",
-    "teamA": "COL",
-    "teamB": "COD",
-    "group": "K",
+    "id": "m-041",
+    "match": 41,
     "stage": "group",
-    "matchday": 2,
-    "stadium": "Mercedes-Benz Stadium",
-    "city": "Atlanta",
+    "matchday": 41,
+    "group": "I",
+    "teamA": "NOR",
+    "teamB": "SEN",
+    "stadium": "MetLife Stadium",
+    "city": "East Rutherford",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-22T23:59:00Z",
+    "utcTimestamp": "2026-06-23T00:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 29°C, schwül"
+    "travelInfo": "Flughäfen EWR/JFK/LGA, NJ Transit",
+    "weatherForecast": "Warm, ~28°C, manchmal Gewitter."
   },
   {
-    "id": "m45",
-    "teamA": "ENG",
-    "teamB": "GHA",
-    "group": "L",
+    "id": "m-044",
+    "match": 44,
     "stage": "group",
-    "matchday": 2,
-    "stadium": "Lumen Field",
-    "city": "Seattle",
+    "matchday": 44,
+    "group": "J",
+    "teamA": "JOR",
+    "teamB": "ALG",
+    "stadium": "Levi's Stadium",
+    "city": "Santa Clara",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-23T03:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen SFO/SJC, Caltrain & VTA",
+    "weatherForecast": "Mild, ~24°C. Sonnig, abends frisch."
+  },
+  {
+    "id": "m-047",
+    "match": 47,
+    "stage": "group",
+    "matchday": 47,
+    "group": "K",
+    "teamA": "POR",
+    "teamB": "UZB",
+    "stadium": "NRG Stadium",
+    "city": "Houston",
     "hostCountry": "USA",
     "utcTimestamp": "2026-06-23T17:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: SEA · Link Light Rail",
-    "weatherForecast": "Mild, 22°C, mild"
+    "travelInfo": "Flughafen IAH/HOU, MetroRail Red Line",
+    "weatherForecast": "Schwül, ~33°C, hohe Luftfeuchtigkeit."
   },
   {
-    "id": "m46",
+    "id": "m-045",
+    "match": 45,
+    "stage": "group",
+    "matchday": 45,
+    "group": "L",
+    "teamA": "ENG",
+    "teamB": "GHA",
+    "stadium": "Gillette Stadium",
+    "city": "Foxborough",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-23T20:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen BOS, MBTA Commuter Rail",
+    "weatherForecast": "Warm, ~26°C, abends frisch."
+  },
+  {
+    "id": "m-046",
+    "match": 46,
+    "stage": "group",
+    "matchday": 46,
+    "group": "L",
     "teamA": "PAN",
     "teamB": "CRO",
-    "group": "L",
-    "stage": "group",
-    "matchday": 2,
-    "stadium": "SoFi Stadium",
-    "city": "Los Angeles",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-23T21:00:00Z",
+    "stadium": "BMO Field",
+    "city": "Toronto",
+    "hostCountry": "CAN",
+    "utcTimestamp": "2026-06-23T23:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: LAX · Shuttle",
-    "weatherForecast": "Warm, 26°C, sonnig"
+    "travelInfo": "Flughafen YYZ, UP Express & TTC",
+    "weatherForecast": "Mild, ~25°C, gelegentlich windig."
   },
   {
-    "id": "m47",
-    "teamA": "BEL",
-    "teamB": "IRN",
-    "group": "G",
+    "id": "m-048",
+    "match": 48,
     "stage": "group",
-    "matchday": 2,
-    "stadium": "MetLife Stadium",
-    "city": "New York/New Jersey",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-24T18:00:00Z",
+    "matchday": 48,
+    "group": "K",
+    "teamA": "COL",
+    "teamB": "COD",
+    "stadium": "Estadio Akron",
+    "city": "Guadalajara",
+    "hostCountry": "MEX",
+    "utcTimestamp": "2026-06-24T02:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: EWR · NJ Transit",
-    "weatherForecast": "Warm, 27°C, schwül"
+    "travelInfo": "Flughafen GDL, Tren Ligero",
+    "weatherForecast": "Warm, ~28°C, abends Schauer möglich."
   },
   {
-    "id": "m48",
-    "teamA": "EGY",
-    "teamB": "NZL",
-    "group": "G",
+    "id": "m-051",
+    "match": 51,
     "stage": "group",
-    "matchday": 2,
-    "stadium": "Lincoln Financial Field",
-    "city": "Philadelphia",
+    "matchday": 51,
+    "group": "B",
+    "teamA": "SUI",
+    "teamB": "CAN",
+    "stadium": "BC Place",
+    "city": "Vancouver",
+    "hostCountry": "CAN",
+    "utcTimestamp": "2026-06-24T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen YVR, SkyTrain Canada Line",
+    "weatherForecast": "Mild, ~22°C. Pazifikküste, oft bewölkt."
+  },
+  {
+    "id": "m-052",
+    "match": 52,
+    "stage": "group",
+    "matchday": 52,
+    "group": "B",
+    "teamA": "BIH",
+    "teamB": "QAT",
+    "stadium": "Lumen Field",
+    "city": "Seattle",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-24T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen SEA, Link Light Rail",
+    "weatherForecast": "Mild, ~22°C. Gelegentlich Regen."
+  },
+  {
+    "id": "m-049",
+    "match": 49,
+    "stage": "group",
+    "matchday": 49,
+    "group": "C",
+    "teamA": "SCO",
+    "teamB": "BRA",
+    "stadium": "Hard Rock Stadium",
+    "city": "Miami",
     "hostCountry": "USA",
     "utcTimestamp": "2026-06-24T22:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: PHL · SEPTA Linie",
-    "weatherForecast": "Warm, 28°C, schwül"
+    "travelInfo": "Flughafen MIA, Tri-Rail & Metrorail",
+    "weatherForecast": "Tropisch, ~32°C, kurze Schauer."
   },
   {
-    "id": "m49",
+    "id": "m-050",
+    "match": 50,
+    "stage": "group",
+    "matchday": 50,
+    "group": "C",
+    "teamA": "MAR",
+    "teamB": "HAI",
+    "stadium": "Mercedes-Benz Stadium",
+    "city": "Atlanta",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-24T22:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen ATL, MARTA Red/Gold Line",
+    "weatherForecast": "Schwül, ~31°C, Nachmittagsschauer."
+  },
+  {
+    "id": "m-053",
+    "match": 53,
+    "stage": "group",
+    "matchday": 53,
+    "group": "A",
     "teamA": "CZE",
     "teamB": "MEX",
-    "group": "A",
-    "stage": "group",
-    "matchday": 3,
     "stadium": "Estadio Azteca",
     "city": "Mexiko-Stadt",
     "hostCountry": "MEX",
-    "utcTimestamp": "2026-06-25T16:00:00Z",
+    "utcTimestamp": "2026-06-25T01:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MEX · Metro Línea 5",
-    "weatherForecast": "Mild, 21°C, Höhenluft"
+    "travelInfo": "Flughafen MEX, Metro Linie 2",
+    "weatherForecast": "Mild, ~21°C, dünne Höhenluft (2250 m)."
   },
   {
-    "id": "m50",
+    "id": "m-054",
+    "match": 54,
+    "stage": "group",
+    "matchday": 54,
+    "group": "A",
     "teamA": "RSA",
     "teamB": "KOR",
-    "group": "A",
-    "stage": "group",
-    "matchday": 3,
     "stadium": "Estadio BBVA",
     "city": "Monterrey",
     "hostCountry": "MEX",
-    "utcTimestamp": "2026-06-25T16:00:00Z",
+    "utcTimestamp": "2026-06-25T01:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MTY · Uber/Taxi",
-    "weatherForecast": "Heiß, 30°C, trocken"
+    "travelInfo": "Flughafen MTY, Metrorrey",
+    "weatherForecast": "Heiß & trocken, ~33°C."
   },
   {
-    "id": "m51",
-    "teamA": "SUI",
-    "teamB": "CAN",
-    "group": "B",
+    "id": "m-055",
+    "match": 55,
     "stage": "group",
-    "matchday": 3,
-    "stadium": "BMO Field",
-    "city": "Toronto",
-    "hostCountry": "CAN",
-    "utcTimestamp": "2026-06-25T20:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: YYZ · UP Express",
-    "weatherForecast": "Mild, 22°C, Brise"
-  },
-  {
-    "id": "m52",
-    "teamA": "BIH",
-    "teamB": "QAT",
-    "group": "B",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "Gillette Stadium",
-    "city": "Boston",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-25T20:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: BOS · Commuter Rail",
-    "weatherForecast": "Warm, 25°C, schwül"
-  },
-  {
-    "id": "m53",
-    "teamA": "SCO",
-    "teamB": "BRA",
-    "group": "C",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "Hard Rock Stadium",
-    "city": "Miami",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-26T16:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MIA · Metrorail",
-    "weatherForecast": "Heiß, 31°C, tropisch"
-  },
-  {
-    "id": "m54",
-    "teamA": "MAR",
-    "teamB": "HAI",
-    "group": "C",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "Mercedes-Benz Stadium",
-    "city": "Atlanta",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-26T16:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 29°C, schwül"
-  },
-  {
-    "id": "m55",
-    "teamA": "TUR",
-    "teamB": "USA",
-    "group": "D",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "MetLife Stadium",
-    "city": "New York/New Jersey",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-26T20:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: EWR · NJ Transit",
-    "weatherForecast": "Warm, 27°C, schwül"
-  },
-  {
-    "id": "m56",
-    "teamA": "AUS",
-    "teamB": "PAR",
-    "group": "D",
-    "stage": "group",
-    "matchday": 3,
+    "matchday": 55,
+    "group": "E",
+    "teamA": "CUW",
+    "teamB": "CIV",
     "stadium": "Lincoln Financial Field",
     "city": "Philadelphia",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-26T20:00:00Z",
+    "utcTimestamp": "2026-06-25T20:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: PHL · SEPTA Linie",
-    "weatherForecast": "Warm, 28°C, schwül"
+    "travelInfo": "Flughafen PHL, SEPTA Broad Street Line",
+    "weatherForecast": "Warm & schwül, ~30°C."
   },
   {
-    "id": "m57",
+    "id": "m-056",
+    "match": 56,
+    "stage": "group",
+    "matchday": 56,
+    "group": "E",
     "teamA": "ECU",
     "teamB": "GER",
-    "group": "E",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "Lincoln Financial Field",
-    "city": "Philadelphia",
+    "stadium": "MetLife Stadium",
+    "city": "East Rutherford",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-27T16:00:00Z",
+    "utcTimestamp": "2026-06-25T20:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV",
-      "ZDF"
+      "ARD"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: PHL · SEPTA Linie",
-    "weatherForecast": "Warm, 28°C, schwül"
+    "travelInfo": "Flughäfen EWR/JFK/LGA, NJ Transit",
+    "weatherForecast": "Warm, ~28°C, manchmal Gewitter."
   },
   {
-    "id": "m58",
-    "teamA": "CUW",
-    "teamB": "CIV",
-    "group": "E",
+    "id": "m-057",
+    "match": 57,
     "stage": "group",
-    "matchday": 3,
-    "stadium": "NRG Stadium",
-    "city": "Houston",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-27T16:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: IAH · Metro Red Line",
-    "weatherForecast": "Sehr heiß, 33°C, schwül"
-  },
-  {
-    "id": "m59",
-    "teamA": "TUN",
-    "teamB": "NED",
+    "matchday": 57,
     "group": "F",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "Mercedes-Benz Stadium",
-    "city": "Atlanta",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-27T20:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 29°C, schwül"
-  },
-  {
-    "id": "m60",
     "teamA": "JPN",
     "teamB": "SWE",
+    "stadium": "AT&T Stadium",
+    "city": "Arlington",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-25T23:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen DFW, TRE & Trinity Metro",
+    "weatherForecast": "Sehr heiß, ~35°C."
+  },
+  {
+    "id": "m-058",
+    "match": 58,
+    "stage": "group",
+    "matchday": 58,
     "group": "F",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "Gillette Stadium",
-    "city": "Boston",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-27T20:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: BOS · Commuter Rail",
-    "weatherForecast": "Warm, 25°C, schwül"
-  },
-  {
-    "id": "m61",
-    "teamA": "URU",
-    "teamB": "ESP",
-    "group": "H",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "BMO Field",
-    "city": "Toronto",
-    "hostCountry": "CAN",
-    "utcTimestamp": "2026-06-28T16:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: YYZ · UP Express",
-    "weatherForecast": "Mild, 22°C, Brise"
-  },
-  {
-    "id": "m62",
-    "teamA": "CPV",
-    "teamB": "KSA",
-    "group": "H",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "Gillette Stadium",
-    "city": "Boston",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-28T16:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: BOS · Commuter Rail",
-    "weatherForecast": "Warm, 25°C, schwül"
-  },
-  {
-    "id": "m63",
-    "teamA": "IRQ",
-    "teamB": "FRA",
-    "group": "I",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "MetLife Stadium",
-    "city": "New York/New Jersey",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-28T20:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: EWR · NJ Transit",
-    "weatherForecast": "Warm, 27°C, schwül"
-  },
-  {
-    "id": "m64",
-    "teamA": "SEN",
-    "teamB": "NOR",
-    "group": "I",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "Lincoln Financial Field",
-    "city": "Philadelphia",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-28T20:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: PHL · SEPTA Linie",
-    "weatherForecast": "Warm, 28°C, schwül"
-  },
-  {
-    "id": "m65",
-    "teamA": "JOR",
-    "teamB": "ARG",
-    "group": "J",
-    "stage": "group",
-    "matchday": 3,
-    "stadium": "NRG Stadium",
-    "city": "Houston",
-    "hostCountry": "USA",
-    "utcTimestamp": "2026-06-29T16:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: IAH · Metro Red Line",
-    "weatherForecast": "Sehr heiß, 33°C, schwül"
-  },
-  {
-    "id": "m66",
-    "teamA": "ALG",
-    "teamB": "AUT",
-    "group": "J",
-    "stage": "group",
-    "matchday": 3,
+    "teamA": "TUN",
+    "teamB": "NED",
     "stadium": "Arrowhead Stadium",
     "city": "Kansas City",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-29T16:00:00Z",
+    "utcTimestamp": "2026-06-25T23:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MCI · Bus / Mietwagen",
-    "weatherForecast": "Heiß, 30°C, schwül"
+    "travelInfo": "Flughafen MCI, KC Streetcar",
+    "weatherForecast": "Warm & schwül, ~30°C, Gewitter möglich."
   },
   {
-    "id": "m67",
-    "teamA": "COL",
-    "teamB": "POR",
-    "group": "K",
+    "id": "m-059",
+    "match": 59,
     "stage": "group",
-    "matchday": 3,
-    "stadium": "Estadio BBVA",
-    "city": "Monterrey",
-    "hostCountry": "MEX",
-    "utcTimestamp": "2026-06-29T20:00:00Z",
+    "matchday": 59,
+    "group": "D",
+    "teamA": "TUR",
+    "teamB": "USA",
+    "stadium": "SoFi Stadium",
+    "city": "Inglewood",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-26T02:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MTY · Uber/Taxi",
-    "weatherForecast": "Heiß, 30°C, trocken"
+    "travelInfo": "Flughafen LAX, Metro K Line",
+    "weatherForecast": "Warm & trocken, ~28°C."
   },
   {
-    "id": "m68",
-    "teamA": "COD",
-    "teamB": "UZB",
-    "group": "K",
+    "id": "m-060",
+    "match": 60,
     "stage": "group",
-    "matchday": 3,
+    "matchday": 60,
+    "group": "D",
+    "teamA": "PAR",
+    "teamB": "AUS",
+    "stadium": "Levi's Stadium",
+    "city": "Santa Clara",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-26T02:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen SFO/SJC, Caltrain & VTA",
+    "weatherForecast": "Mild, ~24°C. Sonnig, abends frisch."
+  },
+  {
+    "id": "m-061",
+    "match": 61,
+    "stage": "group",
+    "matchday": 61,
+    "group": "I",
+    "teamA": "NOR",
+    "teamB": "FRA",
+    "stadium": "Gillette Stadium",
+    "city": "Foxborough",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-26T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen BOS, MBTA Commuter Rail",
+    "weatherForecast": "Warm, ~26°C, abends frisch."
+  },
+  {
+    "id": "m-062",
+    "match": 62,
+    "stage": "group",
+    "matchday": 62,
+    "group": "I",
+    "teamA": "SEN",
+    "teamB": "IRQ",
+    "stadium": "BMO Field",
+    "city": "Toronto",
+    "hostCountry": "CAN",
+    "utcTimestamp": "2026-06-26T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen YYZ, UP Express & TTC",
+    "weatherForecast": "Mild, ~25°C, gelegentlich windig."
+  },
+  {
+    "id": "m-065",
+    "match": 65,
+    "stage": "group",
+    "matchday": 65,
+    "group": "H",
+    "teamA": "CPV",
+    "teamB": "KSA",
+    "stadium": "NRG Stadium",
+    "city": "Houston",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-27T00:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen IAH/HOU, MetroRail Red Line",
+    "weatherForecast": "Schwül, ~33°C, hohe Luftfeuchtigkeit."
+  },
+  {
+    "id": "m-066",
+    "match": 66,
+    "stage": "group",
+    "matchday": 66,
+    "group": "H",
+    "teamA": "URU",
+    "teamB": "ESP",
     "stadium": "Estadio Akron",
     "city": "Guadalajara",
     "hostCountry": "MEX",
-    "utcTimestamp": "2026-06-29T20:00:00Z",
+    "utcTimestamp": "2026-06-27T00:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: GDL · Mietwagen empfohlen",
-    "weatherForecast": "Warm, 26°C, Höhenklima"
+    "travelInfo": "Flughafen GDL, Tren Ligero",
+    "weatherForecast": "Warm, ~28°C, abends Schauer möglich."
   },
   {
-    "id": "m69",
-    "teamA": "PAN",
-    "teamB": "ENG",
-    "group": "L",
+    "id": "m-063",
+    "match": 63,
     "stage": "group",
-    "matchday": 3,
-    "stadium": "BC Place",
-    "city": "Vancouver",
-    "hostCountry": "CAN",
-    "utcTimestamp": "2026-06-30T16:00:00Z",
-    "broadcaster": "MagentaTV",
-    "broadcasters": [
-      "MagentaTV"
-    ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: YVR · SkyTrain",
-    "weatherForecast": "Kühl, 20°C, gelegentlicher Regen"
-  },
-  {
-    "id": "m70",
-    "teamA": "CRO",
-    "teamB": "GHA",
-    "group": "L",
-    "stage": "group",
-    "matchday": 3,
+    "matchday": 63,
+    "group": "G",
+    "teamA": "EGY",
+    "teamB": "IRN",
     "stadium": "Lumen Field",
     "city": "Seattle",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-30T16:00:00Z",
+    "utcTimestamp": "2026-06-27T03:00:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: SEA · Link Light Rail",
-    "weatherForecast": "Mild, 22°C, mild"
+    "travelInfo": "Flughafen SEA, Link Light Rail",
+    "weatherForecast": "Mild, ~22°C. Gelegentlich Regen."
   },
   {
-    "id": "m71",
-    "teamA": "BEL",
-    "teamB": "NZL",
-    "group": "G",
+    "id": "m-064",
+    "match": 64,
     "stage": "group",
-    "matchday": 3,
+    "matchday": 64,
+    "group": "G",
+    "teamA": "NZL",
+    "teamB": "BEL",
+    "stadium": "BC Place",
+    "city": "Vancouver",
+    "hostCountry": "CAN",
+    "utcTimestamp": "2026-06-27T03:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen YVR, SkyTrain Canada Line",
+    "weatherForecast": "Mild, ~22°C. Pazifikküste, oft bewölkt."
+  },
+  {
+    "id": "m-067",
+    "match": 67,
+    "stage": "group",
+    "matchday": 67,
+    "group": "L",
+    "teamA": "PAN",
+    "teamB": "ENG",
+    "stadium": "MetLife Stadium",
+    "city": "East Rutherford",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-27T21:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughäfen EWR/JFK/LGA, NJ Transit",
+    "weatherForecast": "Warm, ~28°C, manchmal Gewitter."
+  },
+  {
+    "id": "m-068",
+    "match": 68,
+    "stage": "group",
+    "matchday": 68,
+    "group": "L",
+    "teamA": "CRO",
+    "teamB": "GHA",
+    "stadium": "Lincoln Financial Field",
+    "city": "Philadelphia",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-27T21:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen PHL, SEPTA Broad Street Line",
+    "weatherForecast": "Warm & schwül, ~30°C."
+  },
+  {
+    "id": "m-071",
+    "match": 71,
+    "stage": "group",
+    "matchday": 71,
+    "group": "K",
+    "teamA": "COL",
+    "teamB": "POR",
     "stadium": "Hard Rock Stadium",
     "city": "Miami",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-30T20:00:00Z",
+    "utcTimestamp": "2026-06-27T23:30:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: MIA · Metrorail",
-    "weatherForecast": "Heiß, 31°C, tropisch"
+    "travelInfo": "Flughafen MIA, Tri-Rail & Metrorail",
+    "weatherForecast": "Tropisch, ~32°C, kurze Schauer."
   },
   {
-    "id": "m72",
-    "teamA": "IRN",
-    "teamB": "EGY",
-    "group": "G",
+    "id": "m-072",
+    "match": 72,
     "stage": "group",
-    "matchday": 3,
+    "matchday": 72,
+    "group": "K",
+    "teamA": "COD",
+    "teamB": "UZB",
     "stadium": "Mercedes-Benz Stadium",
     "city": "Atlanta",
     "hostCountry": "USA",
-    "utcTimestamp": "2026-06-30T20:00:00Z",
+    "utcTimestamp": "2026-06-27T23:30:00Z",
     "broadcaster": "MagentaTV",
     "broadcasters": [
       "MagentaTV"
     ],
-    "status": "scheduled",
-    "travelInfo": "Flughafen: ATL · MARTA",
-    "weatherForecast": "Warm, 29°C, schwül"
+    "travelInfo": "Flughafen ATL, MARTA Red/Gold Line",
+    "weatherForecast": "Schwül, ~31°C, Nachmittagsschauer."
+  },
+  {
+    "id": "m-069",
+    "match": 69,
+    "stage": "group",
+    "matchday": 69,
+    "group": "J",
+    "teamA": "ALG",
+    "teamB": "AUT",
+    "stadium": "Arrowhead Stadium",
+    "city": "Kansas City",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-28T02:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MCI, KC Streetcar",
+    "weatherForecast": "Warm & schwül, ~30°C, Gewitter möglich."
+  },
+  {
+    "id": "m-070",
+    "match": 70,
+    "stage": "group",
+    "matchday": 70,
+    "group": "J",
+    "teamA": "JOR",
+    "teamB": "ARG",
+    "stadium": "AT&T Stadium",
+    "city": "Arlington",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-28T02:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen DFW, TRE & Trinity Metro",
+    "weatherForecast": "Sehr heiß, ~35°C."
+  },
+  {
+    "id": "m-073",
+    "match": 73,
+    "stage": "r32",
+    "matchday": 73,
+    "group": "KO",
+    "teamA": "2A",
+    "teamB": "2B",
+    "stadium": "SoFi Stadium",
+    "city": "Inglewood",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-28T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen LAX, Metro K Line",
+    "weatherForecast": "Warm & trocken, ~28°C."
+  },
+  {
+    "id": "m-076",
+    "match": 76,
+    "stage": "r32",
+    "matchday": 76,
+    "group": "KO",
+    "teamA": "1C",
+    "teamB": "2F",
+    "stadium": "NRG Stadium",
+    "city": "Houston",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-29T17:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen IAH/HOU, MetroRail Red Line",
+    "weatherForecast": "Schwül, ~33°C, hohe Luftfeuchtigkeit."
+  },
+  {
+    "id": "m-074",
+    "match": 74,
+    "stage": "r32",
+    "matchday": 74,
+    "group": "KO",
+    "teamA": "1E",
+    "teamB": "3",
+    "stadium": "Gillette Stadium",
+    "city": "Foxborough",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-29T20:30:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen BOS, MBTA Commuter Rail",
+    "weatherForecast": "Warm, ~26°C, abends frisch."
+  },
+  {
+    "id": "m-075",
+    "match": 75,
+    "stage": "r32",
+    "matchday": 75,
+    "group": "KO",
+    "teamA": "1F",
+    "teamB": "2C",
+    "stadium": "Estadio BBVA",
+    "city": "Monterrey",
+    "hostCountry": "MEX",
+    "utcTimestamp": "2026-06-30T01:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MTY, Metrorrey",
+    "weatherForecast": "Heiß & trocken, ~33°C."
+  },
+  {
+    "id": "m-078",
+    "match": 78,
+    "stage": "r32",
+    "matchday": 78,
+    "group": "KO",
+    "teamA": "2E",
+    "teamB": "2I",
+    "stadium": "AT&T Stadium",
+    "city": "Arlington",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-30T17:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen DFW, TRE & Trinity Metro",
+    "weatherForecast": "Sehr heiß, ~35°C."
+  },
+  {
+    "id": "m-077",
+    "match": 77,
+    "stage": "r32",
+    "matchday": 77,
+    "group": "KO",
+    "teamA": "1I",
+    "teamB": "3",
+    "stadium": "MetLife Stadium",
+    "city": "East Rutherford",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-06-30T21:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughäfen EWR/JFK/LGA, NJ Transit",
+    "weatherForecast": "Warm, ~28°C, manchmal Gewitter."
+  },
+  {
+    "id": "m-079",
+    "match": 79,
+    "stage": "r32",
+    "matchday": 79,
+    "group": "KO",
+    "teamA": "1A",
+    "teamB": "3",
+    "stadium": "Estadio Azteca",
+    "city": "Mexiko-Stadt",
+    "hostCountry": "MEX",
+    "utcTimestamp": "2026-07-01T01:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MEX, Metro Linie 2",
+    "weatherForecast": "Mild, ~21°C, dünne Höhenluft (2250 m)."
+  },
+  {
+    "id": "m-080",
+    "match": 80,
+    "stage": "r32",
+    "matchday": 80,
+    "group": "KO",
+    "teamA": "1L",
+    "teamB": "3",
+    "stadium": "Mercedes-Benz Stadium",
+    "city": "Atlanta",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-01T16:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen ATL, MARTA Red/Gold Line",
+    "weatherForecast": "Schwül, ~31°C, Nachmittagsschauer."
+  },
+  {
+    "id": "m-082",
+    "match": 82,
+    "stage": "r32",
+    "matchday": 82,
+    "group": "KO",
+    "teamA": "1G",
+    "teamB": "3",
+    "stadium": "Lumen Field",
+    "city": "Seattle",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-01T20:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen SEA, Link Light Rail",
+    "weatherForecast": "Mild, ~22°C. Gelegentlich Regen."
+  },
+  {
+    "id": "m-081",
+    "match": 81,
+    "stage": "r32",
+    "matchday": 81,
+    "group": "KO",
+    "teamA": "1D",
+    "teamB": "3",
+    "stadium": "Levi's Stadium",
+    "city": "Santa Clara",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-02T00:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen SFO/SJC, Caltrain & VTA",
+    "weatherForecast": "Mild, ~24°C. Sonnig, abends frisch."
+  },
+  {
+    "id": "m-084",
+    "match": 84,
+    "stage": "r32",
+    "matchday": 84,
+    "group": "KO",
+    "teamA": "1H",
+    "teamB": "2J",
+    "stadium": "SoFi Stadium",
+    "city": "Inglewood",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-02T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen LAX, Metro K Line",
+    "weatherForecast": "Warm & trocken, ~28°C."
+  },
+  {
+    "id": "m-083",
+    "match": 83,
+    "stage": "r32",
+    "matchday": 83,
+    "group": "KO",
+    "teamA": "2K",
+    "teamB": "2L",
+    "stadium": "BMO Field",
+    "city": "Toronto",
+    "hostCountry": "CAN",
+    "utcTimestamp": "2026-07-02T23:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen YYZ, UP Express & TTC",
+    "weatherForecast": "Mild, ~25°C, gelegentlich windig."
+  },
+  {
+    "id": "m-085",
+    "match": 85,
+    "stage": "r32",
+    "matchday": 85,
+    "group": "KO",
+    "teamA": "1B",
+    "teamB": "3",
+    "stadium": "BC Place",
+    "city": "Vancouver",
+    "hostCountry": "CAN",
+    "utcTimestamp": "2026-07-03T03:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen YVR, SkyTrain Canada Line",
+    "weatherForecast": "Mild, ~22°C. Pazifikküste, oft bewölkt."
+  },
+  {
+    "id": "m-088",
+    "match": 88,
+    "stage": "r32",
+    "matchday": 88,
+    "group": "KO",
+    "teamA": "2D",
+    "teamB": "2G",
+    "stadium": "AT&T Stadium",
+    "city": "Arlington",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-03T18:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen DFW, TRE & Trinity Metro",
+    "weatherForecast": "Sehr heiß, ~35°C."
+  },
+  {
+    "id": "m-086",
+    "match": 86,
+    "stage": "r32",
+    "matchday": 86,
+    "group": "KO",
+    "teamA": "1J",
+    "teamB": "2H",
+    "stadium": "Hard Rock Stadium",
+    "city": "Miami",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-03T22:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MIA, Tri-Rail & Metrorail",
+    "weatherForecast": "Tropisch, ~32°C, kurze Schauer."
+  },
+  {
+    "id": "m-087",
+    "match": 87,
+    "stage": "r32",
+    "matchday": 87,
+    "group": "KO",
+    "teamA": "1K",
+    "teamB": "3",
+    "stadium": "Arrowhead Stadium",
+    "city": "Kansas City",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-04T01:30:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MCI, KC Streetcar",
+    "weatherForecast": "Warm & schwül, ~30°C, Gewitter möglich."
+  },
+  {
+    "id": "m-090",
+    "match": 90,
+    "stage": "r16",
+    "matchday": 90,
+    "group": "KO",
+    "teamA": "W73",
+    "teamB": "W75",
+    "stadium": "NRG Stadium",
+    "city": "Houston",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-04T17:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen IAH/HOU, MetroRail Red Line",
+    "weatherForecast": "Schwül, ~33°C, hohe Luftfeuchtigkeit."
+  },
+  {
+    "id": "m-089",
+    "match": 89,
+    "stage": "r16",
+    "matchday": 89,
+    "group": "KO",
+    "teamA": "W74",
+    "teamB": "W77",
+    "stadium": "Lincoln Financial Field",
+    "city": "Philadelphia",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-04T21:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen PHL, SEPTA Broad Street Line",
+    "weatherForecast": "Warm & schwül, ~30°C."
+  },
+  {
+    "id": "m-091",
+    "match": 91,
+    "stage": "r16",
+    "matchday": 91,
+    "group": "KO",
+    "teamA": "W76",
+    "teamB": "W78",
+    "stadium": "MetLife Stadium",
+    "city": "East Rutherford",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-05T20:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughäfen EWR/JFK/LGA, NJ Transit",
+    "weatherForecast": "Warm, ~28°C, manchmal Gewitter."
+  },
+  {
+    "id": "m-092",
+    "match": 92,
+    "stage": "r16",
+    "matchday": 92,
+    "group": "KO",
+    "teamA": "W79",
+    "teamB": "W80",
+    "stadium": "Estadio Azteca",
+    "city": "Mexiko-Stadt",
+    "hostCountry": "MEX",
+    "utcTimestamp": "2026-07-06T00:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MEX, Metro Linie 2",
+    "weatherForecast": "Mild, ~21°C, dünne Höhenluft (2250 m)."
+  },
+  {
+    "id": "m-093",
+    "match": 93,
+    "stage": "r16",
+    "matchday": 93,
+    "group": "KO",
+    "teamA": "W83",
+    "teamB": "W84",
+    "stadium": "AT&T Stadium",
+    "city": "Arlington",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-06T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen DFW, TRE & Trinity Metro",
+    "weatherForecast": "Sehr heiß, ~35°C."
+  },
+  {
+    "id": "m-094",
+    "match": 94,
+    "stage": "r16",
+    "matchday": 94,
+    "group": "KO",
+    "teamA": "W81",
+    "teamB": "W82",
+    "stadium": "Lumen Field",
+    "city": "Seattle",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-07T00:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen SEA, Link Light Rail",
+    "weatherForecast": "Mild, ~22°C. Gelegentlich Regen."
+  },
+  {
+    "id": "m-095",
+    "match": 95,
+    "stage": "r16",
+    "matchday": 95,
+    "group": "KO",
+    "teamA": "W86",
+    "teamB": "W88",
+    "stadium": "Mercedes-Benz Stadium",
+    "city": "Atlanta",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-07T16:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen ATL, MARTA Red/Gold Line",
+    "weatherForecast": "Schwül, ~31°C, Nachmittagsschauer."
+  },
+  {
+    "id": "m-096",
+    "match": 96,
+    "stage": "r16",
+    "matchday": 96,
+    "group": "KO",
+    "teamA": "W85",
+    "teamB": "W87",
+    "stadium": "BC Place",
+    "city": "Vancouver",
+    "hostCountry": "CAN",
+    "utcTimestamp": "2026-07-07T20:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen YVR, SkyTrain Canada Line",
+    "weatherForecast": "Mild, ~22°C. Pazifikküste, oft bewölkt."
+  },
+  {
+    "id": "m-097",
+    "match": 97,
+    "stage": "qf",
+    "matchday": 97,
+    "group": "KO",
+    "teamA": "W89",
+    "teamB": "W90",
+    "stadium": "Gillette Stadium",
+    "city": "Foxborough",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-09T20:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen BOS, MBTA Commuter Rail",
+    "weatherForecast": "Warm, ~26°C, abends frisch."
+  },
+  {
+    "id": "m-098",
+    "match": 98,
+    "stage": "qf",
+    "matchday": 98,
+    "group": "KO",
+    "teamA": "W93",
+    "teamB": "W94",
+    "stadium": "SoFi Stadium",
+    "city": "Inglewood",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-10T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen LAX, Metro K Line",
+    "weatherForecast": "Warm & trocken, ~28°C."
+  },
+  {
+    "id": "m-099",
+    "match": 99,
+    "stage": "qf",
+    "matchday": 99,
+    "group": "KO",
+    "teamA": "W91",
+    "teamB": "W92",
+    "stadium": "Hard Rock Stadium",
+    "city": "Miami",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-11T21:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MIA, Tri-Rail & Metrorail",
+    "weatherForecast": "Tropisch, ~32°C, kurze Schauer."
+  },
+  {
+    "id": "m-100",
+    "match": 100,
+    "stage": "qf",
+    "matchday": 100,
+    "group": "KO",
+    "teamA": "W95",
+    "teamB": "W96",
+    "stadium": "Arrowhead Stadium",
+    "city": "Kansas City",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-12T01:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV"
+    ],
+    "travelInfo": "Flughafen MCI, KC Streetcar",
+    "weatherForecast": "Warm & schwül, ~30°C, Gewitter möglich."
+  },
+  {
+    "id": "m-101",
+    "match": 101,
+    "stage": "sf",
+    "matchday": 101,
+    "group": "KO",
+    "teamA": "W97",
+    "teamB": "W98",
+    "stadium": "AT&T Stadium",
+    "city": "Arlington",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-14T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV",
+      "ARD"
+    ],
+    "travelInfo": "Flughafen DFW, TRE & Trinity Metro",
+    "weatherForecast": "Sehr heiß, ~35°C."
+  },
+  {
+    "id": "m-102",
+    "match": 102,
+    "stage": "sf",
+    "matchday": 102,
+    "group": "KO",
+    "teamA": "W99",
+    "teamB": "W100",
+    "stadium": "Mercedes-Benz Stadium",
+    "city": "Atlanta",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-15T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV",
+      "ARD",
+      "ZDF"
+    ],
+    "travelInfo": "Flughafen ATL, MARTA Red/Gold Line",
+    "weatherForecast": "Schwül, ~31°C, Nachmittagsschauer."
+  },
+  {
+    "id": "m-103",
+    "match": 103,
+    "stage": "third",
+    "matchday": 103,
+    "group": "KO",
+    "teamA": "L101",
+    "teamB": "L102",
+    "stadium": "Hard Rock Stadium",
+    "city": "Miami",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-18T21:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV",
+      "ARD"
+    ],
+    "travelInfo": "Flughafen MIA, Tri-Rail & Metrorail",
+    "weatherForecast": "Tropisch, ~32°C, kurze Schauer."
+  },
+  {
+    "id": "m-104",
+    "match": 104,
+    "stage": "final",
+    "matchday": 104,
+    "group": "KO",
+    "teamA": "W101",
+    "teamB": "W102",
+    "stadium": "MetLife Stadium",
+    "city": "East Rutherford",
+    "hostCountry": "USA",
+    "utcTimestamp": "2026-07-19T19:00:00Z",
+    "broadcaster": "MagentaTV",
+    "broadcasters": [
+      "MagentaTV",
+      "ARD"
+    ],
+    "travelInfo": "Flughäfen EWR/JFK/LGA, NJ Transit",
+    "weatherForecast": "Warm, ~28°C, manchmal Gewitter."
   }
 ]
