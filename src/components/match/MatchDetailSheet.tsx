@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
 } from "@/components/ui/sheet";
@@ -7,7 +8,7 @@ import { getTeam } from "@/data/teams";
 import { getGroupStandings } from "@/data/groups";
 import { useAppStore } from "@/store/app-store";
 import { getLocalParts } from "@/lib/time";
-import { Tv, Cloud, Plane, MapPin } from "lucide-react";
+import { Tv, Plane, MapPin } from "lucide-react";
 
 
 function getBroadcasterUrl(broadcaster: string): string {
@@ -31,11 +32,14 @@ export function MatchDetailSheet({
   onOpenChange: (v: boolean) => void;
 }) {
   const tz = useAppStore((s) => s.userTimezone);
+  const spoiler = useAppStore((s) => s.spoilerProtection);
+  const [revealed, setRevealed] = useState(false);
   if (!match) return null;
   const a = getTeam(match.teamA);
   const b = getTeam(match.teamB);
   const local = getLocalParts(match.utcTimestamp, tz);
   const standings = getGroupStandings(match.group);
+  const hideFinishedScore = spoiler && match.status === "finished" && !revealed;
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="rounded-t-3xl max-h-[90vh] overflow-y-auto border-border bg-background">
@@ -52,6 +56,26 @@ export function MatchDetailSheet({
         </SheetHeader>
 
         <div className="mt-5 space-y-5">
+          {/* Score (finished) with spoiler */}
+          {match.status === "finished" && match.score && (
+            <div className="rounded-2xl border border-border bg-card p-4 text-center relative">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                Endstand
+              </div>
+              <div className={`text-3xl font-black tabular-nums ${hideFinishedScore ? "blur-md select-none" : ""}`}>
+                {match.score.a} : {match.score.b}
+              </div>
+              {hideFinishedScore && (
+                <button
+                  onClick={() => setRevealed(true)}
+                  className="absolute inset-x-0 top-1/2 -translate-y-1/2 mx-auto w-fit text-xs px-3 py-1.5 rounded-full bg-accent text-accent-foreground font-semibold shadow-lg"
+                >
+                  Ergebnis aufdecken
+                </button>
+              )}
+            </div>
+          )}
+
           {/* Broadcaster */}
           <div className="rounded-2xl border border-border bg-card p-4">
             <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
@@ -84,12 +108,9 @@ export function MatchDetailSheet({
           </div>
 
           {/* Insights */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2">
             <Insight icon={<MapPin className="h-4 w-4" />} label="Stadion" value={`${match.stadium}, ${match.city}`} />
-            <Insight icon={<Cloud className="h-4 w-4" />} label="Wetter" value={match.weatherForecast} />
-            <div className="col-span-2">
-              <Insight icon={<Plane className="h-4 w-4" />} label="Anreise & Transit" value={match.travelInfo} />
-            </div>
+            <Insight icon={<Plane className="h-4 w-4" />} label="Anreise & Transit" value={match.travelInfo} />
           </div>
 
           {/* Standings */}
