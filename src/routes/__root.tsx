@@ -16,6 +16,7 @@ import { useAppStore } from "@/store/app-store";
 import { useLiveClock } from "@/hooks/useLiveClock";
 import { useLiveSimulation } from "@/hooks/useLiveSimulation";
 import { useLiveApi } from "@/hooks/useLiveApi";
+import { runScheduleAudit } from "@/lib/scheduleAudit";
 
 import appCss from "../styles.css?url";
 
@@ -98,6 +99,9 @@ function RootComponent() {
   useLiveClock();
   useLiveSimulation();
   useLiveApi();
+  useEffect(() => {
+    if (import.meta.env.DEV) runScheduleAudit();
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen w-full flex justify-center bg-background">
