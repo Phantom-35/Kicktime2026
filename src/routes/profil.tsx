@@ -256,11 +256,12 @@ function ProfilPage() {
           </AlertDialogContent>
         </AlertDialog>
       </Card>
+      </div>
 
-      <p className="text-center text-[10px] text-muted-foreground pt-2">
+      <p className="text-center text-[10px] text-muted-foreground pt-2 md:col-span-2">
         KickTime 2026 · Made for football nerds 🇩🇪
       </p>
-      <p className="text-center text-[10px] text-muted-foreground/70 -mt-3">
+      <p className="text-center text-[10px] text-muted-foreground/70 -mt-3 md:col-span-2">
         Version {APP_VERSION}
       </p>
     </div>
