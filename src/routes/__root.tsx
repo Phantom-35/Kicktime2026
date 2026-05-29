@@ -157,7 +157,6 @@ function RootComponent() {
       </div>
       <Toaster theme={theme} position="top-center" richColors />
     </QueryClientProvider>
-    </QueryClientProvider>
   );
 }
 
