@@ -1,13 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
+  useLocation,
   createRootRouteWithContext,
   useRouter,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { ArrowUp } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
@@ -71,8 +73,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/jpeg", href: "/app-icon.jpeg" },
-      { rel: "apple-touch-icon", href: "/app-icon.jpeg" },
+      { rel: "icon", type: "image/jpeg", href: "/app-icon.jpeg?v=2.0.6" },
+      { rel: "apple-touch-icon", href: "/app-icon.jpeg?v=2.0.6" },
     ],
   }),
   shellComponent: RootShell,
@@ -97,6 +99,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const mainRef = useRef<HTMLElement | null>(null);
+  const location = useLocation();
+  const [showSpieleTop, setShowSpieleTop] = useState(false);
   const onboarded = useAppStore((s) => s.isOnboarded);
   const theme = useAppStore((s) => s.theme);
   useThemeClass(theme);
@@ -106,14 +111,43 @@ function RootComponent() {
   useEffect(() => {
     if (import.meta.env.DEV) runScheduleAudit();
   }, []);
+  useEffect(() => {
+    if (location.pathname !== "/spiele") {
+      setShowSpieleTop(false);
+      return;
+    }
+    const main = mainRef.current;
+    const onScroll = () => setShowSpieleTop(Math.max(main?.scrollTop ?? 0, window.scrollY) > 24);
+    onScroll();
+    main?.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      main?.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [location.pathname]);
+  const scrollSpieleToTop = () => {
+    mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen w-full flex justify-center bg-background">
         <div className="relative w-full max-w-md min-h-screen flex flex-col bg-background shadow-2xl md:my-4 md:rounded-3xl md:overflow-hidden md:min-h-[calc(100vh-2rem)] md:border md:border-border">
           <AppHeader />
-          <main className="flex-1 overflow-y-auto">
+          <main ref={mainRef} className="flex-1 overflow-y-auto">
             {onboarded ? <Outlet /> : <OnboardingFlow />}
           </main>
+          {onboarded && showSpieleTop && (
+            <button
+              type="button"
+              onClick={scrollSpieleToTop}
+              aria-label="Nach oben"
+              className="fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-[max(1rem,calc((100vw-28rem)/2+1rem))] z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/40 ring-2 ring-background active:scale-90 transition-transform"
+            >
+              <ArrowUp className="h-6 w-6" />
+            </button>
+          )}
           {onboarded && <BottomNav />}
         </div>
       </div>

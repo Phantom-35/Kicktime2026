@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { Match } from "@/data/matches";
 import { isPerfectFor, isNightShift } from "@/lib/categorize";
 import { getTeam } from "@/data/teams";
@@ -9,42 +9,16 @@ import { getLocalParts } from "@/lib/time";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowUp } from "lucide-react";
+import { Search } from "lucide-react";
 
 export const Route = createFileRoute("/spiele")({ component: SpielePage });
-
-function getScroller(): HTMLElement | null {
-  let el: HTMLElement | null = document.querySelector("main");
-  while (el) {
-    const style = window.getComputedStyle(el);
-    if (/(auto|scroll)/.test(style.overflowY)) return el;
-    el = el.parentElement;
-  }
-  return null;
-}
 
 function SpielePage() {
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<Match | null>(null);
-  const [showTop, setShowTop] = useState(false);
   const state = useAppStore();
   const spoiler = useAppStore((s) => s.spoilerProtection);
   const matches = useMatchStore(selectMatchList);
-
-  useEffect(() => {
-    const scroller = getScroller();
-    const getY = () => (scroller ? scroller.scrollTop : window.scrollY);
-    const onScroll = () => setShowTop(getY() > 120);
-    onScroll();
-    const target: HTMLElement | Window = scroller ?? window;
-    target.addEventListener("scroll", onScroll, { passive: true });
-    return () => target.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    const scroller = getScroller();
-    (scroller ?? window).scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   const filtered = useMemo(() => {
     const ql = q.trim().toLowerCase();
@@ -119,16 +93,6 @@ function SpielePage() {
 
       <MatchDetailSheet match={selected} open={!!selected} onOpenChange={(v) => !v && setSelected(null)} />
 
-      {showTop && (
-        <button
-          type="button"
-          onClick={scrollToTop}
-          aria-label="Nach oben"
-          className="fixed bottom-24 right-5 z-50 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center justify-center active:scale-90 transition-transform"
-        >
-          <ArrowUp className="h-5 w-5" />
-        </button>
-      )}
     </div>
   );
 }
