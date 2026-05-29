@@ -87,7 +87,7 @@ function SpielePage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="w-full h-7 text-[11px] text-muted-foreground hover:text-foreground mt-2"
+                        className="w-full h-7 text-[11px] text-muted-foreground hover:bg-muted/50 hover:text-foreground mt-2"
                         onClick={(e) => {
                           e.stopPropagation();
                           try {
