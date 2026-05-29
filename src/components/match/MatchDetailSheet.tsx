@@ -100,27 +100,36 @@ export function MatchDetailSheet({
             </div>
           )}
 
-          {/* Broadcaster — ARD XOR ZDF in free TV, MagentaTV separate */}
+          {/* Broadcaster — ARD + ZDF combined in free TV, MagentaTV separate & larger */}
           <div className="rounded-2xl border border-border bg-card p-4">
             <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
               <Tv className="h-3.5 w-3.5" /> Live im TV
             </div>
             <div className="flex flex-col gap-3 w-full">
-              {freeTv && (
+              {showFreeTv && (
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Free-TV</span>
-                    <span className="text-lg font-black tracking-tight text-primary bg-primary/10 border border-primary/30 rounded-lg px-3 py-1">
-                      {freeTv}
+                    <span className="text-base font-bold tracking-tight text-primary bg-primary/10 border border-primary/30 rounded-lg px-2.5 py-0.5">
+                      ARD / ZDF
                     </span>
                   </div>
-                  <Button
-                    variant="outline"
-                    onClick={() => window.open(getBroadcasterUrl(freeTv), "_blank", "noopener,noreferrer")}
-                    className="h-11 w-full font-semibold"
-                  >
-                    {freeTv} öffnen
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => window.open(getBroadcasterUrl("ARD"), "_blank", "noopener,noreferrer")}
+                      className="h-9 flex-1 text-sm font-medium"
+                    >
+                      ARD öffnen
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => window.open(getBroadcasterUrl("ZDF"), "_blank", "noopener,noreferrer")}
+                      className="h-9 flex-1 text-sm font-medium"
+                    >
+                      ZDF öffnen
+                    </Button>
+                  </div>
                 </div>
               )}
               {showMagenta && (
@@ -140,7 +149,7 @@ export function MatchDetailSheet({
                   </Button>
                 </div>
               )}
-              {!freeTv && !showMagenta && (
+              {!showFreeTv && !showMagenta && (
                 <p className="text-xs text-muted-foreground">Keine Übertragung hinterlegt.</p>
               )}
             </div>
