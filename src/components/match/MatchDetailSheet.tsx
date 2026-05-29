@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
 } from "@/components/ui/sheet";
@@ -7,8 +7,10 @@ import type { Match } from "@/data/matches";
 import { getTeam } from "@/data/teams";
 import { getGroupStandings } from "@/data/groups";
 import { useAppStore } from "@/store/app-store";
+import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { getLocalParts } from "@/lib/time";
-import { Tv, Plane, MapPin } from "lucide-react";
+import { freeTvBroadcaster, hasMagentaTv } from "@/lib/broadcaster";
+import { Tv, MapPin, History } from "lucide-react";
 
 
 function getBroadcasterUrl(broadcaster: string): string {
@@ -34,12 +36,34 @@ export function MatchDetailSheet({
   const tz = useAppStore((s) => s.userTimezone);
   const spoiler = useAppStore((s) => s.spoilerProtection);
   const [revealed, setRevealed] = useState(false);
+  const allMatches = useMatchStore(selectMatchList);
+
+  const history = useMemo(() => {
+    if (!match) return [];
+    return allMatches
+      .filter(
+        (m) =>
+          m.group === match.group &&
+          m.status === "finished" &&
+          m.id !== match.id &&
+          (m.teamA === match.teamA || m.teamB === match.teamA) &&
+          m.score
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime()
+      );
+  }, [match, allMatches]);
+
   if (!match) return null;
   const a = getTeam(match.teamA);
   const b = getTeam(match.teamB);
   const local = getLocalParts(match.utcTimestamp, tz);
   const standings = getGroupStandings(match.group);
   const hideFinishedScore = spoiler && match.status === "finished" && !revealed;
+  const freeTv = freeTvBroadcaster(match);
+  const showMagenta = hasMagentaTv(match);
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="rounded-t-3xl max-h-[90vh] overflow-y-auto border-border bg-background">
@@ -76,41 +100,91 @@ export function MatchDetailSheet({
             </div>
           )}
 
-          {/* Broadcaster */}
+          {/* Broadcaster — ARD XOR ZDF in free TV, MagentaTV separate */}
           <div className="rounded-2xl border border-border bg-card p-4">
             <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
               <Tv className="h-3.5 w-3.5" /> Live im TV
             </div>
             <div className="flex flex-col gap-3 w-full">
-              <div className="flex flex-wrap items-center gap-2">
-                {(match.broadcasters ?? [match.broadcaster]).map((bc) => (
-                  <span
-                    key={bc}
-                    className="text-lg font-black tracking-tight text-primary bg-primary/10 border border-primary/30 rounded-lg px-3 py-1"
+              {freeTv && (
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Free-TV</span>
+                    <span className="text-lg font-black tracking-tight text-primary bg-primary/10 border border-primary/30 rounded-lg px-3 py-1">
+                      {freeTv}
+                    </span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => window.open(getBroadcasterUrl(freeTv), "_blank", "noopener,noreferrer")}
+                    className="h-11 w-full font-semibold"
                   >
-                    {bc}
-                  </span>
-                ))}
-              </div>
-              {(match.broadcasters ?? [match.broadcaster]).map((bc) => (
-                <Button
-                  key={bc}
-                  variant={bc === "MagentaTV" ? "default" : "outline"}
-                  onClick={() => {
-                    window.open(getBroadcasterUrl(bc), "_blank", "noopener,noreferrer");
-                  }}
-                  className="h-11 w-full font-semibold"
-                >
-                  {bc} öffnen
-                </Button>
-              ))}
+                    {freeTv} öffnen
+                  </Button>
+                </div>
+              )}
+              {showMagenta && (
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Pay-TV</span>
+                    <span className="text-lg font-black tracking-tight text-accent bg-accent/10 border border-accent/30 rounded-lg px-3 py-1">
+                      MagentaTV
+                    </span>
+                  </div>
+                  <Button
+                    variant="default"
+                    onClick={() => window.open(getBroadcasterUrl("MagentaTV"), "_blank", "noopener,noreferrer")}
+                    className="h-11 w-full font-semibold"
+                  >
+                    MagentaTV öffnen
+                  </Button>
+                </div>
+              )}
+              {!freeTv && !showMagenta && (
+                <p className="text-xs text-muted-foreground">Keine Übertragung hinterlegt.</p>
+              )}
             </div>
           </div>
 
-          {/* Insights */}
-          <div className="grid grid-cols-1 gap-2">
-            <Insight icon={<MapPin className="h-4 w-4" />} label="Stadion" value={`${match.stadium}, ${match.city}`} />
-            <Insight icon={<Plane className="h-4 w-4" />} label="Anreise & Transit" value={match.travelInfo} />
+          {/* Stadium */}
+          <div className="rounded-xl border border-border bg-card p-3">
+            <div className="flex items-center gap-1.5 text-[10px] uppercase text-muted-foreground">
+              <MapPin className="h-4 w-4" /> Stadion
+            </div>
+            <div className="mt-1 text-sm font-semibold">{match.stadium}, {match.city}</div>
+          </div>
+
+          {/* Team A history in this group */}
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+              <History className="h-3.5 w-3.5" /> Bilanz {a.name} in Gruppe {match.group}
+            </div>
+            {history.length === 0 ? (
+              <p className="text-xs text-muted-foreground italic">Noch keine Gruppenspiele absolviert.</p>
+            ) : (
+              <ul className="space-y-1.5">
+                {history.map((m) => {
+                  const isHome = m.teamA === match.teamA;
+                  const opp = getTeam(isHome ? m.teamB : m.teamA);
+                  const gf = isHome ? m.score!.a : m.score!.b;
+                  const ga = isHome ? m.score!.b : m.score!.a;
+                  const tone =
+                    gf > ga ? "text-primary" : gf < ga ? "text-destructive" : "text-muted-foreground";
+                  const hideThis = spoiler && !revealed;
+                  return (
+                    <li key={m.id} className="flex items-center justify-between text-sm">
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="text-base">{opp.flag}</span>
+                        <span className="truncate">{opp.name}</span>
+                      </span>
+                      <span className={`font-bold tabular-nums ${tone} ${hideThis ? "blur-sm select-none" : ""}`}>
+                        {gf} : {ga}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
 
           {/* Standings */}
@@ -148,16 +222,5 @@ export function MatchDetailSheet({
         </div>
       </SheetContent>
     </Sheet>
-  );
-}
-
-function Insight({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-border bg-card p-3">
-      <div className="flex items-center gap-1.5 text-[10px] uppercase text-muted-foreground">
-        {icon} {label}
-      </div>
-      <div className="mt-1 text-sm font-semibold">{value}</div>
-    </div>
   );
 }
