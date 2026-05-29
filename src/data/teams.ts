@@ -72,8 +72,6 @@ export const TEAMS: Team[] = [
   { code: "CRO", name: "Kroatien", flag: "🇭🇷", group: "L", tier: 2 },
   { code: "GHA", name: "Ghana", flag: "🇬🇭", group: "L", tier: 3 },
   { code: "PAN", name: "Panama", flag: "🇵🇦", group: "L", tier: 3 },
-  // Italien — used in the official 2026 group-stage schedule (Gruppe K Slot 1).
-  { code: "ITA", name: "Italien", flag: "🇮🇹", group: "K", tier: 1 },
   // Platzhalter-Slots für die offiziellen FIFA-Gruppenslots (A2..L4),
   // bevor die finalen Auslosungen / Playoffs gespielt sind.
   ...(["A","B","C","D","E","F","G","H","I","J","K","L"] as const).flatMap((g) =>
@@ -102,7 +100,7 @@ export const TEAM_ISO2: Record<string, string> = {
   ARG: "ar", ALG: "dz", AUT: "at", JOR: "jo",
   POR: "pt", COD: "cd", UZB: "uz", COL: "co",
   ENG: "gb-eng", CRO: "hr", GHA: "gh", PAN: "pa",
-  ITA: "it",
+  
 };
 
 // Attach iso2 onto each entry that has one.

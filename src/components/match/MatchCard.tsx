@@ -2,6 +2,7 @@ import { getTeam } from "@/data/teams";
 import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { useAppStore } from "@/store/app-store";
+import { getBroadcastersForMatch } from "@/lib/broadcaster";
 import { Tv, MapPin } from "lucide-react";
 
 type MatchLike = Match & {
@@ -77,7 +78,7 @@ export function MatchCard({
 
       <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
         <span className="flex items-center gap-1">
-          <Tv className="h-3 w-3" /> {(match.broadcasters ?? [match.broadcaster]).join(" & ")}
+          <Tv className="h-3 w-3" /> {getBroadcastersForMatch(match).join(" · ")}
         </span>
         <span className="flex items-center gap-1">
           <MapPin className="h-3 w-3" /> {match.city}

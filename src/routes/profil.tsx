@@ -171,38 +171,43 @@ function ProfilPage() {
 
         <div className="md:break-inside-avoid md:mb-5">
           <Card icon={<Users className="h-4 w-4" />} title="Teams">
+            <p className="text-[11px] text-muted-foreground mb-3 leading-snug">
+              Tippe: 1× <span className="text-primary font-semibold">Favorit</span> ·
+              2× <span className="text-accent font-semibold">Interessant</span> ·
+              3× Entfernen
+            </p>
             <div className="grid grid-cols-4 gap-2">
               {TEAMS.map((t) => {
                 const fav = s.favoriteTeams.includes(t.code);
                 const intg = s.interestingTeams.includes(t.code);
+                const cycle = () => {
+                  if (!fav && !intg) {
+                    // none → favorite
+                    s.toggleFavorite(t.code);
+                  } else if (fav) {
+                    // favorite → interesting
+                    s.toggleFavorite(t.code); // remove fav
+                    s.toggleInteresting(t.code); // add intg
+                  } else {
+                    // interesting → none
+                    s.toggleInteresting(t.code);
+                  }
+                };
                 return (
-                  <div key={t.code} className="flex flex-col items-center gap-1">
-                    <div
-                      className={`w-full rounded-lg border-2 p-2 flex flex-col items-center transition-all
-                        ${fav ? "border-primary bg-primary/10" : intg ? "border-accent bg-accent/10" : "border-border"}`}
-                    >
-                      <span className="text-xl">{t.flag}</span>
-                      <span className="text-[9px] font-semibold leading-tight mt-0.5">{t.code}</span>
-                    </div>
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => s.toggleFavorite(t.code)}
-                        className={`h-5 w-5 rounded-md flex items-center justify-center active:scale-90 transition
-                          ${fav ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
-                        aria-label="Favorit"
-                      >
-                        <span className="text-[10px]">★</span>
-                      </button>
-                      <button
-                        onClick={() => s.toggleInteresting(t.code)}
-                        className={`h-5 w-5 rounded-md flex items-center justify-center active:scale-90 transition
-                          ${intg ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}
-                        aria-label="Interessant"
-                      >
-                        <span className="text-[10px]">🔔</span>
-                      </button>
-                    </div>
-                  </div>
+                  <button
+                    key={t.code}
+                    onClick={cycle}
+                    aria-label={`${t.name}: ${fav ? "Favorit" : intg ? "Interessant" : "nicht ausgewählt"}`}
+                    className={`w-full rounded-lg border-2 p-2 flex flex-col items-center transition-all active:scale-95
+                      ${fav
+                        ? "border-primary bg-primary/15 shadow-[0_0_10px_hsl(var(--primary)/0.35)]"
+                        : intg
+                        ? "border-accent bg-accent/15"
+                        : "border-border hover:border-primary/40"}`}
+                  >
+                    <span className="text-xl">{t.flag}</span>
+                    <span className="text-[9px] font-semibold leading-tight mt-0.5">{t.code}</span>
+                  </button>
                 );
               })}
             </div>

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import scheduleJson from "@/data/world_cup_2026_schedule.json";
 import type { Match, MatchStage, Broadcaster } from "@/data/matches";
+import { calculateTableStandings } from "@/lib/standings";
 
 export type MatchStatus = "scheduled" | "live" | "finished";
 
@@ -102,7 +103,9 @@ export const useMatchStore = create<State & Actions>((set) => ({
   syncWithRealTime: () =>
     set((s) => {
       const now = Date.now();
-      return { now, matches: rollMatches(s.matches, now) };
+      const rolled = rollMatches(s.matches, now);
+      const resolved = resolveKnockoutPlaceholders(rolled);
+      return { now, matches: resolved };
     }),
 
   setNow: (ts) => set({ now: ts }),
@@ -111,7 +114,7 @@ export const useMatchStore = create<State & Actions>((set) => ({
     set(() => {
       const next: Record<string, RuntimeMatch> = {};
       for (const m of payload) next[m.id] = m;
-      return { matches: next };
+      return { matches: resolveKnockoutPlaceholders(next) };
     }),
 
   resetMatches: () => set({ matches: seed(), now: Date.now() }),
@@ -141,6 +144,53 @@ function rollMatches(
         next[id] = { ...m, matchMinute: minute };
         changed = true;
       }
+    }
+  }
+  return changed ? next : matches;
+}
+
+/**
+ * Replace group-stage placeholders ("1A", "2B", "3F" etc.) in unfinished
+ * knockout matches with the actual qualified teams once the corresponding
+ * group is fully decided. Runs idempotently — already-resolved matches are
+ * skipped. "3XXXXX"-style placeholders (best-of-third-place) are left
+ * untouched here; those come from the API once FIFA confirms the bracket.
+ */
+function resolveKnockoutPlaceholders(
+  matches: Record<string, RuntimeMatch>
+): Record<string, RuntimeMatch> {
+  const list = Object.values(matches);
+
+  // Detect groups whose 4 matches all finished.
+  const groupDone = new Map<string, string[]>(); // group -> ordered team codes (1st..4th)
+  for (const letter of ["A","B","C","D","E","F","G","H","I","J","K","L"]) {
+    const groupMatches = list.filter((m) => m.stage === "group" && m.group === letter);
+    if (groupMatches.length === 0) continue;
+    const allFinished = groupMatches.every((m) => m.status === "finished" && m.score);
+    if (!allFinished) continue;
+    const standings = calculateTableStandings(letter, groupMatches);
+    groupDone.set(letter, standings.map((r) => r.code));
+  }
+  if (groupDone.size === 0) return matches;
+
+  const resolve = (code: string): string => {
+    const m = code.match(/^([12])([A-L])$/);
+    if (!m) return code;
+    const ranks = groupDone.get(m[2]);
+    if (!ranks) return code;
+    const idx = parseInt(m[1], 10) - 1;
+    return ranks[idx] ?? code;
+  };
+
+  let changed = false;
+  const next: Record<string, RuntimeMatch> = { ...matches };
+  for (const m of list) {
+    if (m.stage === "group" || m.status === "finished") continue;
+    const newA = resolve(m.teamA);
+    const newB = resolve(m.teamB);
+    if (newA !== m.teamA || newB !== m.teamB) {
+      next[m.id] = { ...m, teamA: newA, teamB: newB };
+      changed = true;
     }
   }
   return changed ? next : matches;

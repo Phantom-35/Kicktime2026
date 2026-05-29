@@ -21,19 +21,41 @@ function Dashboard() {
   const state = useAppStore();
   const matches = useMatchStore(selectMatchList);
   const now = useMatchStore((s) => s.now);
+
+  // Determine current tournament phase: while any group match is still
+  // scheduled or live, we're in "group" phase. Once the group stage is done,
+  // automatically switch to KO and only consider knockout matches.
+  const phase: "group" | "ko" = useMemo(() => {
+    const groupPending = matches.some(
+      (m) => m.stage === "group" && m.status !== "finished"
+    );
+    return groupPending ? "group" : "ko";
+  }, [matches]);
+
+  const phaseMatches = useMemo(
+    () =>
+      phase === "group"
+        ? matches.filter((m) => m.stage === "group")
+        : matches.filter((m) => m.stage !== "group"),
+    [matches, phase]
+  );
+
   const cats = useMemo(
-    () => categorizeMatches({ ...state, matches, now }),
-    [state, matches, now]
+    () => categorizeMatches({ ...state, matches: phaseMatches, now }),
+    [state, phaseMatches, now]
   );
   const [selected, setSelected] = useState<Match | null>(null);
 
   return (
     <div className="p-4 pb-6">
-      <div className="mb-4">
+      <div className="mb-4 flex items-center justify-between gap-2">
         <h2 className="text-xl font-bold flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-accent" />
           Dein WM-Tag
         </h2>
+        <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-full bg-primary/15 text-primary border border-primary/30">
+          {phase === "group" ? "Gruppenphase" : "K.-o.-Runde"}
+        </span>
       </div>
 
       <Tabs defaultValue="perfect" className="w-full">
