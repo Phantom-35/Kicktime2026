@@ -33,12 +33,15 @@ function SpielePage() {
 
   useEffect(() => {
     const scroller = getScroller();
-    const getY = () => (scroller ? scroller.scrollTop : window.scrollY);
-    const onScroll = () => setShowTop(getY() > 120);
+    const getY = () => Math.max(window.scrollY, scroller?.scrollTop ?? 0);
+    const onScroll = () => setShowTop(getY() > 24);
     onScroll();
-    const target: HTMLElement | Window = scroller ?? window;
-    target.addEventListener("scroll", onScroll, { passive: true });
-    return () => target.removeEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    scroller?.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      scroller?.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   const scrollToTop = () => {
@@ -124,9 +127,9 @@ function SpielePage() {
           type="button"
           onClick={scrollToTop}
           aria-label="Nach oben"
-          className="fixed bottom-24 right-5 z-50 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center justify-center active:scale-90 transition-transform"
+          className="fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-[max(1rem,calc((100vw-28rem)/2+1rem))] z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/40 ring-2 ring-background flex items-center justify-center active:scale-90 transition-transform"
         >
-          <ArrowUp className="h-5 w-5" />
+          <ArrowUp className="h-6 w-6" />
         </button>
       )}
     </div>
