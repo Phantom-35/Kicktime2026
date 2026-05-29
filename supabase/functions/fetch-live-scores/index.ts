@@ -1,21 +1,15 @@
 /**
  * Supabase Edge Function: fetch-live-scores
  *
- * Proxies live FIFA World Cup fixture data from API-Football so the secret
- * `API_FOOTBALL_KEY` never ships inside the iOS / web bundle.
- *
- * SETUP (one-time, in Supabase Dashboard):
- *   1. Project → Edge Functions → Manage secrets
- *   2. Add:   API_FOOTBALL_KEY = <your api-football.com key>
- *   3. Save. Lovable Cloud auto-deploys this function from `supabase/functions/`.
- *
- * Client usage:
- *   const { data, error } = await supabase.functions.invoke('fetch-live-scores')
- *   // data.fixtures  → raw API-Football "response" array (already filtered to live)
+ * Proxies live FIFA World Cup fixture data from API-Football. The upstream
+ * API key stays server-side; the function requires an authenticated caller
+ * (valid Supabase JWT) so the third-party quota cannot be abused by anyone
+ * holding the public anon key.
  */
 
 // deno-lint-ignore-file no-explicit-any
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -29,44 +23,54 @@ serve(async (req: Request) => {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
 
+  // --- AuthN: require a valid Supabase JWT ----------------------------------
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    return json({ error: "Unauthorized", fixtures: [] }, 401);
+  }
+  try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error("[fetch-live-scores] supabase env vars missing");
+      return json({ error: "Service temporarily unavailable.", fixtures: [] }, 500);
+    }
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: { user }, error: authErr } = await supabase.auth.getUser(
+      authHeader.replace("Bearer ", ""),
+    );
+    if (authErr || !user) {
+      return json({ error: "Unauthorized", fixtures: [] }, 401);
+    }
+  } catch (err) {
+    console.error("[fetch-live-scores] auth check failed:", err);
+    return json({ error: "Unauthorized", fixtures: [] }, 401);
+  }
+
   const apiKey = Deno.env.get("API_FOOTBALL_KEY");
   if (!apiKey) {
-    return json(
-      {
-        error:
-          "API_FOOTBALL_KEY is not set. Add it under Supabase Dashboard → Edge Functions → Secrets.",
-        fixtures: [],
-      },
-      500
-    );
+    console.error("[fetch-live-scores] upstream API key not configured");
+    return json({ error: "Service temporarily unavailable.", fixtures: [] }, 500);
   }
 
   try {
     const upstream = await fetch(
       "https://v3.football.api-sports.io/fixtures?live=all",
-      { headers: { "x-apisports-key": apiKey } }
+      { headers: { "x-apisports-key": apiKey } },
     );
 
     if (!upstream.ok) {
-      return json(
-        {
-          error: `API-Football responded ${upstream.status}`,
-          fixtures: [],
-        },
-        502
-      );
+      console.error("[fetch-live-scores] upstream non-ok:", upstream.status);
+      return json({ error: "Upstream error", fixtures: [] }, 502);
     }
 
     const payload = (await upstream.json()) as { response?: any[] };
     return json({ fixtures: payload.response ?? [] }, 200);
   } catch (err) {
-    return json(
-      {
-        error: err instanceof Error ? err.message : "Unknown upstream error",
-        fixtures: [],
-      },
-      502
-    );
+    console.error("[fetch-live-scores] upstream error:", err);
+    return json({ error: "Failed to fetch live data.", fixtures: [] }, 502);
   }
 });
 
