@@ -6,10 +6,13 @@ import { getTeam } from "@/data/teams";
 import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { getLocalParts, parseDateQuery, matchesDateQuery } from "@/lib/time";
+import { addMatchToCalendar } from "@/lib/calendar";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Search, CalendarPlus } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/spiele")({ component: SpielePage });
 
