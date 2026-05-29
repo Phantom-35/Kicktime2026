@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { Match } from "@/data/matches";
 import { isPerfectFor, isNightShift } from "@/lib/categorize";
 import { getTeam } from "@/data/teams";
@@ -9,45 +9,16 @@ import { getLocalParts } from "@/lib/time";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowUp } from "lucide-react";
+import { Search } from "lucide-react";
 
 export const Route = createFileRoute("/spiele")({ component: SpielePage });
-
-function getScroller(): HTMLElement | null {
-  let el: HTMLElement | null = document.querySelector("main");
-  while (el) {
-    const style = window.getComputedStyle(el);
-    if (/(auto|scroll)/.test(style.overflowY)) return el;
-    el = el.parentElement;
-  }
-  return null;
-}
 
 function SpielePage() {
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<Match | null>(null);
-  const [showTop, setShowTop] = useState(false);
   const state = useAppStore();
   const spoiler = useAppStore((s) => s.spoilerProtection);
   const matches = useMatchStore(selectMatchList);
-
-  useEffect(() => {
-    const scroller = getScroller();
-    const getY = () => Math.max(window.scrollY, scroller?.scrollTop ?? 0);
-    const onScroll = () => setShowTop(getY() > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    scroller?.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      scroller?.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    const scroller = getScroller();
-    (scroller ?? window).scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   const filtered = useMemo(() => {
     const ql = q.trim().toLowerCase();
@@ -122,16 +93,6 @@ function SpielePage() {
 
       <MatchDetailSheet match={selected} open={!!selected} onOpenChange={(v) => !v && setSelected(null)} />
 
-      {showTop && (
-        <button
-          type="button"
-          onClick={scrollToTop}
-          aria-label="Nach oben"
-          className="fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-[max(1rem,calc((100vw-28rem)/2+1rem))] z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/40 ring-2 ring-background flex items-center justify-center active:scale-90 transition-transform"
-        >
-          <ArrowUp className="h-6 w-6" />
-        </button>
-      )}
     </div>
   );
 }
