@@ -1,51 +1,139 @@
-# Desktop-Layout für KickTime 2026
+# Plan: KickTime 2026 – 10 Optimierungen
 
-Ziel: Auf Bildschirmen ab `md` (≥768px) wird die App zu einem vollwertigen, breiten Desktop-Layout. Auf Smartphones (<768px) bleibt **alles 1:1 wie jetzt** — keine Klassen ohne `md:` / `lg:` Prefix werden verändert.
+## 1. Teamliste auf echte WM-Teilnehmer reduzieren
 
-## 1. App-Shell (`src/routes/__root.tsx`)
+Aktuell sind in `src/data/teams.ts` mehrere Nationen aufgeführt, die laut hochgeladenem FIFA-Spielplan (v17) **nicht** dabei sind. Im PDF tauchen u. a. diese Mannschaften auf, die in unserem Code fehlen oder falsch zugeordnet sind: **CRC (Costa Rica), CUR (Curaçao)** etc. Gleichzeitig sind im Code Teams, die im Spielplan nirgendwo erscheinen.
 
-Aktuell wird alles in eine `max-w-md`-Handy-Hülle gepresst. Stattdessen:
+**Aktion:**
+- `src/data/teams.ts` exakt an die Teams aus dem PDF angleichen (nur die `<mark>`-Codes ABC bis L4 aus dem Schedule).
+- Codes, Gruppen, Flaggen und `TEAM_ISO2` synchronisieren.
+- `src/utils/teamMapping.ts` entsprechend bereinigen (gleicher Code-Satz, Aliase aus PDF-Schreibweise).
+- `REAL_TEAMS` wird dadurch automatisch korrekt – wird sowohl im Onboarding (`OnboardingFlow.tsx`) als auch im Profil (`profil.tsx`) verwendet, also keine Doppelpflege nötig.
 
-- Mobile: unverändert (`max-w-md`, BottomNav unten, AppHeader oben).
-- Desktop (`md:`): 
-  - Äußerer Container wird `max-w-[1400px]` und `lg:max-w-screen-2xl`, Karten-Hülle entfällt (`md:max-w-none md:rounded-none md:border-0 md:shadow-none md:my-0`).
-  - Grid mit zwei Spalten: **linke Sidebar** (240px) mit Logo + Desktop-Navigation, **rechter Content** flexibel breit.
-  - `BottomNav` wird auf Desktop versteckt (`md:hidden`).
-  - Neue Komponente `SideNav` (nur `hidden md:flex`) mit denselben Tabs wie BottomNav, vertikal, inkl. KickTime-Logo + Spoiler-Schutz-Toggle oben.
-  - `AppHeader` bleibt auf Mobile sichtbar, wird auf Desktop versteckt (`md:hidden`), weil Logo + Spoiler-Toggle in die SideNav wandern.
-  - Scroll-to-top-Button-Positionierung wird für Desktop angepasst (rechts unten ohne Bottom-Nav-Offset).
+> Hinweis: Da der PDF-Inhalt durch das Parsing teilweise abgeschnitten ist, lese ich vor der Umsetzung das vollständige PDF erneut ein und extrahiere die finale 48er-Liste deterministisch (alle `<mark>`-Tags der ersten Spalte je Spieltag).
 
-## 2. Seiten-Layouts (jeweils nur `md:` Klassen hinzufügen)
+## 2. Onboarding scrollt nach „Weiter“ / „Starten“ nach oben
 
-- **`src/routes/index.tsx` (Dashboard):** Auf Desktop zweispaltiges Grid (`md:grid md:grid-cols-[1fr_360px] md:gap-6`) — Haupt-Content links, Sekundär-Widgets (z.B. Nächste Spiele / Quick-Stats) rechts als Sticky-Sidebar.
-- **`src/routes/spiele.tsx`:** Spiel-Liste auf Desktop als Grid (`md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4`). Filter-Bar wird zur Sticky-Sidebar links (`md:grid md:grid-cols-[260px_1fr]`).
-- **`src/routes/tabellen.tsx`:** Gruppen-Tabellen auf Desktop als 2- bzw. 3-Spalten-Grid (`md:grid-cols-2 lg:grid-cols-3`).
-- **`src/routes/bars.tsx`:** Venue-Karten auf Desktop als Grid (`md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`). Stadt-Dropdown bleibt oben, volle Breite begrenzt.
-- **`src/routes/profil.tsx`:** Einstellungs-Karten auf Desktop als Masonry-artiges 2-Spalten-Grid (`md:grid md:grid-cols-2 md:gap-5`), Danger-Zone + Version bleiben full-width.
-- **`OnboardingFlow`:** Auf Desktop zentrierter Karten-Container mit `md:max-w-2xl`, sonst unverändert.
+`src/components/onboarding/OnboardingFlow.tsx`:
+- Beim Klick auf „Weiter“, „Zurück“ und „WM-Planer starten“ ein `window.scrollTo({ top: 0, behavior: "smooth" })` ausführen (in einem `useEffect`, der auf `step` lauscht – sauberer als im Click-Handler, weil das auch beim Swipe/State-Wechsel funktioniert).
+- Zusätzlich beim Mount der neuen Step-`motion.div` Fokus auf den Step-Titel (`tabIndex={-1}` + ref) für Screenreader.
 
-Alle Anpassungen sind **additive Tailwind-Utility-Klassen mit `md:` / `lg:` / `xl:` Prefix**. Bestehende Mobile-Klassen werden nicht entfernt.
+## 3. Dashboard: Vorrunde → K.‑o. automatisch umschalten
 
-## 3. Padding & Spacing
+`src/routes/index.tsx` zeigt aktuell alle Matches kategorisiert (perfect/night/missed), unabhängig von Turnierphase.
 
-- Außen-Padding auf Desktop großzügiger: `md:px-8 lg:px-12 md:py-8`.
-- Karten-Innenabstand auf Desktop leicht erhöht wo sinnvoll (`md:p-6`).
+**Aktion:**
+- Neuen Selektor `useTournamentPhase()` einführen, der aus `useMatchStore` ermittelt, ob noch Vorrundenspiele (`stage === "group"`) im Zustand `scheduled|live` existieren. Wenn nein → Phase = `"ko"`.
+- Default-Filter für die drei Tabs:
+  - Phase = `"group"`: nur Matches mit `stage === "group"`.
+  - Phase = `"ko"`: nur Matches der K.‑o.‑Stages (`r32|r16|qf|sf|third|final`).
+- Kleiner Phasen-Indikator oberhalb der Tabs („Gruppenphase“ / „K.‑o.‑Runde“), damit der Wechsel sichtbar ist.
+- Übergang ist nahtlos, da der Selektor reaktiv aus dem Live-Store kommt.
 
-## 4. Version
+## 4. Match-Detailansicht: Anreise raus, Team-Historie rein
 
-`APP_VERSION` in `src/routes/profil.tsx` von `"2.0.7"` → `"3.0.0"`.
+`src/components/match/MatchDetailSheet.tsx`:
+- `<Insight icon={<Plane/>} label="Anreise & Transit" ... />` entfernen (inkl. ungenutzten `Plane`-Imports). „Stadion“ bleibt.
+- Neuen Block **„Bilanz in der Gruppe – {Team A}“** einfügen:
+  - Quelle: `useMatchStore` → alle Matches der gleichen `group`, an denen `match.teamA` beteiligt war und `status === "finished"`.
+  - Anzeige als kompakte Liste: `🇲🇦 Marokko  2 : 1` (Gegnername links, Ergebnis aus Sicht von Team A rechts, farbig je W/D/L).
+  - Falls noch keine Spiele beendet: „Noch keine Gruppenspiele absolviert.“
 
-## Technische Details
+## 5. TV-Sender eindeutig (ARD ODER ZDF, nie beide)
 
-- Keine neuen Dependencies.
-- Neue Datei: `src/components/layout/SideNav.tsx` (analog zu `BottomNav.tsx`, aber vertikal + Logo + Spoiler-Switch).
-- `BottomNav` bekommt `className="md:hidden"` am Wrapper.
-- `AppHeader` bekommt `className="md:hidden"` am Wrapper.
-- Shell-Wrapper-Klassen werden umgeschrieben, sodass Mobile-Resultat byte-identisch bleibt (alle alten Klassen bleiben, neue `md:`-Overrides kommen dazu).
-- Breakpoint-Grenze: `md` (768px). Alles darunter = aktuelles Mobile-Design.
+`MatchDetailSheet.tsx` & `MatchCard.tsx` rendern aktuell `match.broadcasters ?? [match.broadcaster]` als Liste – das führt visuell zu „ARD + ZDF gleichzeitig“.
 
-## Out of Scope
+**Aktion:**
+- Helper `primaryBroadcaster(match)` in `src/lib/broadcaster.ts`:
+  - Wenn nur ein FreeTV-Sender (ARD oder ZDF) vorhanden ist → diesen zurückgeben.
+  - Wenn beide gelistet sind (Datenfehler) → den ersten wählen und im Detail-Sheet einen kleinen Hinweis „Free-TV: ARD“ als **einzelne** Badge anzeigen.
+  - MagentaTV wird separat als „Pay-TV: MagentaTV“ angezeigt.
+- Im Detail-Sheet zwei klar getrennte Zeilen: **Free-TV:** ARD *oder* ZDF (eine Badge, ein Button) + **Pay-TV:** MagentaTV.
+- Schedule-JSON (`src/data/world_cup_2026_schedule.json`) wird **nicht** umgeschrieben; die Eindeutigkeit passiert in der Anzeigeschicht.
 
-- Keine Änderung an Business-Logik, Daten, Stores, Auth, Edge Functions.
-- Keine neuen Farben/Tokens — bestehende `src/styles.css` Tokens werden weiterverwendet.
-- Keine Änderungen an Match-Card-Innenleben — nur Grid-Anordnung außen herum.
+## 6. Spoiler-Schutz-Label im Header
+
+`src/components/layout/AppHeader.tsx` zeigt das Label bereits via `hidden xs:inline`. Auf 390 px greift `xs:` aber meist nicht.
+
+**Aktion:**
+- Class auf `inline` setzen (immer sichtbar), Text klein und dezent: `text-[11px] font-medium text-muted-foreground`.
+- Analog in `src/components/layout/SideNav.tsx` (Desktop) das Label fest neben dem Switch anzeigen.
+
+## 7. Dynamische K.‑o.‑Paarungen via API ersetzen
+
+`src/services/footballApi.ts` + `supabase/functions/fetch-live-scores/index.ts` liefern bereits Live-Daten.
+
+**Aktion:**
+- In der Edge Function zusätzlich die Endstände der Gruppenphase ziehen und daraus die finale Tabelle berechnen.
+- Im Client einen neuen Reducer `resolveKnockoutPlaceholders()` (in `src/store/match-store.ts`):
+  - Sobald alle Matches einer Gruppe `finished` sind, berechne `1A`, `2A`, `3A` etc. aus `getGroupStandings()` (bereits vorhanden, muss aber echte Stats statt Nullen liefern – Live-Updates schreiben `score` ein).
+  - Mappe Platzhalter-Codes (`1B`, `2A`, …, `3EFGIJ`) in den K.‑o.‑Matches auf die echten Team-Codes via `applyLiveUpdate`-Variante `replaceTeams(id, teamA, teamB)`.
+- `teamMapping`/`getTeam` bekommen einen Fallback für `3EFGIJ`-Codes (heute schon teilweise vorhanden für `3A` etc.).
+
+## 8. Teamauswahl im Profil: 3-Klick-Toggle direkt auf der Karte
+
+`src/routes/profil.tsx` Teams-Karte:
+- Entfernt: die beiden kleinen Buttons unter jedem Kärtchen.
+- Neuer Zustand pro Karte: `none → favorite → interesting → none`.
+- Klick-Handler: ruft je nach aktuellem Status `toggleFavorite` und/oder `toggleInteresting` so, dass das Resultat der gewünschten Sequenz entspricht.
+- Visuell:
+  - `favorite`: grüner Rand + grünes Tint (`border-primary bg-primary/15`).
+  - `interesting`: Akzent-Farbe (`border-accent bg-accent/15`).
+  - `none`: neutral.
+- Kleiner Hinweistext über dem Grid: „Tippe: 1× Favorit · 2× Interessant · 3× Entfernen“.
+
+## 9. Wecker-/Erinnerungs-Funktion mobil härten
+
+`src/lib/notifications.ts` + `src/routes/index.tsx` (AlarmRow):
+
+**Probleme heute:**
+- `setTimeout` läuft nicht im Hintergrund, sobald der Tab geschlossen wird.
+- iOS Safari blockt `Notification` außerhalb PWA.
+
+**Aktion:**
+- Service-Worker basierte Lösung skizzieren: `public/sw.js` registrieren, `showNotification` aus dem SW heraus aufrufen (funktioniert auf Android Chrome zuverlässig).
+- Für iOS: klare UX-Meldung beibehalten, zusätzlich Fallback „Zum Kalender hinzufügen“ vom Dashboard prominent anbieten, wenn `detectPushSupport() === "ios-needs-pwa"`.
+- Persistente Alarm-Queue im `localStorage` + beim App-Start neu planen (heute geht der Timer beim Reload verloren).
+- Mobile-Test-Checkliste: iOS 16.4+ PWA, Android Chrome Tab offen, Android Chrome PWA, Desktop. Ergebnis als Toast-Hinweis im Profil-Card dokumentieren.
+
+## 10. Suche im „Alle Spiele“-Tab: auch nach Datum filtern
+
+`src/routes/spiele.tsx` filtert aktuell nach Team und Stadt.
+
+**Aktion:**
+- Helper `parseDateQuery(q)` (neu, in `src/lib/time.ts`): erkennt Eingaben wie `14.06`, `14.06.2026`, `14/6`, `2026-06-14`, `14. Juni`, `Juni`, `Juni 14`.
+- Match-Filter: zusätzlich Treffer, wenn `getLocalParts(m.utcTimestamp).dayKey` mit dem geparsten Datum übereinstimmt **oder** Monat passt.
+- Placeholder der `Input` auf `"Team, Stadt oder Datum (z. B. 14.06)…"` aktualisieren.
+- Kein neuer DatePicker, bewusst nur Freitext, wie gewünscht.
+
+---
+
+## Technische Details / betroffene Dateien
+
+```
+src/data/teams.ts                      # Schritt 1
+src/utils/teamMapping.ts               # Schritt 1
+src/components/onboarding/OnboardingFlow.tsx  # Schritt 2
+src/routes/index.tsx                   # Schritt 3
+src/components/match/MatchDetailSheet.tsx     # Schritt 4, 5
+src/components/match/MatchCard.tsx     # Schritt 5
+src/lib/broadcaster.ts (neu)           # Schritt 5
+src/components/layout/AppHeader.tsx    # Schritt 6
+src/components/layout/SideNav.tsx      # Schritt 6
+src/store/match-store.ts               # Schritt 7
+src/services/footballApi.ts            # Schritt 7
+supabase/functions/fetch-live-scores/index.ts  # Schritt 7
+src/data/groups.ts                     # Schritt 7 (echte Stats aus Live-Scores)
+src/routes/profil.tsx                  # Schritt 8
+src/lib/notifications.ts               # Schritt 9
+public/sw.js (neu)                     # Schritt 9
+src/lib/time.ts                        # Schritt 10
+src/routes/spiele.tsx                  # Schritt 10
+```
+
+Keine neuen npm-Pakete nötig. Mobile Layout (≤ 768 px) bleibt unverändert; Schritte 4–8 sind rein inhaltlich/funktional, keine Layout-Verschiebung auf Mobile.
+
+## Open Questions
+
+1. **Schritt 7 (echte K.‑o.‑Paarungen):** API-Football liefert die finalen Paarungen automatisch, sobald die Gruppenphase beendet ist – das nutzen wir. Falls du es **vor** Turnierende lieber per Hand pflegen willst (für Testing), sag Bescheid, dann baue ich zusätzlich einen Admin-Override.
+2. **Schritt 9 (Wecker):** Ein zuverlässiger Hintergrund-Push auf iOS erfordert Lovable Cloud (Web Push API + Subscriptions in Supabase). Soll ich das gleich mit aufsetzen, oder reicht dir vorerst die Service-Worker-Lösung (Android zuverlässig, iOS nur als installierte PWA)?
