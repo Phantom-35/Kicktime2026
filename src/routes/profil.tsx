@@ -23,15 +23,15 @@ import {
   RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, FlaskConical, Cloud, Trash2,
 } from "lucide-react";
 
-const APP_VERSION = "2.0.7";
+const APP_VERSION = "3.0.0";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
 function ProfilPage() {
   const s = useAppStore();
   return (
-    <div className="p-4 pb-6 space-y-5">
-      <h2 className="text-xl font-bold">Profil & Einstellungen</h2>
+    <div className="p-4 pb-6 space-y-5 md:space-y-0 md:grid md:grid-cols-2 md:gap-5 md:items-start">
+      <h2 className="text-xl font-bold md:col-span-2">Profil & Einstellungen</h2>
 
       <Card icon={<Eye className="h-4 w-4" />} title="Spoiler-Schutz">
         <div className="flex items-center justify-between">

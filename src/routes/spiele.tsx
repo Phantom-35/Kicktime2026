@@ -64,7 +64,7 @@ function SpielePage() {
         {grouped.map(([key, label, list]) => (
           <div key={key}>
             <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">{label}</div>
-            <div className="space-y-2.5">
+            <div className="space-y-2.5 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-3">
               {list.map((m) => {
                 const indicator = isPerfectFor(m, state)
                   ? "perfect"
