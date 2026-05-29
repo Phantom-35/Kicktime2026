@@ -61,7 +61,7 @@ export function MatchDetailSheet({
   const local = getLocalParts(match.utcTimestamp, tz);
   const standings = getGroupStandings(match.group);
   const hideFinishedScore = spoiler && match.status === "finished" && !revealed;
-  const freeTv = freeTvBroadcaster(match);
+  const showFreeTv = hasAnyFreeTv(match);
   const showMagenta = hasMagentaTv(match);
 
   return (
