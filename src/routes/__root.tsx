@@ -19,6 +19,7 @@ import { useAppStore } from "@/store/app-store";
 import { useLiveClock } from "@/hooks/useLiveClock";
 import { useLiveSimulation } from "@/hooks/useLiveSimulation";
 import { useLiveApi } from "@/hooks/useLiveApi";
+import { useAlarmScheduler } from "@/hooks/useAlarmScheduler";
 import { runScheduleAudit } from "@/lib/scheduleAudit";
 
 import appCss from "../styles.css?url";
@@ -109,6 +110,7 @@ function RootComponent() {
   useLiveClock();
   useLiveSimulation();
   useLiveApi();
+  useAlarmScheduler();
   useEffect(() => {
     if (import.meta.env.DEV) runScheduleAudit();
   }, []);
