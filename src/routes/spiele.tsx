@@ -77,13 +77,33 @@ function SpielePage() {
                   ? "night"
                   : null;
                 return (
-                  <MatchCard
-                    key={m.id}
-                    match={m}
-                    indicator={indicator}
-                    hideScore={spoiler && m.status === "finished"}
-                    onClick={() => setSelected(m)}
-                  />
+                  <div key={m.id}>
+                    <MatchCard
+                      match={m}
+                      indicator={indicator}
+                      hideScore={spoiler && m.status === "finished"}
+                      onClick={() => setSelected(m)}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full h-7 text-[11px] text-muted-foreground hover:text-foreground mt-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          try {
+                            addMatchToCalendar(m);
+                            toast.success("Kalender wird geöffnet…", {
+                              description: getLocalParts(m.utcTimestamp).fullStr,
+                            });
+                          } catch {
+                            toast.error("Konnte Kalender nicht öffnen");
+                          }
+                        }}
+                      >
+                        <CalendarPlus className="h-3 w-3 mr-1" /> Zum Kalender hinzufügen
+                      </Button>
+                    </MatchCard>
+                  </div>
                 );
               })}
             </div>
