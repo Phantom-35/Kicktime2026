@@ -208,6 +208,7 @@ function ProfilPage() {
       </Button>
 
       {/* Danger zone: full data wipe */}
+      <div className="md:col-span-2">
       <Card icon={<Trash2 className="h-4 w-4" />} title="Alle Daten löschen">
         <p className="text-xs text-muted-foreground mb-3">
           Setzt die App vollständig zurück: Favoriten, Wecker, Einstellungen und
