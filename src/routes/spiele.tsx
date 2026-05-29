@@ -5,7 +5,7 @@ import { isPerfectFor, isNightShift } from "@/lib/categorize";
 import { getTeam } from "@/data/teams";
 import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
-import { getLocalParts } from "@/lib/time";
+import { getLocalParts, parseDateQuery, matchesDateQuery } from "@/lib/time";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { Input } from "@/components/ui/input";
@@ -22,8 +22,10 @@ function SpielePage() {
 
   const filtered = useMemo(() => {
     const ql = q.trim().toLowerCase();
+    const dateQ = parseDateQuery(q);
     const list = ql
       ? matches.filter((m) => {
+          if (dateQ && matchesDateQuery(m.utcTimestamp, dateQ)) return true;
           const a = getTeam(m.teamA).name.toLowerCase();
           const b = getTeam(m.teamB).name.toLowerCase();
           return a.includes(ql) || b.includes(ql) || m.city.toLowerCase().includes(ql);
@@ -55,7 +57,7 @@ function SpielePage() {
         <Input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Team oder Stadt suchen…"
+          placeholder="Team, Stadt oder Datum (z. B. 14.06)…"
           className="pl-9 h-11 bg-card"
         />
       </div>
