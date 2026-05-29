@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
 import { useAppStore } from "@/store/app-store";
@@ -23,6 +23,14 @@ export function OnboardingFlow() {
     availability, setAvailability,
     setOnboarded,
   } = useAppStore();
+
+  // Scroll to top whenever the step changes so the new content is visible
+  // without manual scrolling.
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [step]);
 
   const canAdvance =
     step === 0 ? true :
@@ -102,6 +110,7 @@ export function OnboardingFlow() {
             <Button
               onClick={() => {
                 setOnboarded(true);
+                if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
                 navigate({ to: "/", replace: true });
               }}
               className="flex-1 h-12 font-semibold"
