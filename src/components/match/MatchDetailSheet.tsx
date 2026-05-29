@@ -9,7 +9,7 @@ import { getGroupStandings } from "@/data/groups";
 import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { getLocalParts } from "@/lib/time";
-import { freeTvBroadcaster, hasMagentaTv } from "@/lib/broadcaster";
+import { hasAnyFreeTv, hasMagentaTv } from "@/lib/broadcaster";
 import { Tv, MapPin, History } from "lucide-react";
 
 
