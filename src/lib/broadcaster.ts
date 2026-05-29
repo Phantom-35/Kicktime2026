@@ -20,6 +20,11 @@ export function freeTvBroadcaster(match: Match): Broadcaster | null {
   return (list.find((b) => b === "ARD" || b === "ZDF") as Broadcaster | undefined) ?? null;
 }
 
+export function hasAnyFreeTv(match: Match): boolean {
+  const list = match.broadcasters ?? [match.broadcaster];
+  return list.some((b) => b === "ARD" || b === "ZDF");
+}
+
 export function hasMagentaTv(match: Match): boolean {
   const list = match.broadcasters ?? [match.broadcaster];
   return list.includes("MagentaTV");
