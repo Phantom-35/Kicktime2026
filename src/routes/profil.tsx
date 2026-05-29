@@ -198,7 +198,7 @@ function ProfilPage() {
 
       <Button
         variant="outline"
-        className="w-full h-12"
+        className="w-full h-12 md:col-span-2"
         onClick={() => {
           s.resetOnboarding();
           toast("Onboarding zurückgesetzt");
