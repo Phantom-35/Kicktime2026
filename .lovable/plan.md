@@ -1,51 +1,51 @@
-# Gastro Tab: Echte Public-Viewing-Daten + UI-Upgrade
+# Desktop-Layout für KickTime 2026
 
-## 1. Neue Datendatei `src/data/publicViewingData.ts`
+Ziel: Auf Bildschirmen ab `md` (≥768px) wird die App zu einem vollwertigen, breiten Desktop-Layout. Auf Smartphones (<768px) bleibt **alles 1:1 wie jetzt** — keine Klassen ohne `md:` / `lg:` Prefix werden verändert.
 
-- Exportiert `Venue`-Type und `publicViewingVenues`-Array exakt wie vom User vorgegeben (15 Einträge: München 4, Berlin 3, Hamburg 3, Köln 3, Frankfurt 2).
-- Felder: `id, name, city, address, type, distanceMock, hours, googleMapsUrl`.
-- `type` ist union: `"Sportsbar" | "Biergarten" | "Fan Zone / Großbildleinwand"`.
-- Hamburg wird neu hinzugefügt – die alte `BARS`-Liste in `src/data/bars.ts` kennt Hamburg nicht.
+## 1. App-Shell (`src/routes/__root.tsx`)
 
-Die alte `src/data/bars.ts` bleibt zunächst bestehen, wird aber von `bars.tsx` nicht mehr verwendet. (Aufräumen optional – wenn keine andere Referenz existiert, löschen.)
+Aktuell wird alles in eine `max-w-md`-Handy-Hülle gepresst. Stattdessen:
 
-## 2. `src/routes/bars.tsx` umbauen
+- Mobile: unverändert (`max-w-md`, BottomNav unten, AppHeader oben).
+- Desktop (`md:`): 
+  - Äußerer Container wird `max-w-[1400px]` und `lg:max-w-screen-2xl`, Karten-Hülle entfällt (`md:max-w-none md:rounded-none md:border-0 md:shadow-none md:my-0`).
+  - Grid mit zwei Spalten: **linke Sidebar** (240px) mit Logo + Desktop-Navigation, **rechter Content** flexibel breit.
+  - `BottomNav` wird auf Desktop versteckt (`md:hidden`).
+  - Neue Komponente `SideNav` (nur `hidden md:flex`) mit denselben Tabs wie BottomNav, vertikal, inkl. KickTime-Logo + Spoiler-Schutz-Toggle oben.
+  - `AppHeader` bleibt auf Mobile sichtbar, wird auf Desktop versteckt (`md:hidden`), weil Logo + Spoiler-Toggle in die SideNav wandern.
+  - Scroll-to-top-Button-Positionierung wird für Desktop angepasst (rechts unten ohne Bottom-Nav-Offset).
 
-- Import: `publicViewingVenues, Venue` aus der neuen Datendatei.
-- Städte-Dropdown: `["München", "Berlin", "Hamburg", "Köln", "Frankfurt"]` (Hamburg ergänzt).
-- Umkreis-Filter (`distanceKm`) entfällt, da `distanceMock` jetzt ein String ist. Stattdessen wird der String unverändert als Badge angezeigt (z. B. „1.2 km").
-- Filter: nur nach `city`. Der bestehende „Nur Bars mit nächstem Perfect Match"-Switch wird entfernt (matchIds existieren bei den neuen Venues nicht).
-- Karten-Layout pro Venue:
-  - Header: `name` + rechts oben `distanceMock`-Badge.
-  - Adresse-Zeile (MapPin-Icon) + Öffnungszeiten-Zeile (Clock-Icon).
-  - **Neuer Type-Badge**: kleines Pill (`bg-primary/10 text-primary`, abhängig vom Typ ggf. unterschiedliche Tönung – Sportsbar = primary, Biergarten = grün, Fan Zone = accent). Premium-Look, abgerundet.
-  - **Nächstes Match in dieser Stadt**: ersetzt den "ZEIGT U.A."-Block. 
-    - Logik: aus `useMatchStore(selectMatchList)` das nächste `scheduled`/`live` Match filtern, dessen `city` mit `venue.city` übereinstimmt. Falls keines: Fallback „Kein Match in {city} geplant".
-    - Format: `📺 Nächstes Match hier: {TeamA} vs. {TeamB} ({DD.MM.} – {HH:mm})` mit `getTeam()` für Flag/Name und `getLocalParts()` für Datum/Zeit.
-  - **Primary Button** (volle Breite, ersetzt "Tisch reservieren"):
-    - Icon: `MapPin` (oder `Navigation`) + Text „Auf Google Maps anzeigen".
-    - `onClick: () => window.open(venue.googleMapsUrl, "_blank", "noopener,noreferrer")`.
+## 2. Seiten-Layouts (jeweils nur `md:` Klassen hinzufügen)
 
-- Header-Text bleibt „Gastro-Finder" + Untertitel „Public Viewing für Nachtspiele in Deutschland."
+- **`src/routes/index.tsx` (Dashboard):** Auf Desktop zweispaltiges Grid (`md:grid md:grid-cols-[1fr_360px] md:gap-6`) — Haupt-Content links, Sekundär-Widgets (z.B. Nächste Spiele / Quick-Stats) rechts als Sticky-Sidebar.
+- **`src/routes/spiele.tsx`:** Spiel-Liste auf Desktop als Grid (`md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4`). Filter-Bar wird zur Sticky-Sidebar links (`md:grid md:grid-cols-[260px_1fr]`).
+- **`src/routes/tabellen.tsx`:** Gruppen-Tabellen auf Desktop als 2- bzw. 3-Spalten-Grid (`md:grid-cols-2 lg:grid-cols-3`).
+- **`src/routes/bars.tsx`:** Venue-Karten auf Desktop als Grid (`md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`). Stadt-Dropdown bleibt oben, volle Breite begrenzt.
+- **`src/routes/profil.tsx`:** Einstellungs-Karten auf Desktop als Masonry-artiges 2-Spalten-Grid (`md:grid md:grid-cols-2 md:gap-5`), Danger-Zone + Version bleiben full-width.
+- **`OnboardingFlow`:** Auf Desktop zentrierter Karten-Container mit `md:max-w-2xl`, sonst unverändert.
 
-## 3. Version-Bump
+Alle Anpassungen sind **additive Tailwind-Utility-Klassen mit `md:` / `lg:` / `xl:` Prefix**. Bestehende Mobile-Klassen werden nicht entfernt.
 
-- `src/routes/profil.tsx`: `APP_VERSION` von `"1.2.1"` → `"2.0.0"` (Major-Bump wegen substanzieller Daten-/UI-Änderung).
+## 3. Padding & Spacing
 
-## 4. Aufräumen
+- Außen-Padding auf Desktop großzügiger: `md:px-8 lg:px-12 md:py-8`.
+- Karten-Innenabstand auf Desktop leicht erhöht wo sinnvoll (`md:p-6`).
 
-- Wenn `src/data/bars.ts` keine weiteren Referenzen hat (Grep prüfen): Datei löschen. Sonst stehen lassen.
+## 4. Version
 
-# Technische Details
+`APP_VERSION` in `src/routes/profil.tsx` von `"2.0.7"` → `"3.0.0"`.
+
+## Technische Details
 
 - Keine neuen Dependencies.
-- Type-Badge-Farben über bestehende Tokens (`primary`, `accent`, ggf. neu definierte semantische Klasse in `styles.css` falls nötig – ansonsten Tailwind-Utility mit Token-Mix).
-- Nächstes-Match-Lookup ist ein simples `matches.filter(m => m.city === city && new Date(m.utcTimestamp) > now).sort(...)[0]`, memoized per `useMemo`.
-- Kein Backend-/DB-Touch.
+- Neue Datei: `src/components/layout/SideNav.tsx` (analog zu `BottomNav.tsx`, aber vertikal + Logo + Spoiler-Switch).
+- `BottomNav` bekommt `className="md:hidden"` am Wrapper.
+- `AppHeader` bekommt `className="md:hidden"` am Wrapper.
+- Shell-Wrapper-Klassen werden umgeschrieben, sodass Mobile-Resultat byte-identisch bleibt (alle alten Klassen bleiben, neue `md:`-Overrides kommen dazu).
+- Breakpoint-Grenze: `md` (768px). Alles darunter = aktuelles Mobile-Design.
 
-# Geänderte/neue Dateien
+## Out of Scope
 
-- **neu**: `src/data/publicViewingData.ts`
-- **bearbeitet**: `src/routes/bars.tsx` (kompletter Rewrite des Render-/Filter-Teils)
-- **bearbeitet**: `src/routes/profil.tsx` (Version)
-- **optional gelöscht**: `src/data/bars.ts`
+- Keine Änderung an Business-Logik, Daten, Stores, Auth, Edge Functions.
+- Keine neuen Farben/Tokens — bestehende `src/styles.css` Tokens werden weiterverwendet.
+- Keine Änderungen an Match-Card-Innenleben — nur Grid-Anordnung außen herum.

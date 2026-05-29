@@ -6,7 +6,7 @@ export function AppHeader() {
   const spoiler = useAppStore((s) => s.spoilerProtection);
   const setSpoiler = useAppStore((s) => s.setSpoiler);
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-card/95 backdrop-blur px-4">
+    <header className="md:hidden sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-card/95 backdrop-blur px-4">
       <div className="flex items-center gap-2">
         <span className="text-lg">⚽️</span>
         <h1 className="text-base font-bold tracking-tight">

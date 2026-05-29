@@ -12,7 +12,7 @@ const tabs = [
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <nav className="sticky bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+    <nav className="md:hidden sticky bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <ul className="grid grid-cols-5">
         {tabs.map(({ to, label, icon: Icon }) => {
           const active = pathname === to;
