@@ -107,25 +107,25 @@ export function MatchDetailSheet({
             </div>
             <div className="flex flex-col gap-3 w-full">
               {showFreeTv && (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Free-TV: ARD oder ZDF
+                  </span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Free-TV</span>
-                    <span className="text-base font-bold tracking-tight text-primary bg-primary/10 border border-primary/30 rounded-lg px-2.5 py-0.5">
-                      ARD / ZDF
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
                     <Button
                       variant="outline"
+                      size="sm"
                       onClick={() => window.open(getBroadcasterUrl("ARD"), "_blank", "noopener,noreferrer")}
-                      className="h-9 flex-1 text-sm font-medium"
+                      className="h-8 flex-1 text-xs font-medium"
                     >
                       ARD öffnen
                     </Button>
+                    <span className="text-[10px] uppercase text-muted-foreground">oder</span>
                     <Button
                       variant="outline"
+                      size="sm"
                       onClick={() => window.open(getBroadcasterUrl("ZDF"), "_blank", "noopener,noreferrer")}
-                      className="h-9 flex-1 text-sm font-medium"
+                      className="h-8 flex-1 text-xs font-medium"
                     >
                       ZDF öffnen
                     </Button>
@@ -133,22 +133,18 @@ export function MatchDetailSheet({
                 </div>
               )}
               {showMagenta && (
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Pay-TV</span>
-                    <span className="text-lg font-black tracking-tight text-accent bg-accent/10 border border-accent/30 rounded-lg px-3 py-1">
-                      MagentaTV
-                    </span>
-                  </div>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Pay-TV</span>
                   <Button
                     variant="default"
                     onClick={() => window.open(getBroadcasterUrl("MagentaTV"), "_blank", "noopener,noreferrer")}
-                    className="h-11 w-full font-semibold"
+                    className="h-12 w-full text-base font-semibold"
                   >
                     MagentaTV öffnen
                   </Button>
                 </div>
               )}
+
               {!showFreeTv && !showMagenta && (
                 <p className="text-xs text-muted-foreground">Keine Übertragung hinterlegt.</p>
               )}
