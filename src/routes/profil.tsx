@@ -20,10 +20,10 @@ import { detectPushSupport, requestPushPermission } from "@/lib/notifications";
 
 import { toast } from "sonner";
 import {
-  RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, FlaskConical, Cloud, Trash2,
+  RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2,
 } from "lucide-react";
 
-const APP_VERSION = "3.1.3";
+const APP_VERSION = "3.1.4";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
