@@ -5,7 +5,7 @@ import {
 import { Button } from "@/components/ui/button";
 import type { Match } from "@/data/matches";
 import { getTeam } from "@/data/teams";
-import { getGroupStandings } from "@/data/groups";
+import { calculateTableStandings, type LiveScores } from "@/lib/standings";
 import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { getLocalParts } from "@/lib/time";
