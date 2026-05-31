@@ -59,7 +59,14 @@ export function MatchDetailSheet({
   const a = getTeam(match.teamA);
   const b = getTeam(match.teamB);
   const local = getLocalParts(match.utcTimestamp, tz);
-  const standings = getGroupStandings(match.group);
+  const liveScores: LiveScores = {};
+  for (const m of allMatches) {
+    if (m.status === "live" && m.liveScore) liveScores[m.id] = m.liveScore;
+  }
+  const standings =
+    match.stage === "group"
+      ? calculateTableStandings(match.group, allMatches, liveScores)
+      : [];
   const hideFinishedScore = spoiler && match.status === "finished" && !revealed;
   const showFreeTv = hasAnyFreeTv(match);
   const showMagenta = hasMagentaTv(match);
