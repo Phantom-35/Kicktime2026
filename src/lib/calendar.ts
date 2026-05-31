@@ -38,8 +38,23 @@ export function addMatchToCalendar(match: Match): void {
   const end = new Date(start.getTime() + 105 * 60 * 1000);
 
   const broadcasters = (match.broadcasters ?? [match.broadcaster]).join(" & ");
-  const summary = `${a.flag} ${a.name} vs ${b.name} ${b.flag} (Gruppe ${match.group})`;
-  const description = `FIFA WM 2026 · Gruppenphase\\nÜbertragung: ${broadcasters}\\nStadion: ${match.stadium}, ${match.city}`;
+  const stageLabel =
+    match.stage === "group"
+      ? `Gruppe ${match.group}`
+      : match.stage === "r32"
+      ? "Sechzehntelfinale"
+      : match.stage === "r16"
+      ? "Achtelfinale"
+      : match.stage === "qf"
+      ? "Viertelfinale"
+      : match.stage === "sf"
+      ? "Halbfinale"
+      : match.stage === "third"
+      ? "Spiel um Platz 3"
+      : "Finale";
+  const phaseLabel = match.stage === "group" ? "Gruppenphase" : "K.-o.-Runde";
+  const summary = `${a.flag} ${a.name} vs ${b.name} ${b.flag} (${stageLabel})`;
+  const description = `FIFA WM 2026 · ${phaseLabel}\\nÜbertragung: ${broadcasters}\\nStadion: ${match.stadium}, ${match.city}`;
   const location = `${match.stadium}, ${match.city}`;
   const uid = `${match.id}@kicktime-2026`;
 
