@@ -5,7 +5,7 @@ import {
 import { Button } from "@/components/ui/button";
 import type { Match } from "@/data/matches";
 import { getTeam } from "@/data/teams";
-import { getGroupStandings } from "@/data/groups";
+import { calculateTableStandings, type LiveScores } from "@/lib/standings";
 import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { getLocalParts } from "@/lib/time";
@@ -59,7 +59,14 @@ export function MatchDetailSheet({
   const a = getTeam(match.teamA);
   const b = getTeam(match.teamB);
   const local = getLocalParts(match.utcTimestamp, tz);
-  const standings = getGroupStandings(match.group);
+  const liveScores: LiveScores = {};
+  for (const m of allMatches) {
+    if (m.status === "live" && m.liveScore) liveScores[m.id] = m.liveScore;
+  }
+  const standings =
+    match.stage === "group"
+      ? calculateTableStandings(match.group, allMatches, liveScores)
+      : [];
   const hideFinishedScore = spoiler && match.status === "finished" && !revealed;
   const showFreeTv = hasAnyFreeTv(match);
   const showMagenta = hasMagentaTv(match);
@@ -159,71 +166,75 @@ export function MatchDetailSheet({
             <div className="mt-1 text-sm font-semibold">{match.stadium}, {match.city}</div>
           </div>
 
-          {/* Team A history in this group */}
-          <div className="rounded-2xl border border-border bg-card p-4">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-              <History className="h-3.5 w-3.5" /> Bilanz {a.name} in Gruppe {match.group}
+          {/* Team A history in this group (only for group stage) */}
+          {match.stage === "group" && (
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                <History className="h-3.5 w-3.5" /> Bilanz {a.name} in Gruppe {match.group}
+              </div>
+              {history.length === 0 ? (
+                <p className="text-xs text-muted-foreground italic">Noch keine Gruppenspiele absolviert.</p>
+              ) : (
+                <ul className="space-y-1.5">
+                  {history.map((m) => {
+                    const isHome = m.teamA === match.teamA;
+                    const opp = getTeam(isHome ? m.teamB : m.teamA);
+                    const gf = isHome ? m.score!.a : m.score!.b;
+                    const ga = isHome ? m.score!.b : m.score!.a;
+                    const tone =
+                      gf > ga ? "text-primary" : gf < ga ? "text-destructive" : "text-muted-foreground";
+                    const hideThis = spoiler && !revealed;
+                    return (
+                      <li key={m.id} className="flex items-center justify-between text-sm">
+                        <span className="flex items-center gap-2 min-w-0">
+                          <span className="text-base">{opp.flag}</span>
+                          <span className="truncate">{opp.name}</span>
+                        </span>
+                        <span className={`font-bold tabular-nums ${tone} ${hideThis ? "blur-sm select-none" : ""}`}>
+                          {gf} : {ga}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
-            {history.length === 0 ? (
-              <p className="text-xs text-muted-foreground italic">Noch keine Gruppenspiele absolviert.</p>
-            ) : (
-              <ul className="space-y-1.5">
-                {history.map((m) => {
-                  const isHome = m.teamA === match.teamA;
-                  const opp = getTeam(isHome ? m.teamB : m.teamA);
-                  const gf = isHome ? m.score!.a : m.score!.b;
-                  const ga = isHome ? m.score!.b : m.score!.a;
-                  const tone =
-                    gf > ga ? "text-primary" : gf < ga ? "text-destructive" : "text-muted-foreground";
-                  const hideThis = spoiler && !revealed;
-                  return (
-                    <li key={m.id} className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-2 min-w-0">
-                        <span className="text-base">{opp.flag}</span>
-                        <span className="truncate">{opp.name}</span>
-                      </span>
-                      <span className={`font-bold tabular-nums ${tone} ${hideThis ? "blur-sm select-none" : ""}`}>
-                        {gf} : {ga}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
+          )}
 
-          {/* Standings */}
-          <div className="rounded-2xl border border-border bg-card overflow-hidden">
-            <div className="px-4 py-3 text-xs font-semibold text-muted-foreground">
-              Gruppe {match.group} · Tabelle
+          {/* Standings (only meaningful for group-stage matches) */}
+          {match.stage === "group" && standings.length > 0 && (
+            <div className="rounded-2xl border border-border bg-card overflow-hidden">
+              <div className="px-4 py-3 text-xs font-semibold text-muted-foreground">
+                Gruppe {match.group} · Tabelle
+              </div>
+              <table className="w-full text-sm">
+                <thead className="text-[10px] uppercase text-muted-foreground">
+                  <tr>
+                    <th className="text-left pl-4 py-1.5">Team</th>
+                    <th className="text-center py-1.5">Sp</th>
+                    <th className="text-center py-1.5">TD</th>
+                    <th className="text-right pr-4 py-1.5">Pkt</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {standings.map((row) => {
+                    const t = getTeam(row.code);
+                    const highlight = row.code === match.teamA || row.code === match.teamB;
+                    return (
+                      <tr key={row.code} className={highlight ? "bg-primary/15" : ""}>
+                        <td className="pl-4 py-2 font-medium flex items-center gap-2">
+                          <span>{t.flag}</span> {t.name}
+                        </td>
+                        <td className="text-center tabular-nums">{row.played}</td>
+                        <td className="text-center tabular-nums">{row.gd}</td>
+                        <td className="text-right pr-4 font-bold tabular-nums">{row.pts}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-            <table className="w-full text-sm">
-              <thead className="text-[10px] uppercase text-muted-foreground">
-                <tr>
-                  <th className="text-left pl-4 py-1.5">Team</th>
-                  <th className="text-center py-1.5">Sp</th>
-                  <th className="text-center py-1.5">TD</th>
-                  <th className="text-right pr-4 py-1.5">Pkt</th>
-                </tr>
-              </thead>
-              <tbody>
-                {standings.map((row) => {
-                  const t = getTeam(row.code);
-                  const highlight = row.code === match.teamA || row.code === match.teamB;
-                  return (
-                    <tr key={row.code} className={highlight ? "bg-primary/15" : ""}>
-                      <td className="pl-4 py-2 font-medium flex items-center gap-2">
-                        <span>{t.flag}</span> {t.name}
-                      </td>
-                      <td className="text-center tabular-nums">{row.played}</td>
-                      <td className="text-center tabular-nums">{row.gf - row.ga}</td>
-                      <td className="text-right pr-4 font-bold tabular-nums">{row.pts}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          )}
         </div>
       </SheetContent>
     </Sheet>
