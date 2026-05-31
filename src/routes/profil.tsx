@@ -20,10 +20,10 @@ import { detectPushSupport, requestPushPermission } from "@/lib/notifications";
 
 import { toast } from "sonner";
 import {
-  RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, FlaskConical, Cloud, Trash2,
+  RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2,
 } from "lucide-react";
 
-const APP_VERSION = "3.1.3";
+const APP_VERSION = "3.1.4";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
@@ -138,36 +138,6 @@ function ProfilPage() {
           </Card>
         </div>
 
-        <div className="md:break-inside-avoid md:mb-5">
-          <Card icon={<FlaskConical className="h-4 w-4" />} title="Entwickler-Modus: Live-Daten simulieren">
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-muted-foreground pr-3">
-                Tickt Live-Scores für das Spiel, das der echten Uhrzeit am nächsten liegt –
-                ideal, um Dashboard & Tabellen-Animationen jetzt schon zu testen. Aus = echte
-                API-Football-Daten (sobald das Turnier läuft).
-              </p>
-              <Switch
-                checked={s.devSimulateLive}
-                onCheckedChange={(v) => {
-                  s.setDevSimulateLive(v);
-                  toast(v ? "Live-Simulation aktiv" : "Live-Simulation aus");
-                }}
-              />
-            </div>
-            <div className="mt-3 rounded-xl border border-border bg-muted/30 p-3 text-[11px] leading-relaxed">
-              <div className="flex items-center gap-1.5 font-semibold mb-1">
-                <Cloud className="h-3.5 w-3.5" /> Live-Daten via Supabase
-              </div>
-              <p className="text-muted-foreground">
-                Echte Live-Scores laufen über die Edge Function{" "}
-                <span className="font-mono text-foreground">fetch-live-scores</span>.
-                Der API-Schlüssel wird in Supabase → Edge Functions → Secrets als{" "}
-                <span className="font-mono text-foreground">API_FOOTBALL_KEY</span>{" "}
-                hinterlegt – nie im App-Bundle.
-              </p>
-            </div>
-          </Card>
-        </div>
 
         <div className="md:break-inside-avoid md:mb-5">
           <Card icon={<Users className="h-4 w-4" />} title="Teams">
@@ -273,10 +243,20 @@ function ProfilPage() {
       </Card>
 
       <p className="text-center text-[10px] text-muted-foreground pt-2">
-        KickTime 2026 · Made for football nerds 🇩🇪
+        KickTime 2026 · Made by Phantom Studios
       </p>
       <p className="text-center text-[10px] text-muted-foreground/70 -mt-3">
         Version {APP_VERSION}
+      </p>
+      <p className="text-center text-[10px] text-muted-foreground/50 -mt-3">
+        <a
+          href="https://kicktime2026.de"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-muted-foreground transition-colors"
+        >
+          Datenschutz & Impressum
+        </a>
       </p>
     </div>
   );
