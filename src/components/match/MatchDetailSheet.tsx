@@ -166,38 +166,40 @@ export function MatchDetailSheet({
             <div className="mt-1 text-sm font-semibold">{match.stadium}, {match.city}</div>
           </div>
 
-          {/* Team A history in this group */}
-          <div className="rounded-2xl border border-border bg-card p-4">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-              <History className="h-3.5 w-3.5" /> Bilanz {a.name} in Gruppe {match.group}
+          {/* Team A history in this group (only for group stage) */}
+          {match.stage === "group" && (
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                <History className="h-3.5 w-3.5" /> Bilanz {a.name} in Gruppe {match.group}
+              </div>
+              {history.length === 0 ? (
+                <p className="text-xs text-muted-foreground italic">Noch keine Gruppenspiele absolviert.</p>
+              ) : (
+                <ul className="space-y-1.5">
+                  {history.map((m) => {
+                    const isHome = m.teamA === match.teamA;
+                    const opp = getTeam(isHome ? m.teamB : m.teamA);
+                    const gf = isHome ? m.score!.a : m.score!.b;
+                    const ga = isHome ? m.score!.b : m.score!.a;
+                    const tone =
+                      gf > ga ? "text-primary" : gf < ga ? "text-destructive" : "text-muted-foreground";
+                    const hideThis = spoiler && !revealed;
+                    return (
+                      <li key={m.id} className="flex items-center justify-between text-sm">
+                        <span className="flex items-center gap-2 min-w-0">
+                          <span className="text-base">{opp.flag}</span>
+                          <span className="truncate">{opp.name}</span>
+                        </span>
+                        <span className={`font-bold tabular-nums ${tone} ${hideThis ? "blur-sm select-none" : ""}`}>
+                          {gf} : {ga}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
-            {history.length === 0 ? (
-              <p className="text-xs text-muted-foreground italic">Noch keine Gruppenspiele absolviert.</p>
-            ) : (
-              <ul className="space-y-1.5">
-                {history.map((m) => {
-                  const isHome = m.teamA === match.teamA;
-                  const opp = getTeam(isHome ? m.teamB : m.teamA);
-                  const gf = isHome ? m.score!.a : m.score!.b;
-                  const ga = isHome ? m.score!.b : m.score!.a;
-                  const tone =
-                    gf > ga ? "text-primary" : gf < ga ? "text-destructive" : "text-muted-foreground";
-                  const hideThis = spoiler && !revealed;
-                  return (
-                    <li key={m.id} className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-2 min-w-0">
-                        <span className="text-base">{opp.flag}</span>
-                        <span className="truncate">{opp.name}</span>
-                      </span>
-                      <span className={`font-bold tabular-nums ${tone} ${hideThis ? "blur-sm select-none" : ""}`}>
-                        {gf} : {ga}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
+          )}
 
           {/* Standings (only meaningful for group-stage matches) */}
           {match.stage === "group" && standings.length > 0 && (
