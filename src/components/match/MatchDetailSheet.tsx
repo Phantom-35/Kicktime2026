@@ -199,38 +199,40 @@ export function MatchDetailSheet({
             )}
           </div>
 
-          {/* Standings */}
-          <div className="rounded-2xl border border-border bg-card overflow-hidden">
-            <div className="px-4 py-3 text-xs font-semibold text-muted-foreground">
-              Gruppe {match.group} · Tabelle
+          {/* Standings (only meaningful for group-stage matches) */}
+          {match.stage === "group" && standings.length > 0 && (
+            <div className="rounded-2xl border border-border bg-card overflow-hidden">
+              <div className="px-4 py-3 text-xs font-semibold text-muted-foreground">
+                Gruppe {match.group} · Tabelle
+              </div>
+              <table className="w-full text-sm">
+                <thead className="text-[10px] uppercase text-muted-foreground">
+                  <tr>
+                    <th className="text-left pl-4 py-1.5">Team</th>
+                    <th className="text-center py-1.5">Sp</th>
+                    <th className="text-center py-1.5">TD</th>
+                    <th className="text-right pr-4 py-1.5">Pkt</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {standings.map((row) => {
+                    const t = getTeam(row.code);
+                    const highlight = row.code === match.teamA || row.code === match.teamB;
+                    return (
+                      <tr key={row.code} className={highlight ? "bg-primary/15" : ""}>
+                        <td className="pl-4 py-2 font-medium flex items-center gap-2">
+                          <span>{t.flag}</span> {t.name}
+                        </td>
+                        <td className="text-center tabular-nums">{row.played}</td>
+                        <td className="text-center tabular-nums">{row.gd}</td>
+                        <td className="text-right pr-4 font-bold tabular-nums">{row.pts}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-            <table className="w-full text-sm">
-              <thead className="text-[10px] uppercase text-muted-foreground">
-                <tr>
-                  <th className="text-left pl-4 py-1.5">Team</th>
-                  <th className="text-center py-1.5">Sp</th>
-                  <th className="text-center py-1.5">TD</th>
-                  <th className="text-right pr-4 py-1.5">Pkt</th>
-                </tr>
-              </thead>
-              <tbody>
-                {standings.map((row) => {
-                  const t = getTeam(row.code);
-                  const highlight = row.code === match.teamA || row.code === match.teamB;
-                  return (
-                    <tr key={row.code} className={highlight ? "bg-primary/15" : ""}>
-                      <td className="pl-4 py-2 font-medium flex items-center gap-2">
-                        <span>{t.flag}</span> {t.name}
-                      </td>
-                      <td className="text-center tabular-nums">{row.played}</td>
-                      <td className="text-center tabular-nums">{row.gf - row.ga}</td>
-                      <td className="text-right pr-4 font-bold tabular-nums">{row.pts}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          )}
         </div>
       </SheetContent>
     </Sheet>
