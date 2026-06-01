@@ -20,10 +20,10 @@ import { detectPushSupport, requestPushPermission } from "@/lib/notifications";
 
 import { toast } from "sonner";
 import {
-  RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2,
+  RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2, ExternalLink,
 } from "lucide-react";
 
-const APP_VERSION = "3.1.6";
+const APP_VERSION = "3.2.0";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
@@ -249,17 +249,48 @@ function ProfilPage() {
         Version {APP_VERSION}
       </p>
       <p className="text-center text-[10px] text-muted-foreground/50 -mt-3">
-        <a
-          href="https://kicktime2026.de"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline hover:text-muted-foreground transition-colors"
+        <button
+          type="button"
+          onClick={() => openExternalLink("https://kicktime2026.de")}
+          className="underline hover:text-muted-foreground transition-colors inline-flex items-center gap-0.5"
         >
-          Datenschutz & Impressum
-        </a>
+          Datenschutz & Impressum <ExternalLink className="h-2.5 w-2.5" />
+        </button>
       </p>
     </div>
   );
+}
+
+function openExternalLink(url: string) {
+  // Detect installed PWA (iOS or Android)
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as any).standalone === true;
+
+  if (isStandalone) {
+    // In PWA mode: create a hidden anchor and dispatch a click event.
+    // This is more reliable than window.open for forcing the system browser on iOS/Android.
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.style.display = 'none';
+    document.body.appendChild(link);
+
+    const event = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+    });
+    link.dispatchEvent(event);
+
+    setTimeout(() => {
+      if (link.parentNode) document.body.removeChild(link);
+    }, 100);
+  } else {
+    // Regular browser tab
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
 }
 
 function Card({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
