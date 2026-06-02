@@ -23,7 +23,7 @@ import {
   RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2, ExternalLink,
 } from "lucide-react";
 
-const APP_VERSION = "3.2.1";
+const APP_VERSION = "3.2.2";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
@@ -249,13 +249,18 @@ function ProfilPage() {
         Version {APP_VERSION}
       </p>
       <p className="text-center text-[10px] text-muted-foreground/50 -mt-3">
-        <button
-          type="button"
-          onClick={() => openExternalLink("https://kicktime2026.de")}
+        <a
+          href="https://kicktime2026.de"
+          target="_blank"
+          rel="external noopener noreferrer"
+          onClick={(e) => {
+            e.preventDefault();
+            openExternalLink("https://kicktime2026.de");
+          }}
           className="underline hover:text-muted-foreground transition-colors inline-flex items-center gap-0.5"
         >
           Datenschutz & Impressum <ExternalLink className="h-2.5 w-2.5" />
-        </button>
+        </a>
       </p>
     </div>
   );
@@ -263,27 +268,10 @@ function ProfilPage() {
 
 function openExternalLink(url: string) {
   const ua = navigator.userAgent || "";
-  const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
   const isAndroid = /Android/i.test(ua);
   const isStandalone =
     window.matchMedia("(display-mode: standalone)").matches ||
     (window.navigator as any).standalone === true;
-
-  // iOS PWA: target="_blank" landet im in-App-WebView.
-  // Ein normaler Anchor-Click OHNE target wird von iOS aus standalone PWAs
-  // automatisch an Safari delegiert (Cross-Origin-Verhalten).
-  if (isStandalone && isIOS) {
-    const link = document.createElement("a");
-    link.href = url;
-    link.rel = "external noopener noreferrer";
-    link.style.display = "none";
-    document.body.appendChild(link);
-    link.click();
-    setTimeout(() => {
-      if (link.parentNode) document.body.removeChild(link);
-    }, 100);
-    return;
-  }
 
   // Android PWA: Intent-URL erzwingt den externen Browser.
   if (isStandalone && isAndroid) {
@@ -296,8 +284,24 @@ function openExternalLink(url: string) {
     return;
   }
 
-  // Normaler Browser-Tab
-  window.open(url, "_blank", "noopener,noreferrer");
+  // iOS PWA + alle anderen: Ein Form-Submit mit target="_blank" wird von
+  // iOS aus standalone PWAs an Safari delegiert (im Gegensatz zu window.open
+  // oder anchor.click(), die im in-App-WebView landen).
+  try {
+    const form = document.createElement("form");
+    form.method = "GET";
+    form.action = url;
+    form.target = "_blank";
+    form.rel = "noopener noreferrer";
+    form.style.display = "none";
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(() => {
+      if (form.parentNode) document.body.removeChild(form);
+    }, 100);
+  } catch {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
 }
 
 
