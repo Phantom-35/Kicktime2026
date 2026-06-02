@@ -268,27 +268,10 @@ function ProfilPage() {
 
 function openExternalLink(url: string) {
   const ua = navigator.userAgent || "";
-  const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
   const isAndroid = /Android/i.test(ua);
   const isStandalone =
     window.matchMedia("(display-mode: standalone)").matches ||
     (window.navigator as any).standalone === true;
-
-  // iOS PWA: target="_blank" landet im in-App-WebView.
-  // Ein normaler Anchor-Click OHNE target wird von iOS aus standalone PWAs
-  // automatisch an Safari delegiert (Cross-Origin-Verhalten).
-  if (isStandalone && isIOS) {
-    const link = document.createElement("a");
-    link.href = url;
-    link.rel = "external noopener noreferrer";
-    link.style.display = "none";
-    document.body.appendChild(link);
-    link.click();
-    setTimeout(() => {
-      if (link.parentNode) document.body.removeChild(link);
-    }, 100);
-    return;
-  }
 
   // Android PWA: Intent-URL erzwingt den externen Browser.
   if (isStandalone && isAndroid) {
@@ -301,8 +284,24 @@ function openExternalLink(url: string) {
     return;
   }
 
-  // Normaler Browser-Tab
-  window.open(url, "_blank", "noopener,noreferrer");
+  // iOS PWA + alle anderen: Ein Form-Submit mit target="_blank" wird von
+  // iOS aus standalone PWAs an Safari delegiert (im Gegensatz zu window.open
+  // oder anchor.click(), die im in-App-WebView landen).
+  try {
+    const form = document.createElement("form");
+    form.method = "GET";
+    form.action = url;
+    form.target = "_blank";
+    form.rel = "noopener noreferrer";
+    form.style.display = "none";
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(() => {
+      if (form.parentNode) document.body.removeChild(form);
+    }, 100);
+  } catch {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
 }
 
 
