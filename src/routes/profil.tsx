@@ -249,13 +249,18 @@ function ProfilPage() {
         Version {APP_VERSION}
       </p>
       <p className="text-center text-[10px] text-muted-foreground/50 -mt-3">
-        <button
-          type="button"
-          onClick={() => openExternalLink("https://kicktime2026.de")}
+        <a
+          href="https://kicktime2026.de"
+          target="_blank"
+          rel="external noopener noreferrer"
+          onClick={(e) => {
+            e.preventDefault();
+            openExternalLink("https://kicktime2026.de");
+          }}
           className="underline hover:text-muted-foreground transition-colors inline-flex items-center gap-0.5"
         >
           Datenschutz & Impressum <ExternalLink className="h-2.5 w-2.5" />
-        </button>
+        </a>
       </p>
     </div>
   );
