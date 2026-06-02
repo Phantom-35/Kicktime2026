@@ -262,36 +262,44 @@ function ProfilPage() {
 }
 
 function openExternalLink(url: string) {
-  // Detect installed PWA (iOS or Android)
+  const ua = navigator.userAgent || "";
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
+  const isAndroid = /Android/i.test(ua);
   const isStandalone =
-    window.matchMedia('(display-mode: standalone)').matches ||
+    window.matchMedia("(display-mode: standalone)").matches ||
     (window.navigator as any).standalone === true;
 
-  if (isStandalone) {
-    // In PWA mode: create a hidden anchor and dispatch a click event.
-    // This is more reliable than window.open for forcing the system browser on iOS/Android.
-    const link = document.createElement('a');
+  // iOS PWA: target="_blank" landet im in-App-WebView.
+  // Ein normaler Anchor-Click OHNE target wird von iOS aus standalone PWAs
+  // automatisch an Safari delegiert (Cross-Origin-Verhalten).
+  if (isStandalone && isIOS) {
+    const link = document.createElement("a");
     link.href = url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.style.display = 'none';
+    link.rel = "external noopener noreferrer";
+    link.style.display = "none";
     document.body.appendChild(link);
-
-    const event = new MouseEvent('click', {
-      bubbles: true,
-      cancelable: true,
-      view: window,
-    });
-    link.dispatchEvent(event);
-
+    link.click();
     setTimeout(() => {
       if (link.parentNode) document.body.removeChild(link);
     }, 100);
-  } else {
-    // Regular browser tab
-    window.open(url, '_blank', 'noopener,noreferrer');
+    return;
   }
+
+  // Android PWA: Intent-URL erzwingt den externen Browser.
+  if (isStandalone && isAndroid) {
+    const stripped = url.replace(/^https?:\/\//, "");
+    const intentUrl =
+      "intent://" +
+      stripped +
+      "#Intent;scheme=https;action=android.intent.action.VIEW;end";
+    window.location.href = intentUrl;
+    return;
+  }
+
+  // Normaler Browser-Tab
+  window.open(url, "_blank", "noopener,noreferrer");
 }
+
 
 function Card({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
