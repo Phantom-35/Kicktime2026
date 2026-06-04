@@ -22,7 +22,9 @@ export const Route = createFileRoute("/tabellen")({ component: TabellenPage });
 
 function TabellenPage() {
   const matches = useMatchStore(selectMatchList);
+  const now = useMatchStore((s) => s.now);
   const [activeGroup, setActiveGroup] = useState<string>("E");
+  const [selected, setSelected] = useState<RuntimeMatch | null>(null);
 
   const live: LiveScores = useMemo(() => {
     const out: LiveScores = {};
@@ -40,9 +42,29 @@ function TabellenPage() {
     [activeGroup, matches, live]
   );
 
-
+  const upcomingForGroup = useMemo(() => {
+    const reference = now ?? Date.now();
+    return matches
+      .filter(
+        (m) =>
+          m.group === activeGroup &&
+          m.stage === "group" &&
+          (m.status === "live" ||
+            new Date(m.utcTimestamp).getTime() >= reference)
+      )
+      .sort((a, b) => {
+        if (a.status === "live" && b.status !== "live") return -1;
+        if (b.status === "live" && a.status !== "live") return 1;
+        return (
+          new Date(a.utcTimestamp).getTime() -
+          new Date(b.utcTimestamp).getTime()
+        );
+      })
+      .slice(0, 2);
+  }, [matches, activeGroup, now]);
 
   return (
+
     <div className="p-4 pb-24 relative">
       <h2 className="text-xl font-bold mb-1">Tabellen</h2>
       <p className="text-sm text-muted-foreground mb-4">
