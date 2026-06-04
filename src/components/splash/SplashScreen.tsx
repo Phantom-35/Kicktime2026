@@ -43,7 +43,7 @@ export function SplashScreen({ onDone, duration = 3000 }: SplashScreenProps) {
 
             {/* Logo */}
             <motion.img
-              src={logoAsset.url}
+              src="/logo.png"
               alt="KickTime"
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
