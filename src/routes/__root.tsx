@@ -164,33 +164,37 @@ function RootComponent() {
   };
   return (
     <QueryClientProvider client={queryClient}>
-      <motion.div
-        initial={appReady ? false : { opacity: 0, y: 24 }}
-        animate={appReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="min-h-screen w-full flex justify-center bg-background md:justify-start"
-      >
-        {onboarded && <SideNav />}
-        <div className="relative w-full max-w-md min-h-screen flex flex-col bg-background shadow-2xl md:my-0 md:max-w-none md:rounded-none md:border-0 md:shadow-none md:min-h-screen md:flex-1 md:overflow-visible">
-          <AppHeader />
-          <main ref={mainRef} className="flex-1 overflow-y-auto md:overflow-visible">
-            <div className="md:max-w-[1400px] xl:max-w-screen-2xl md:mx-auto md:w-full md:px-8 lg:px-12 md:py-6">
-              {onboarded ? <Outlet /> : <OnboardingFlow />}
-            </div>
-          </main>
-          {onboarded && showSpieleTop && (
-            <button
-              type="button"
-              onClick={scrollSpieleToTop}
-              aria-label="Nach oben"
-              className="fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-[max(1rem,calc((100vw-28rem)/2+1rem))] md:bottom-8 md:right-8 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/40 ring-2 ring-background active:scale-90 transition-transform"
-            >
-              <ArrowUp className="h-6 w-6" />
-            </button>
-          )}
-          {onboarded && <BottomNav />}
-        </div>
-      </motion.div>
+      {booted ? (
+        <motion.div
+          initial={appReady ? false : { opacity: 0, y: 24 }}
+          animate={appReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="min-h-screen w-full flex justify-center bg-background md:justify-start"
+        >
+          {onboarded && <SideNav />}
+          <div className="relative w-full max-w-md min-h-screen flex flex-col bg-background shadow-2xl md:my-0 md:max-w-none md:rounded-none md:border-0 md:shadow-none md:min-h-screen md:flex-1 md:overflow-visible">
+            <AppHeader />
+            <main ref={mainRef} className="flex-1 overflow-y-auto md:overflow-visible">
+              <div className="md:max-w-[1400px] xl:max-w-screen-2xl md:mx-auto md:w-full md:px-8 lg:px-12 md:py-6">
+                {onboarded ? <Outlet /> : <OnboardingFlow />}
+              </div>
+            </main>
+            {onboarded && showSpieleTop && (
+              <button
+                type="button"
+                onClick={scrollSpieleToTop}
+                aria-label="Nach oben"
+                className="fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-[max(1rem,calc((100vw-28rem)/2+1rem))] md:bottom-8 md:right-8 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/40 ring-2 ring-background active:scale-90 transition-transform"
+              >
+                <ArrowUp className="h-6 w-6" />
+              </button>
+            )}
+            {onboarded && <BottomNav />}
+          </div>
+        </motion.div>
+      ) : (
+        <div className="min-h-screen w-full bg-background" />
+      )}
       {showSplash && <SplashScreen onDone={handleSplashDone} />}
       <Toaster theme={theme} position="top-center" richColors />
     </QueryClientProvider>
