@@ -49,7 +49,8 @@ export function SplashScreen({ onDone, duration = 3000 }: SplashScreenProps) {
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className="relative h-40 w-40 rounded-3xl object-cover drop-shadow-[0_0_30px_hsl(var(--primary)/0.45)]"
+              className="relative h-40 w-40 rounded-3xl object-cover"
+              style={{ filter: "drop-shadow(0 0 24px color-mix(in oklab, var(--primary) 55%, transparent))" }}
             />
           </div>
 
@@ -74,7 +75,8 @@ export function SplashScreen({ onDone, duration = 3000 }: SplashScreenProps) {
               initial={{ width: "0%" }}
               animate={{ width: "100%" }}
               transition={{ duration: duration / 1000, ease: "easeOut" }}
-              className="h-full bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.6)]"
+              className="h-full bg-primary"
+              style={{ boxShadow: "0 0 8px color-mix(in oklab, var(--primary) 60%, transparent)" }}
             />
           </div>
         </motion.div>
