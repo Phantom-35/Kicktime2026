@@ -106,19 +106,24 @@ function RootComponent() {
   const mainRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
   const [showSpieleTop, setShowSpieleTop] = useState(false);
-  const splashInitial = (() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return sessionStorage.getItem("splash_shown") !== "1";
-    } catch {
-      return false;
-    }
-  })();
-  const [showSplash, setShowSplash] = useState(splashInitial);
-  const [appReady, setAppReady] = useState(!splashInitial);
+  const [booted, setBooted] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+  const [appReady, setAppReady] = useState(false);
   const onboarded = useAppStore((s) => s.isOnboarded);
   const theme = useAppStore((s) => s.theme);
   useThemeClass(theme);
+
+  useEffect(() => {
+    let shouldShow = true;
+    try {
+      shouldShow = sessionStorage.getItem("splash_shown") !== "1";
+    } catch {
+      shouldShow = true;
+    }
+    setShowSplash(shouldShow);
+    setAppReady(!shouldShow);
+    setBooted(true);
+  }, []);
 
   const handleSplashDone = () => {
     try {
@@ -129,6 +134,7 @@ function RootComponent() {
     setShowSplash(false);
     setAppReady(true);
   };
+
 
   useLiveClock();
   useLiveSimulation();
