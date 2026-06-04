@@ -69,7 +69,7 @@ export function SideNav() {
           )}
           Spoiler-Schutz
         </span>
-        <Switch checked={spoiler} onCheckedChange={setSpoiler} />
+        <Switch checked={spoiler} onCheckedChange={setSpoiler} className="data-[state=unchecked]:bg-destructive" />
       </label>
     </aside>
   );
