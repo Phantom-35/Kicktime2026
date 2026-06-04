@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { SplashScreen } from "@/components/splash/SplashScreen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -104,9 +106,33 @@ function RootComponent() {
   const mainRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
   const [showSpieleTop, setShowSpieleTop] = useState(false);
+  const [showSplash, setShowSplash] = useState(false);
+  const [appReady, setAppReady] = useState(true);
   const onboarded = useAppStore((s) => s.isOnboarded);
   const theme = useAppStore((s) => s.theme);
   useThemeClass(theme);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      if (sessionStorage.getItem("splash_shown") !== "1") {
+        setShowSplash(true);
+        setAppReady(false);
+      }
+    } catch {
+      // sessionStorage unavailable — skip splash
+    }
+  }, []);
+
+  const handleSplashDone = () => {
+    try {
+      sessionStorage.setItem("splash_shown", "1");
+    } catch {
+      // ignore
+    }
+    setShowSplash(false);
+    setAppReady(true);
+  };
   useLiveClock();
   useLiveSimulation();
   useLiveApi();
