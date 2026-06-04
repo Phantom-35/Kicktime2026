@@ -23,7 +23,7 @@ import {
   RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2, ExternalLink,
 } from "lucide-react";
 
-const APP_VERSION = "3.2.2";
+const APP_VERSION = "3.2.3";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 

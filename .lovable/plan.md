@@ -1,42 +1,54 @@
 ## Ziel
 
-Die Gastro-Seite (`/bars`) mit den vom User gelieferten echten WM-2026-Locations füllen. Pro Location werden zusätzlich **Spiel**, **Datum/Uhrzeit** und **Atmosphäre** angezeigt. Der "Auf Google Maps anzeigen"-Button bleibt erhalten.
+Moderne Splash-Animation (3 s) beim echten App-Cold-Start, mit Logo, pulsierender grüner Aura, KickTime/2026-Text, feinem Ladebalken am unteren Rand. Danach smoother Slide-Up + Fade-In der Haupt-App. Wiederholtes Anzeigen wird per `sessionStorage` verhindert.
 
 ## Änderungen
 
-### 1. `src/data/publicViewingData.ts` — komplett neu befüllen
+### 1. Logo als Asset einbinden
+- `IMG_2028.jpeg` (hochgeladen) via `lovable-assets create` nach `src/assets/splash-logo.jpeg.asset.json` hochladen.
+- Nur als Pointer-JSON im Repo, kein Binary committen.
 
-- `PUBLIC_VIEWING_CITIES` von `["München","Berlin","Hamburg","Köln","Frankfurt"]` → `["Berlin","Köln","Hamburg","München"]` (Frankfurt entfernt, da der User keine FRA-Locations geliefert hat).
-- `Venue`-Typ um drei neue Felder erweitern:
-  - `atmosphere: string` — Atmosphären-Beschreibung
-  - `nextMatch: string` — z. B. `"Deutschland – Elfenbeinküste"`
-  - `nextMatchKickoff: string` — ISO/lesbares Datum, z. B. `"2026-06-20T22:00"` + Anzeige `"20.06.2026, 22:00 Uhr"`
-- `distanceMock` und `hours` entfernen — der User hat keine echten Werte geliefert, Platzhalter ("1.2 km", "17:00–01:00") wären gelogen. Stattdessen kommt die Spiel-Info-Zeile in den Vordergrund.
-- `VenueType` bleibt (`Sportsbar` | `Biergarten` | `Fan Zone / Großbildleinwand`). Jede Location wird sinnvoll typisiert:
-  - Berlin: Kulturbrauerei → Fan Zone, Brandenburg Gate → Fan Zone, FC Magnet Bar → Sportsbar, Denk-Mal-Lounge → Sportsbar, Hofbräu Wirtshaus → Sportsbar
-  - Köln: Joe Champs → Sportsbar, Rhein Roxy → Fan Zone, RheinEnergieSTADION → Fan Zone, Lanxess Arena → Fan Zone, Kaisers → Sportsbar
-  - Hamburg: StrandPauli → Biergarten, Spielbudenplatz → Fan Zone, Sky & Sand Beachclub → Biergarten, Stadtpark Open Air → Fan Zone, Volksparkstadion → Fan Zone
-  - München: Olympiapark → Fan Zone, Königlicher Hirschgarten → Biergarten, Olympiasee-Brücke → Fan Zone, Munich Airport Public Viewing → Fan Zone, Paulaner am Nockherberg → Biergarten
-- Alle 20 Locations mit Adresse, `googleMapsUrl` (Search-Query auf Name + Stadt) und den drei neuen Feldern befüllen.
+### 2. Neue Komponente `src/components/splash/SplashScreen.tsx`
+- Fullscreen-Overlay (`fixed inset-0 z-[100]`) mit App-Hintergrund (`bg-background`).
+- Aufbau (zentriert via Flex):
+  - **Aura**: absolut positionierter Kreis hinter dem Logo, `bg-primary/30` mit starkem `blur-3xl`, `animate-pulse` (langsam, ~2 s) – nutzt die bestehende Stadion-Grün-Primärfarbe aus `src/styles.css`.
+  - **Logo**: `<img>` aus dem Asset-Pointer, ca. 160 px, leichter `drop-shadow` in Primärfarbe, dezente `scale-in`-Einblendung.
+  - **Text**: "KickTime" (groß, `font-bold`, `tracking-[0.3em]`), darunter "2026" (kleiner, `tracking-[0.5em]`, `text-muted-foreground`).
+  - **Ladebalken**: am unteren Rand (`absolute bottom-12`), 1 px hoch, 60 % Breite, `bg-primary/20`-Track + Inner-Bar, die per Framer-Motion in 3 s von 0 % auf 100 % wächst (ease-out für „organisches" Auffüllen).
+- State: `visible` (Overlay sichtbar) + `fadingOut` (Opacity 0 + leichter Scale ab ~2.7 s) – nach 3 s `onDone()` Callback.
+- AnimatePresence steuert das saubere Ausblenden (Opacity-Fade, 300 ms).
 
-### 2. `src/routes/bars.tsx` — Anzeige anpassen
+### 3. Einbindung in `src/routes/__root.tsx`
+- Lokaler State `showSplash` in `RootComponent`:
+  ```
+  const [showSplash, setShowSplash] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return sessionStorage.getItem("splash_shown") !== "1";
+  });
+  ```
+- Beim Unmount/Done: `sessionStorage.setItem("splash_shown", "1")` + `setShowSplash(false)`.
+- Layout-Wrapper bekommt parallel eine Motion-Einblende-Animation:
+  - Wenn `showSplash` true: Haupt-Layout wird mit `opacity: 0, y: 24` vorgerendert (oder erst nach Splash-Ende per AnimatePresence eingeblendet).
+  - Sobald Splash fertig: `animate={{ opacity: 1, y: 0 }}`, `transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}` (Slide-Up + Fade).
+- SSR-Sicherheit: `useEffect`-Guard, damit kein Hydration-Mismatch entsteht (initial `showSplash = false`, dann im Effect auf true setzen, falls Session-Flag fehlt). Splash rendert also clientseitig nach Mount.
 
-- Die existierende "Nächstes Match in Stadt"-Logik (zieht aus `useMatchStore`) durch die location-eigenen `nextMatch` + `nextMatchKickoff`-Felder ersetzen — sie sind pro Location identisch, aber so wie vom User vorgegeben.
-- Pro Karte rendern:
-  - Name + Typ-Badge (bleibt)
-  - Adresse mit `MapPin` (bleibt)
-  - **Neu**: "Atmosphäre"-Block mit kurzem Beschreibungstext
-  - **Neu**: "Nächstes Spiel"-Block mit Match + Datum/Uhrzeit (ersetzt die alte `nextLine`-Box)
-  - "Auf Google Maps anzeigen"-Button (unverändert)
-- `distanceMock`- und `hours`-Anzeigen (Badge oben rechts + Clock-Zeile) entfernen, da die Felder wegfallen.
-- Default-Stadt von `"München"` auf `"Berlin"` belassen oder bei `"München"` lassen — bleibt München (häufigste Startwahl).
-- Imports: ungenutzte `Clock`-Icon-Import entfernen; `useMatchStore`/`selectMatchList`/`getTeam`/`getLocalParts` entfernen, da nicht mehr benötigt.
+### 4. Verhalten / Logik
+- **Cold Start** (App neu geöffnet, Tab geschlossen gewesen) → `sessionStorage` leer → Splash erscheint.
+- **Tab-Wechsel / Minimierung** (PWA bleibt im Speicher) → `sessionStorage` bleibt erhalten → kein Splash.
+- **Route-Wechsel innerhalb der App** → State bleibt `false`, kein erneuter Splash.
 
-### 3. Versions-Bump
+### 5. Versions-Bump
+- `APP_VERSION` in `src/routes/profil.tsx` von `"3.2.2"` → `"3.2.3"`.
 
-- `APP_VERSION` in `src/routes/profil.tsx` von `"3.1.5"` → `"3.1.6"`.
+## Technische Details
+
+- Animationen via bereits vorhandenes `framer-motion` (kommt schon im Projekt vor).
+- Farben strikt aus Design-Tokens (`bg-background`, `text-foreground`, `bg-primary`, `text-muted-foreground`) – keine Hardcoded-Hex.
+- Aura-Pulse: zwei übereinandergelegte Kreise mit unterschiedlichem Blur und versetzter `animate-pulse`-Verzögerung für weicheren Glow.
+- Ladebalken: `motion.div` mit `initial={{ width: 0 }}`, `animate={{ width: "100%" }}`, `transition={{ duration: 3, ease: "easeOut" }}`.
+- Splash-Komponente ist client-only (rendert `null` auf Server / vor `useEffect`-Mount), um SSR-Probleme zu vermeiden.
 
 ## Hinweise
 
-- Frankfurt fällt komplett weg, weil der User keine Frankfurter Locations geliefert hat. Falls Frankfurt erhalten bleiben soll, bitte kurz Bescheid geben.
-- Datum/Uhrzeit wird genau so angezeigt wie geliefert (`20.06.2026, 22:00 Uhr` bzw. `09.07.2026, 22:00 Uhr` für das Hofbräu Wirtshaus Viertelfinale). Es findet keine dynamische Verknüpfung mit dem Match-Store statt — die Angaben kommen direkt aus den Location-Daten.
+- Da die App ein SPA mit clientseitigem Routing ist, ist „App komplett geschlossen" exakt der `sessionStorage`-Lifecycle – passt zur Anforderung.
+- Bei installierten PWAs auf iOS/Android verhält sich `sessionStorage` identisch: er wird gelöscht, sobald die App aus dem App-Switcher gewischt wird, bleibt aber bei reinem Minimieren erhalten.

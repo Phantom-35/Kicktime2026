@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { SplashScreen } from "@/components/splash/SplashScreen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -104,9 +106,33 @@ function RootComponent() {
   const mainRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
   const [showSpieleTop, setShowSpieleTop] = useState(false);
+  const [showSplash, setShowSplash] = useState(false);
+  const [appReady, setAppReady] = useState(true);
   const onboarded = useAppStore((s) => s.isOnboarded);
   const theme = useAppStore((s) => s.theme);
   useThemeClass(theme);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      if (sessionStorage.getItem("splash_shown") !== "1") {
+        setShowSplash(true);
+        setAppReady(false);
+      }
+    } catch {
+      // sessionStorage unavailable — skip splash
+    }
+  }, []);
+
+  const handleSplashDone = () => {
+    try {
+      sessionStorage.setItem("splash_shown", "1");
+    } catch {
+      // ignore
+    }
+    setShowSplash(false);
+    setAppReady(true);
+  };
   useLiveClock();
   useLiveSimulation();
   useLiveApi();
@@ -135,7 +161,12 @@ function RootComponent() {
   };
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen w-full flex justify-center bg-background md:justify-start">
+      <motion.div
+        initial={false}
+        animate={appReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="min-h-screen w-full flex justify-center bg-background md:justify-start"
+      >
         {onboarded && <SideNav />}
         <div className="relative w-full max-w-md min-h-screen flex flex-col bg-background shadow-2xl md:my-0 md:max-w-none md:rounded-none md:border-0 md:shadow-none md:min-h-screen md:flex-1 md:overflow-visible">
           <AppHeader />
@@ -156,11 +187,13 @@ function RootComponent() {
           )}
           {onboarded && <BottomNav />}
         </div>
-      </div>
+      </motion.div>
+      {showSplash && <SplashScreen onDone={handleSplashDone} />}
       <Toaster theme={theme} position="top-center" richColors />
     </QueryClientProvider>
   );
 }
+
 
 function useThemeClass(theme: "dark" | "light") {
   useEffect(() => {
