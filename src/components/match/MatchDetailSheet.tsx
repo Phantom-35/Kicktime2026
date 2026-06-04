@@ -72,21 +72,23 @@ export function MatchDetailSheet({
   const showMagenta = hasMagentaTv(match);
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-3xl max-h-[90vh] overflow-y-auto border-border bg-background">
-        <SheetHeader className="text-left">
-          <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-muted" />
-          <SheetTitle className="flex items-center gap-2">
+    <Drawer open={open} onOpenChange={onOpenChange} shouldScaleBackground={false}>
+      <DrawerContent className="max-h-[90vh] border-border bg-background focus-visible:outline-none">
+        {/* Drag handle area – vaul listens for drag gestures on the content; the inner scroll container below still scrolls normally */}
+        <DrawerHeader className="text-left pb-2 pt-3 cursor-grab active:cursor-grabbing">
+          <div className="mx-auto mb-2 h-1.5 w-12 rounded-full bg-muted" />
+          <DrawerTitle className="flex items-center gap-2">
             <span className="text-2xl">{a.flag}</span>
             <span>{a.name}</span>
             <span className="text-muted-foreground mx-1">vs</span>
             <span className="text-2xl">{b.flag}</span>
             <span>{b.name}</span>
-          </SheetTitle>
+          </DrawerTitle>
           <p className="text-xs text-muted-foreground">{local.fullStr} · Gruppe {match.group}</p>
-        </SheetHeader>
+        </DrawerHeader>
 
-        <div className="mt-5 space-y-5">
+        <div className="px-4 pb-6 overflow-y-auto space-y-5">
+
           {/* Score (finished) with spoiler */}
           {match.status === "finished" && match.score && (
             <div className="rounded-2xl border border-border bg-card p-4 text-center relative">
