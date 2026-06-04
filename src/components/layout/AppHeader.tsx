@@ -22,7 +22,7 @@ export function AppHeader() {
         <span className="text-[11px] font-medium text-muted-foreground">
           Spoilerschutz
         </span>
-        <Switch checked={spoiler} onCheckedChange={setSpoiler} />
+        <Switch checked={spoiler} onCheckedChange={setSpoiler} className="data-[state=unchecked]:bg-destructive" />
       </label>
     </header>
   );

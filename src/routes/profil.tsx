@@ -40,7 +40,7 @@ function ProfilPage() {
               <p className="text-xs text-muted-foreground pr-3">
                 Verberge Ergebnisse vergangener Spiele, bis du sie selbst aufdeckst.
               </p>
-              <Switch checked={s.spoilerProtection} onCheckedChange={s.setSpoiler} />
+              <Switch checked={s.spoilerProtection} onCheckedChange={s.setSpoiler} className="data-[state=unchecked]:bg-destructive" />
             </div>
           </Card>
         </div>
