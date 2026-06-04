@@ -1,54 +1,44 @@
-## Ziel
+## 1. Tabellen-Tab: Sektion "Nächste Spiele dieser Gruppe"
 
-Moderne Splash-Animation (3 s) beim echten App-Cold-Start, mit Logo, pulsierender grüner Aura, KickTime/2026-Text, feinem Ladebalken am unteren Rand. Danach smoother Slide-Up + Fade-In der Haupt-App. Wiederholtes Anzeigen wird per `sessionStorage` verhindert.
+Datei: `src/routes/tabellen.tsx`
 
-## Änderungen
+- Neuer `useMemo`-Block unterhalb des bestehenden `standings`-Memos:
+  - Quelle: `matches` (bereits vorhanden via `useMatchStore(selectMatchList)`).
+  - `now` aus dem Store lesen (`useMatchStore((s) => s.now)`), damit der Filter live mit dem Clock-Tick aktualisiert. Fallback: `Date.now()` falls undefined.
+  - Filter: `m.group === activeGroup && m.stage === "group" && (m.status === "live" || new Date(m.utcTimestamp).getTime() >= now)`.
+  - Sortierung aufsteigend nach `utcTimestamp` (live zuerst, da deren Kickoff in der Vergangenheit liegt → zusätzlich Live-Matches an den Anfang sortieren).
+  - `.slice(0, 2)` → maximal 2 Einträge.
+- Neuer JSX-Block direkt nach `<GroupCard ... />`:
+  - Überschrift "Nächste Spiele dieser Gruppe" (gleicher Stil wie restliche Section-Headlines im Tab).
+  - Wenn Array leer → Infokarte (gerundete Card, `border-border bg-card p-4`, Text: „Die Gruppenphase für diese Gruppe ist beendet. Die Top 2 stehen in der K.-o.-Runde.").
+  - Sonst: Liste der Matches gerendert mit der **bestehenden** `MatchCard` aus `src/components/match/MatchCard.tsx` (identisch zum Spiele-Tab, inkl. TV-Sender-Footer).
+  - Für den "Zum Kalender hinzufügen"-Button: gleiche Integration wie im Spiele-Tab. Ich prüfe in `src/routes/spiele.tsx`, wie dort der Button an die Karte angefügt wird (entweder via `children`-Prop von `MatchCard` oder als Bottom-Sheet/Detail). Übernehme exakt dasselbe Pattern (vermutlich `MatchDetailSheet` per `onClick`, und der Kalender-Button lebt im Sheet — dann ist die Konsistenz automatisch gegeben, da `MatchCard` identisch verwendet wird).
 
-### 1. Logo als Asset einbinden
-- `IMG_2028.jpeg` (hochgeladen) via `lovable-assets create` nach `src/assets/splash-logo.jpeg.asset.json` hochladen.
-- Nur als Pointer-JSON im Repo, kein Binary committen.
+## 2. Splash-Flash beim Öffnen beheben
 
-### 2. Neue Komponente `src/components/splash/SplashScreen.tsx`
-- Fullscreen-Overlay (`fixed inset-0 z-[100]`) mit App-Hintergrund (`bg-background`).
-- Aufbau (zentriert via Flex):
-  - **Aura**: absolut positionierter Kreis hinter dem Logo, `bg-primary/30` mit starkem `blur-3xl`, `animate-pulse` (langsam, ~2 s) – nutzt die bestehende Stadion-Grün-Primärfarbe aus `src/styles.css`.
-  - **Logo**: `<img>` aus dem Asset-Pointer, ca. 160 px, leichter `drop-shadow` in Primärfarbe, dezente `scale-in`-Einblendung.
-  - **Text**: "KickTime" (groß, `font-bold`, `tracking-[0.3em]`), darunter "2026" (kleiner, `tracking-[0.5em]`, `text-muted-foreground`).
-  - **Ladebalken**: am unteren Rand (`absolute bottom-12`), 1 px hoch, 60 % Breite, `bg-primary/20`-Track + Inner-Bar, die per Framer-Motion in 3 s von 0 % auf 100 % wächst (ease-out für „organisches" Auffüllen).
-- State: `visible` (Overlay sichtbar) + `fadingOut` (Opacity 0 + leichter Scale ab ~2.7 s) – nach 3 s `onDone()` Callback.
-- AnimatePresence steuert das saubere Ausblenden (Opacity-Fade, 300 ms).
+Datei: `src/routes/__root.tsx`
 
-### 3. Einbindung in `src/routes/__root.tsx`
-- Lokaler State `showSplash` in `RootComponent`:
-  ```
+Problem: `showSplash` startet als `false`, wird erst im `useEffect` nach dem ersten Render auf `true` gesetzt → für 1 Frame ist die App sichtbar.
+
+Fix:
+- Initial-State für `showSplash` und `appReady` per Lazy-Initializer aus `sessionStorage` ermitteln, mit SSR-Guard:
+  ```ts
   const [showSplash, setShowSplash] = useState(() => {
     if (typeof window === "undefined") return false;
-    return sessionStorage.getItem("splash_shown") !== "1";
+    try { return sessionStorage.getItem("splash_shown") !== "1"; }
+    catch { return false; }
   });
+  const [appReady, setAppReady] = useState(() => !showSplashInitial);
   ```
-- Beim Unmount/Done: `sessionStorage.setItem("splash_shown", "1")` + `setShowSplash(false)`.
-- Layout-Wrapper bekommt parallel eine Motion-Einblende-Animation:
-  - Wenn `showSplash` true: Haupt-Layout wird mit `opacity: 0, y: 24` vorgerendert (oder erst nach Splash-Ende per AnimatePresence eingeblendet).
-  - Sobald Splash fertig: `animate={{ opacity: 1, y: 0 }}`, `transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}` (Slide-Up + Fade).
-- SSR-Sicherheit: `useEffect`-Guard, damit kein Hydration-Mismatch entsteht (initial `showSplash = false`, dann im Effect auf true setzen, falls Session-Flag fehlt). Splash rendert also clientseitig nach Mount.
+- Den bisherigen `useEffect`, der `showSplash`/`appReady` setzt, entfernen.
+- Zusätzlich `motion.div`-Wrapper mit `initial={appReady ? false : { opacity: 0, y: 24 }}` lassen, damit kein Flash entsteht. Da SSR `showSplash=false` liefert, könnte der allererste Server-HTML-Frame trotzdem die App zeigen — daher den App-Container per inline-style auf `opacity: 0` rendern, solange `!appReady` UND `typeof window !== "undefined"` noch nicht hydratisiert ist. Praktischer Ansatz: motion `initial={false}` entfernen und stattdessen `initial={{ opacity: 0, y: 24 }}` setzen, damit der erste Client-Frame garantiert unsichtbar ist; bei `splash_shown==="1"` direkt `animate={{opacity:1,y:0}}` mit `duration: 0`.
 
-### 4. Verhalten / Logik
-- **Cold Start** (App neu geöffnet, Tab geschlossen gewesen) → `sessionStorage` leer → Splash erscheint.
-- **Tab-Wechsel / Minimierung** (PWA bleibt im Speicher) → `sessionStorage` bleibt erhalten → kein Splash.
-- **Route-Wechsel innerhalb der App** → State bleibt `false`, kein erneuter Splash.
+## 3. Version-Bump
 
-### 5. Versions-Bump
-- `APP_VERSION` in `src/routes/profil.tsx` von `"3.2.2"` → `"3.2.3"`.
+Datei: `src/routes/profil.tsx` — `APP_VERSION` von `"3.2.3"` auf `"3.3.0"`.
 
 ## Technische Details
 
-- Animationen via bereits vorhandenes `framer-motion` (kommt schon im Projekt vor).
-- Farben strikt aus Design-Tokens (`bg-background`, `text-foreground`, `bg-primary`, `text-muted-foreground`) – keine Hardcoded-Hex.
-- Aura-Pulse: zwei übereinandergelegte Kreise mit unterschiedlichem Blur und versetzter `animate-pulse`-Verzögerung für weicheren Glow.
-- Ladebalken: `motion.div` mit `initial={{ width: 0 }}`, `animate={{ width: "100%" }}`, `transition={{ duration: 3, ease: "easeOut" }}`.
-- Splash-Komponente ist client-only (rendert `null` auf Server / vor `useEffect`-Mount), um SSR-Probleme zu vermeiden.
-
-## Hinweise
-
-- Da die App ein SPA mit clientseitigem Routing ist, ist „App komplett geschlossen" exakt der `sessionStorage`-Lifecycle – passt zur Anforderung.
-- Bei installierten PWAs auf iOS/Android verhält sich `sessionStorage` identisch: er wird gelöscht, sobald die App aus dem App-Switcher gewischt wird, bleibt aber bei reinem Minimieren erhalten.
+- Keine Änderungen an `MatchCard`, `match-store`, oder `calendar.ts` notwendig.
+- Live-Update funktioniert automatisch via `useLiveClock` → `tickClock` → `now` ändert sich → `useMemo` re-evaluiert.
+- Kein neuer State, keine neuen Dependencies.
