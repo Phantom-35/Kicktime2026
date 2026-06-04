@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { CalendarPlus } from "lucide-react";
+import { toast } from "sonner";
 import { TEAMS, getTeam } from "@/data/teams";
 import {
   calculateTableStandings,
@@ -8,13 +10,21 @@ import {
   type LiveScores,
 } from "@/lib/standings";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
+import { MatchCard } from "@/components/match/MatchCard";
+import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
+import { Button } from "@/components/ui/button";
+import { addMatchToCalendar } from "@/lib/calendar";
+import { getLocalParts } from "@/lib/time";
+import type { RuntimeMatch } from "@/store/match-store";
 
 
 export const Route = createFileRoute("/tabellen")({ component: TabellenPage });
 
 function TabellenPage() {
   const matches = useMatchStore(selectMatchList);
+  const now = useMatchStore((s) => s.now);
   const [activeGroup, setActiveGroup] = useState<string>("E");
+  const [selected, setSelected] = useState<RuntimeMatch | null>(null);
 
   const live: LiveScores = useMemo(() => {
     const out: LiveScores = {};
@@ -32,9 +42,29 @@ function TabellenPage() {
     [activeGroup, matches, live]
   );
 
-
+  const upcomingForGroup = useMemo(() => {
+    const reference = now ?? Date.now();
+    return matches
+      .filter(
+        (m) =>
+          m.group === activeGroup &&
+          m.stage === "group" &&
+          (m.status === "live" ||
+            new Date(m.utcTimestamp).getTime() >= reference)
+      )
+      .sort((a, b) => {
+        if (a.status === "live" && b.status !== "live") return -1;
+        if (b.status === "live" && a.status !== "live") return 1;
+        return (
+          new Date(a.utcTimestamp).getTime() -
+          new Date(b.utcTimestamp).getTime()
+        );
+      })
+      .slice(0, 2);
+  }, [matches, activeGroup, now]);
 
   return (
+
     <div className="p-4 pb-24 relative">
       <h2 className="text-xl font-bold mb-1">Tabellen</h2>
       <p className="text-sm text-muted-foreground mb-4">
@@ -98,9 +128,53 @@ function TabellenPage() {
       {/* Standings table */}
       <GroupCard group={activeGroup} standings={standings} />
 
+      {/* Next matches in this group */}
+      <section className="mt-6">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3">
+          Nächste Spiele dieser Gruppe
+        </h3>
+        {upcomingForGroup.length === 0 ? (
+          <div className="rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground">
+            Die Gruppenphase für diese Gruppe ist beendet. Die Top 2 stehen in
+            der K.-o.-Runde.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {upcomingForGroup.map((m) => (
+              <MatchCard key={m.id} match={m} onClick={() => setSelected(m)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full h-7 text-[11px] text-muted-foreground hover:bg-muted/50 hover:text-foreground mt-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    try {
+                      addMatchToCalendar(m);
+                      toast.success("Kalender wird geöffnet…", {
+                        description: getLocalParts(m.utcTimestamp).fullStr,
+                      });
+                    } catch {
+                      toast.error("Konnte Kalender nicht öffnen");
+                    }
+                  }}
+                >
+                  <CalendarPlus className="h-3 w-3 mr-1" /> Zum Kalender hinzufügen
+                </Button>
+              </MatchCard>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <MatchDetailSheet
+        match={selected}
+        open={!!selected}
+        onOpenChange={(v) => !v && setSelected(null)}
+      />
     </div>
   );
 }
+
 
 function GroupCard({
   group,

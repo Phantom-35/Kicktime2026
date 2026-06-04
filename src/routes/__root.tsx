@@ -106,23 +106,19 @@ function RootComponent() {
   const mainRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
   const [showSpieleTop, setShowSpieleTop] = useState(false);
-  const [showSplash, setShowSplash] = useState(false);
-  const [appReady, setAppReady] = useState(true);
+  const splashInitial = (() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return sessionStorage.getItem("splash_shown") !== "1";
+    } catch {
+      return false;
+    }
+  })();
+  const [showSplash, setShowSplash] = useState(splashInitial);
+  const [appReady, setAppReady] = useState(!splashInitial);
   const onboarded = useAppStore((s) => s.isOnboarded);
   const theme = useAppStore((s) => s.theme);
   useThemeClass(theme);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      if (sessionStorage.getItem("splash_shown") !== "1") {
-        setShowSplash(true);
-        setAppReady(false);
-      }
-    } catch {
-      // sessionStorage unavailable — skip splash
-    }
-  }, []);
 
   const handleSplashDone = () => {
     try {
@@ -133,6 +129,7 @@ function RootComponent() {
     setShowSplash(false);
     setAppReady(true);
   };
+
   useLiveClock();
   useLiveSimulation();
   useLiveApi();
@@ -162,7 +159,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <motion.div
-        initial={false}
+        initial={appReady ? false : { opacity: 0, y: 24 }}
         animate={appReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="min-h-screen w-full flex justify-center bg-background md:justify-start"
