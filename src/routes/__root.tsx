@@ -159,7 +159,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <motion.div
-        initial={false}
+        initial={appReady ? false : { opacity: 0, y: 24 }}
         animate={appReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="min-h-screen w-full flex justify-center bg-background md:justify-start"
