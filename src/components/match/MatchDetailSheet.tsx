@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import {
-  Sheet, SheetContent, SheetHeader, SheetTitle,
-} from "@/components/ui/sheet";
+  Drawer, DrawerContent, DrawerHeader, DrawerTitle,
+} from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import type { Match } from "@/data/matches";
 import { getTeam } from "@/data/teams";
