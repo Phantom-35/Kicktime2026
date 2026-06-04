@@ -128,9 +128,53 @@ function TabellenPage() {
       {/* Standings table */}
       <GroupCard group={activeGroup} standings={standings} />
 
+      {/* Next matches in this group */}
+      <section className="mt-6">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3">
+          Nächste Spiele dieser Gruppe
+        </h3>
+        {upcomingForGroup.length === 0 ? (
+          <div className="rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground">
+            Die Gruppenphase für diese Gruppe ist beendet. Die Top 2 stehen in
+            der K.-o.-Runde.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {upcomingForGroup.map((m) => (
+              <MatchCard key={m.id} match={m} onClick={() => setSelected(m)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full h-7 text-[11px] text-muted-foreground hover:bg-muted/50 hover:text-foreground mt-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    try {
+                      addMatchToCalendar(m);
+                      toast.success("Kalender wird geöffnet…", {
+                        description: getLocalParts(m.utcTimestamp).fullStr,
+                      });
+                    } catch {
+                      toast.error("Konnte Kalender nicht öffnen");
+                    }
+                  }}
+                >
+                  <CalendarPlus className="h-3 w-3 mr-1" /> Zum Kalender hinzufügen
+                </Button>
+              </MatchCard>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <MatchDetailSheet
+        match={selected}
+        open={!!selected}
+        onOpenChange={(v) => !v && setSelected(null)}
+      />
     </div>
   );
 }
+
 
 function GroupCard({
   group,
