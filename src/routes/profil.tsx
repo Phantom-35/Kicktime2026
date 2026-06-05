@@ -135,6 +135,27 @@ function ProfilPage() {
             <p className="mt-2 text-[10px] text-muted-foreground leading-relaxed">
               iPhone: nur als installierte App (iOS 16.4+). Android/Desktop: direkt im Browser.
             </p>
+
+            <div className={`mt-3 pt-3 border-t border-border/50 pl-3 border-l-2 ${s.pushEnabled ? "border-l-primary/40" : "border-l-border"}`}>
+              <div className="flex items-center justify-between">
+                <div className="pr-3">
+                  <p className={`text-xs font-medium ${!s.pushEnabled ? "opacity-50" : ""}`}>
+                    Automatisch für Favoriten
+                  </p>
+                  <p className={`text-[11px] text-muted-foreground leading-snug ${!s.pushEnabled ? "opacity-50" : ""}`}>
+                    Aktiviert automatisch die Erinnerungs-Glocke für alle Spiele deiner Favoriten-Teams.
+                  </p>
+                </div>
+                <Switch
+                  checked={s.autoAlarmFavorites}
+                  disabled={!s.pushEnabled}
+                  onCheckedChange={(v) => {
+                    s.setAutoAlarmFavorites(v);
+                    toast(v ? "Auto-Erinnerung für Favoriten aktiviert" : "Auto-Erinnerung deaktiviert");
+                  }}
+                />
+              </div>
+            </div>
           </Card>
         </div>
 
