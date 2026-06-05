@@ -56,6 +56,7 @@ export const useAppStore = create<State & Actions>()(
       alarms: {},
       theme: "dark",
       pushEnabled: false,
+      autoAlarmFavorites: true,
       devSimulateLive: false,
 
 
