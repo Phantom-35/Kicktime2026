@@ -17,6 +17,8 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { SideNav } from "@/components/layout/SideNav";
 import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
+import { WhatsNewModal } from "@/components/whats-new/WhatsNewModal";
+import { APP_VERSION } from "@/lib/version";
 import { useAppStore } from "@/store/app-store";
 import { useLiveClock } from "@/hooks/useLiveClock";
 import { useLiveSimulation } from "@/hooks/useLiveSimulation";
@@ -78,6 +80,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "icon", type: "image/jpeg", href: "/app-icon.jpeg?v=2.0.6" },
       { rel: "apple-touch-icon", href: "/app-icon.jpeg?v=2.0.6" },
     ],
