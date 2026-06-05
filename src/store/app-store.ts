@@ -18,6 +18,8 @@ type State = {
   devSimulateLive: boolean;
   showCountdown: boolean;
   accentTheme: AccentThemeId;
+  predictions: Record<string, { a: number; b: number; createdAt: number }>;
+  lastSeenVersion: string;
 };
 
 type Actions = {
