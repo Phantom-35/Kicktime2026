@@ -17,6 +17,7 @@ type State = {
   autoAlarmFavorites: boolean;
   devSimulateLive: boolean;
   showCountdown: boolean;
+  accentTheme: AccentThemeId;
 };
 
 type Actions = {
