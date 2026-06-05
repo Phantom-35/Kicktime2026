@@ -90,6 +90,13 @@ export const useAppStore = create<State & Actions>()(
       setOnboarded: (v) => set({ isOnboarded: v }),
       toggleAlarm: (id) =>
         set((s) => ({ alarms: { ...s.alarms, [id]: !s.alarms[id] } })),
+      setAlarm: (id, v) =>
+        set((s) => {
+          const next = { ...s.alarms };
+          if (v === null) delete next[id];
+          else next[id] = v;
+          return { alarms: next };
+        }),
       resetOnboarding: () =>
         set({
           isOnboarded: false,
@@ -99,6 +106,7 @@ export const useAppStore = create<State & Actions>()(
         }),
       setTheme: (t) => set({ theme: t }),
       setPushEnabled: (v) => set({ pushEnabled: v }),
+      setAutoAlarmFavorites: (v) => set({ autoAlarmFavorites: v }),
       setDevSimulateLive: (v) => set({ devSimulateLive: v }),
     }),
     { name: "kicktime-2026" }
