@@ -196,7 +196,7 @@ function RootComponent() {
         <div className="min-h-screen w-full bg-background" />
       )}
       {showSplash && <SplashScreen onDone={handleSplashDone} />}
-      <Toaster theme={theme} position="top-center" richColors />
+      <Toaster theme={theme} />
     </QueryClientProvider>
   );
 }
