@@ -44,6 +44,25 @@ function Dashboard() {
     () => categorizeMatches({ ...state, matches: phaseMatches, now }),
     [state, phaseMatches, now]
   );
+
+  const perfectSorted = useMemo(() => {
+    const priority = (m: typeof cats.perfect[number]) => {
+      const fav = state.favoriteTeams.includes(m.teamA) || state.favoriteTeams.includes(m.teamB);
+      if (fav) return 0;
+      const interesting = state.interestingTeams.includes(m.teamA) || state.interestingTeams.includes(m.teamB);
+      if (interesting) return 1;
+      return 2;
+    };
+    return [...cats.perfect].sort((a, b) => {
+      const da = getLocalParts(a.utcTimestamp).dayKey;
+      const db = getLocalParts(b.utcTimestamp).dayKey;
+      if (da !== db) return da < db ? -1 : 1;
+      const pa = priority(a);
+      const pb = priority(b);
+      if (pa !== pb) return pa - pb;
+      return new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime();
+    });
+  }, [cats.perfect, state.favoriteTeams, state.interestingTeams]);
   const [selected, setSelected] = useState<Match | null>(null);
 
   return (
@@ -78,7 +97,7 @@ function Dashboard() {
             empty="Noch keine perfekten Spiele. Markiere mehr Teams oder erweitere dein Zeitfenster."
           >
             <Stream
-              matches={cats.perfect}
+              matches={perfectSorted}
               onSelect={setSelected}
               indicator="perfect"
               footer={(m) => (
