@@ -111,7 +111,9 @@ function RootComponent() {
   const [appReady, setAppReady] = useState(false);
   const onboarded = useAppStore((s) => s.isOnboarded);
   const theme = useAppStore((s) => s.theme);
+  const accentTheme = useAppStore((s) => s.accentTheme);
   useThemeClass(theme);
+  useAccentTheme(accentTheme);
 
   useEffect(() => {
     let shouldShow = true;
