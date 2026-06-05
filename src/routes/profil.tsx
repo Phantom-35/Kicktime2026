@@ -18,6 +18,7 @@ import { formatHourLabel } from "@/lib/time";
 import { REAL_TEAMS as TEAMS } from "@/data/teams";
 import { detectPushSupport, requestPushPermission } from "@/lib/notifications";
 import { ACCENT_THEMES } from "@/lib/accent-themes";
+import { haptics } from "@/lib/haptics";
 import { motion } from "framer-motion";
 
 import { toast } from "sonner";
@@ -229,6 +230,7 @@ function ProfilPage() {
                 const fav = s.favoriteTeams.includes(t.code);
                 const intg = s.interestingTeams.includes(t.code);
                 const cycle = () => {
+                  haptics.tap();
                   if (!fav && !intg) {
                     // none → favorite
                     s.toggleFavorite(t.code);
