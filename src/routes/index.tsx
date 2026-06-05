@@ -97,7 +97,7 @@ function Dashboard() {
             empty="Noch keine perfekten Spiele. Markiere mehr Teams oder erweitere dein Zeitfenster."
           >
             <Stream
-              matches={cats.perfect}
+              matches={perfectSorted}
               onSelect={setSelected}
               indicator="perfect"
               footer={(m) => (
