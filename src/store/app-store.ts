@@ -15,6 +15,7 @@ type State = {
   pushEnabled: boolean;
   autoAlarmFavorites: boolean;
   devSimulateLive: boolean;
+  showCountdown: boolean;
 };
 
 type Actions = {
@@ -31,6 +32,7 @@ type Actions = {
   setPushEnabled: (v: boolean) => void;
   setAutoAlarmFavorites: (v: boolean) => void;
   setDevSimulateLive: (v: boolean) => void;
+  setShowCountdown: (v: boolean) => void;
 };
 
 const detectTz = () => {
@@ -58,6 +60,7 @@ export const useAppStore = create<State & Actions>()(
       pushEnabled: false,
       autoAlarmFavorites: true,
       devSimulateLive: false,
+      showCountdown: true,
 
 
 
@@ -108,6 +111,7 @@ export const useAppStore = create<State & Actions>()(
       setPushEnabled: (v) => set({ pushEnabled: v }),
       setAutoAlarmFavorites: (v) => set({ autoAlarmFavorites: v }),
       setDevSimulateLive: (v) => set({ devSimulateLive: v }),
+      setShowCountdown: (v) => set({ showCountdown: v }),
     }),
     { name: "kicktime-2026" }
   )
