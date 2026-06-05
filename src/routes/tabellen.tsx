@@ -143,24 +143,27 @@ function TabellenPage() {
           <div className="space-y-3">
             {upcomingForGroup.map((m) => (
               <MatchCard key={m.id} match={m} onClick={() => setSelected(m)}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full h-7 text-[11px] text-muted-foreground hover:bg-muted/50 hover:text-foreground mt-2"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    try {
-                      addMatchToCalendar(m);
-                      toast.success("Kalender wird geöffnet…", {
-                        description: getLocalParts(m.utcTimestamp).fullStr,
-                      });
-                    } catch {
-                      toast.error("Konnte Kalender nicht öffnen");
-                    }
-                  }}
-                >
-                  <CalendarPlus className="h-3 w-3 mr-1" /> Zum Kalender hinzufügen
-                </Button>
+                <div className="flex items-center gap-2 mt-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex-1 h-7 text-[11px] text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      try {
+                        addMatchToCalendar(m);
+                        toast.success("Kalender wird geöffnet…", {
+                          description: getLocalParts(m.utcTimestamp).fullStr,
+                        });
+                      } catch {
+                        toast.error("Konnte Kalender nicht öffnen");
+                      }
+                    }}
+                  >
+                    <CalendarPlus className="h-3 w-3 mr-1" /> Zum Kalender hinzufügen
+                  </Button>
+                  <AlarmBell match={m} />
+                </div>
               </MatchCard>
             ))}
           </div>
