@@ -1,98 +1,55 @@
-## Ziel
 
-Erweiterung des Benachrichtigungssystems um Auto-Favoriten-Logik, eine kompakte Glocke neben jedem "Zum Kalender hinzufügen"-Button und konsistente Toast-Bestätigungen. Version → 3.4.0.
+## Tournament Countdown Widget (v4.0.0)
 
-## 1. Store (`src/store/app-store.ts`)
+Add an elegant, dismissible countdown widget directly under the header on the dashboard. Fully local, ticking every second, and aware of the tournament phase + the user's favorites.
 
-- Neues Feld `autoAlarmFavorites: boolean` (Default `true`) + Setter `setAutoAlarmFavorites(v)`.
-- Bestehendes `alarms`/`toggleAlarm` bleibt unverändert (manuelle Overrides).
+### 1. Store changes — `src/store/app-store.ts`
+- Add persisted state:
+  - `showCountdown: boolean` (default `true`)
+  - `setShowCountdown(v: boolean)` action
+- Bump `APP_VERSION` to `"4.0.0"`.
 
-## 2. Helper: effektiver Alarm-Status
+### 2. New component — `src/components/dashboard/TournamentCountdown.tsx`
+Self-contained widget. Reads from `useMatchStore(selectMatchList)`, `useAppStore` (`favoriteTeams`, `showCountdown`, `setShowCountdown`).
 
-Neue kleine Datei `src/lib/alarms.ts`:
+**Tick logic**
+- Local `now` state initialized to `Date.now()`.
+- `useEffect` starts `setInterval(() => setNow(Date.now()), 1000)`; returns `clearInterval` cleanup. Single interval, no leaks.
 
-```ts
-export function isAlarmActive(match, alarms, autoFav, favorites) {
-  if (alarms[match.id]) return true;
-  if (autoFav && (favorites.includes(match.teamA) || favorites.includes(match.teamB))) return true;
-  return false;
-}
-```
+**Target selection (memoized on `now`, matches, favorites)**
+- Tournament start = kickoff of earliest match in schedule (computed via `Math.min` over `utcTimestamp`).
+- If `now < tournamentStart` → mode `"pre"`, target = tournament start, label = `🏆 Das größte Turnier der Welt startet in`.
+- Else → mode `"in"`:
+  - Find next `scheduled`/`live` match where `favoriteTeams` includes `teamA` or `teamB` (sorted by kickoff). If found → label = `🔥 Dein nächstes Top-Match: {A} vs. {B} in`.
+  - Otherwise → next upcoming match of the day (today's `dayKey` per `getLocalParts`) → label = `⏱️ Nächstes Spiel heute: {A} vs. {B} in`.
+  - If no more matches today and no favorite match → render nothing (return `null`).
 
-Wird in `useAlarmScheduler` und in der UI (Glocken-Icon) genutzt — eine Quelle der Wahrheit.
+**Countdown math**
+- `diff = max(0, target - now)`; derive days/hours/minutes/seconds.
+- When `diff === 0` and mode `"pre"`, swap to `"in"` automatically on next tick (re-derives from memo).
 
-## 3. Scheduler (`src/hooks/useAlarmScheduler.ts`)
+**Markup & styling (Stadium Night, semantic tokens only)**
+- Root: `relative rounded-2xl border border-primary/25 bg-card/60 backdrop-blur-md px-4 py-3 shadow-[0_8px_24px_-12px_hsl(var(--primary)/0.35)]`.
+- Subtle inner gradient overlay using existing tokens (no raw hex).
+- Label row: small uppercase muted text with the contextual sentence.
+- Time row: 4 segments (Tage · Std · Min · Sek), each value in `font-mono tabular-nums text-2xl font-bold tracking-tight`, unit label below in `text-[10px] uppercase text-muted-foreground`. Fixed widths via `min-w-[2.5ch] text-center` so the layout never jumps on second ticks.
+- Dismiss button: top-right, `absolute top-2 right-2 h-6 w-6 rounded-full bg-background/40 hover:bg-background/70`, `X` icon (`lucide-react`), `aria-label="Countdown ausblenden"`, calls `setShowCountdown(false)`.
+- Wrap in `motion.div` with subtle fade/scale entry; wrap in `AnimatePresence` at the call site for graceful exit when dismissed.
 
-- `alarms`, `autoAlarmFavorites`, `favoriteTeams` lesen.
-- Loop über alle Matches: nutze `isAlarmActive(...)`.
-- Notification-Text auf neuen Wording umstellen:
-  - Titel: `🏆 KickTime Erinnerung`
-  - Body: `In 15 Minuten startet {TeamA} gegen {TeamB}! Schalte rechtzeitig ein.`
-- Dependency-Array entsprechend erweitern.
+### 3. Integration — `src/routes/index.tsx`
+- Import `TournamentCountdown`.
+- Read `showCountdown` from `useAppStore`.
+- Render at the very top of the dashboard container (before the "Dein WM-Tag" heading) inside `AnimatePresence`, conditional on `showCountdown`.
 
-## 4. Glocken-Komponente (`src/components/match/AlarmBell.tsx`, neu)
+### 4. Settings toggle — `src/routes/profil.tsx`
+- Add a new switch row (in the "Anzeige" / display section, near spoiler protection) titled `Turnier-Countdown anzeigen` with a short description (`Blendet das Countdown-Widget oben auf dem Dashboard ein.`), bound to `showCountdown` / `setShowCountdown`.
+- Update `APP_VERSION` constant to `"4.0.0"`.
 
-Kompakter Icon-Button (`h-8 w-8 rounded-lg border border-border`), Bell-Icon (`h-3.5 w-3.5`).
+### 5. Performance & cleanup
+- Exactly one `setInterval(…, 1000)` per mounted widget, cleared in the effect's cleanup.
+- Heavy computations (tournament start, next match lookup) wrapped in `useMemo` keyed on `matches`, `favoriteTeams`, and `now` (only the seconds-truncated value where appropriate to avoid needless re-renders).
+- No external libraries added.
 
-Props: `match`.
-
-Logik:
-- Liest `alarms`, `autoAlarmFavorites`, `favoriteTeams`, `pushEnabled`, `toggleAlarm`.
-- `active = isAlarmActive(match, ...)`.
-- `isAuto = !alarms[match.id] && active` (Glocke ist nur durch Auto-Favoriten aktiv).
-- Styling:
-  - Aktiv: `bg-primary/15 border-primary text-primary` + `fill-current` auf Bell.
-  - Inaktiv: `text-muted-foreground hover:text-foreground`.
-- Klick:
-  - `e.stopPropagation()` (damit das umgebende `MatchCard onClick` nicht feuert).
-  - Wenn `isAuto` und Nutzer klickt: setze `alarms[id] = false` (expliziter Opt-out — siehe unten unter "Auto-Override").
-  - Sonst: `toggleAlarm(id)`.
-  - Toast: `Erinnerung für {a.name} vs. {b.name} aktiviert! 🔔` oder `… deaktiviert.`
-  - Wenn Hauptschalter aus / Permission fehlt: Toast-Hinweis `Aktiviere Push-Benachrichtigungen im Profil.`
-
-### Auto-Override (Edge Case)
-
-Damit „Auto an, aber dieses eine Spiel will ich nicht" funktioniert, erweitern wir `alarms` semantisch:
-- `alarms[id] === true` → manuell an.
-- `alarms[id] === false` (explizit gesetzt) → manuell aus, überschreibt Auto.
-- `alarms[id] === undefined` → folgt Auto-Logik.
-
-`isAlarmActive` und `toggleAlarm` werden entsprechend angepasst (Tri-State per `undefined`-Check). `toggleAlarm` cycelt: `undefined → true → false → undefined`.
-
-## 5. UI-Integration der Glocke
-
-In allen drei Stellen mit "Zum Kalender hinzufügen"-Button: Button + Glocke in einem `flex items-center gap-2`-Container nebeneinander platzieren.
-
-- `src/routes/index.tsx` (Perfect Matches Section, Z. 110–120)
-- `src/routes/spiele.tsx` (Z. 93–103)
-- `src/routes/tabellen.tsx` (Z. 150–161)
-
-Der Kalender-Button behält `flex-1`, die Glocke ist `shrink-0`.
-
-## 6. Profil-Tab (`src/routes/profil.tsx`)
-
-Innerhalb der bestehenden „Push-Benachrichtigungen"-Card unterhalb des Hauptschalters:
-
-```
-─ Hauptschalter "Push-Benachrichtigungen" [Switch]
-─ iOS-Hinweis (klein)
-─ Trenner (border-t border-border/50 pt-3 mt-3)
-─ Eingerückter Block (pl-3 border-l-2 border-border):
-   - Titel: "Automatisch für Favoriten"
-   - Beschreibung: "Aktiviert automatisch die Erinnerungs-Glocke für alle Spiele deiner Favoriten-Teams."
-   - Switch (disabled wenn !pushEnabled, optisch gedämpft)
-```
-
-Switch nutzt `autoAlarmFavorites` / `setAutoAlarmFavorites`.
-
-## 7. Version-Bump
-
-`APP_VERSION` in `src/routes/profil.tsx` → `"3.4.0"`.
-
-## Technische Details
-
-- Keine neuen Dependencies.
-- `alarms`-Typ bleibt `Record<string, boolean>` — `undefined` ist bereits implizit valide.
-- Bestehende Toast-Komponente (in der letzten Iteration neu designt) wird automatisch genutzt — kein Style-Override nötig.
-- `useAlarmScheduler` reagiert dank Zustand-Subscription automatisch auf Änderungen von `autoAlarmFavorites` und `favoriteTeams`, sodass das Aktivieren des Auto-Schalters sofort alle Favoriten-Spiele scheduled.
-- `e.stopPropagation()` auf der Glocke verhindert, dass das `MatchDetailSheet` aufpoppt.
+### Files
+- **Created**: `src/components/dashboard/TournamentCountdown.tsx`
+- **Edited**: `src/store/app-store.ts`, `src/routes/index.tsx`, `src/routes/profil.tsx`
