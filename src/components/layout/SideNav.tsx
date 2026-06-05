@@ -7,6 +7,7 @@ import {
   ListOrdered,
   Eye,
   EyeOff,
+  Trophy,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useAppStore } from "@/store/app-store";
@@ -15,6 +16,7 @@ const tabs = [
   { to: "/", label: "Dashboard", icon: Home },
   { to: "/spiele", label: "Spiele", icon: CalendarDays },
   { to: "/tabellen", label: "Tabellen", icon: ListOrdered },
+  { to: "/tipps", label: "Tipps", icon: Trophy },
   { to: "/bars", label: "Gastro", icon: MapPin },
   { to: "/profil", label: "Profil", icon: SettingsIcon },
 ] as const;
