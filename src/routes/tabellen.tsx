@@ -15,6 +15,7 @@ import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { AlarmBell } from "@/components/match/AlarmBell";
 import { Button } from "@/components/ui/button";
 import { addMatchToCalendar } from "@/lib/calendar";
+import { haptics } from "@/lib/haptics";
 import { getLocalParts } from "@/lib/time";
 import type { RuntimeMatch } from "@/store/match-store";
 
@@ -152,6 +153,7 @@ function TabellenPage() {
                       e.stopPropagation();
                       try {
                         addMatchToCalendar(m);
+                        haptics.tap();
                         toast.success("Kalender wird geöffnet…", {
                           description: getLocalParts(m.utcTimestamp).fullStr,
                         });

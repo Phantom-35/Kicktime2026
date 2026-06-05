@@ -16,6 +16,7 @@ import { getLocalParts } from "@/lib/time";
 import { toast } from "sonner";
 import { CalendarPlus, BellRing, Play, Sparkles } from "lucide-react";
 import { addMatchToCalendar } from "@/lib/calendar";
+import { haptics } from "@/lib/haptics";
 
 export const Route = createFileRoute("/")({ component: Dashboard });
 
@@ -116,6 +117,7 @@ function Dashboard() {
                       e.stopPropagation();
                       try {
                         addMatchToCalendar(m);
+                        haptics.tap();
                         toast.success("Kalender wird geöffnet…", {
                           description: getLocalParts(m.utcTimestamp).fullStr,
                         });

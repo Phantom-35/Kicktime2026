@@ -7,6 +7,7 @@ import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { getLocalParts, parseDateQuery, matchesDateQuery } from "@/lib/time";
 import { addMatchToCalendar } from "@/lib/calendar";
+import { haptics } from "@/lib/haptics";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { AlarmBell } from "@/components/match/AlarmBell";
@@ -94,6 +95,7 @@ function SpielePage() {
                             e.stopPropagation();
                             try {
                               addMatchToCalendar(m);
+                              haptics.tap();
                               toast.success("Kalender wird geöffnet…", {
                                 description: getLocalParts(m.utcTimestamp).fullStr,
                               });

@@ -265,25 +265,22 @@ function PredictionSection({ match }: { match: Match }) {
 
   const finished = match.status === "finished" && !!match.score;
   const result = pred && finished ? scorePrediction(pred, match.score!) : null;
-
-  const persist = (na: number, nb: number) => {
-    setPrediction(match.id, na, nb);
-    haptics.tap();
-  };
+  const dirty = valA !== (pred?.a ?? 0) || valB !== (pred?.b ?? 0);
 
   const step = (which: "a" | "b", delta: number) => {
     if (finished) return;
     if (which === "a") {
-      const next = Math.max(0, Math.min(19, valA + delta));
-      if (next === valA) return;
-      setValA(next);
-      persist(next, valB);
+      setValA((v) => Math.max(0, Math.min(19, v + delta)));
     } else {
-      const next = Math.max(0, Math.min(19, valB + delta));
-      if (next === valB) return;
-      setValB(next);
-      persist(valA, next);
+      setValB((v) => Math.max(0, Math.min(19, v + delta)));
     }
+  };
+
+  const save = () => {
+    if (finished || !dirty) return;
+    setPrediction(match.id, valA, valB);
+    haptics.tap();
+    toast.success("Tipp gespeichert ⚽");
   };
 
   return (
@@ -298,7 +295,6 @@ function PredictionSection({ match }: { match: Match }) {
               clearPrediction(match.id);
               setValA(0);
               setValB(0);
-              haptics.tap();
               toast("Tipp gelöscht");
             }}
             className="text-[11px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
@@ -326,10 +322,17 @@ function PredictionSection({ match }: { match: Match }) {
         />
       </div>
 
-      {!pred && !finished && (
-        <p className="mt-3 text-[11px] text-muted-foreground text-center">
-          Tipp wird automatisch gespeichert.
-        </p>
+      {!finished && (
+        <div className="mt-3 flex justify-center">
+          <button
+            type="button"
+            onClick={save}
+            disabled={!dirty}
+            className="h-8 px-4 rounded-full border border-primary/40 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/15 active:scale-95 transition disabled:opacity-40 disabled:hover:bg-primary/10"
+          >
+            Tipp speichern
+          </button>
+        </div>
       )}
 
       {finished && pred && result && (
@@ -401,7 +404,6 @@ function ShareCardButton({ match }: { match: Match }) {
     try {
       const blob = await generateShareCard(match);
       const how = await shareOrDownload(match, blob);
-      haptics.tap();
       toast.success(how === "shared" ? "Bereit zum Teilen ✨" : "Bild gespeichert ✨");
     } catch (e) {
       console.error(e);
