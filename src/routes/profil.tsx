@@ -20,10 +20,10 @@ import { detectPushSupport, requestPushPermission } from "@/lib/notifications";
 
 import { toast } from "sonner";
 import {
-  RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2, ExternalLink,
+  RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2, ExternalLink, Timer,
 } from "lucide-react";
 
-const APP_VERSION = "3.4.0";
+const APP_VERSION = "4.0.0";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
@@ -41,6 +41,20 @@ function ProfilPage() {
                 Verberge Ergebnisse vergangener Spiele, bis du sie selbst aufdeckst.
               </p>
               <Switch checked={s.spoilerProtection} onCheckedChange={s.setSpoiler} className="data-[state=unchecked]:bg-destructive" />
+            </div>
+          </Card>
+        </div>
+
+        <div className="md:break-inside-avoid md:mb-5">
+          <Card icon={<Timer className="h-4 w-4" />} title="Turnier-Countdown">
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground pr-3">
+                Blendet das Countdown-Widget oben auf dem Dashboard ein.
+              </p>
+              <Switch checked={s.showCountdown} onCheckedChange={(v) => {
+                s.setShowCountdown(v);
+                toast(v ? "Countdown eingeblendet" : "Countdown ausgeblendet");
+              }} />
             </div>
           </Card>
         </div>
