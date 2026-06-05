@@ -149,13 +149,8 @@ function WelcomeStep({ onStart }: { onStart: () => void }) {
         className="relative mb-5"
       >
         <div className="absolute inset-0 blur-2xl bg-primary/30 rounded-full" />
-        <div className="relative h-24 w-24 rounded-3xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-[0_0_40px_hsl(var(--primary)/0.45)]">
-          <motion.div
-            animate={{ rotate: [0, 8, -8, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <Trophy className="h-12 w-12 text-primary-foreground" strokeWidth={2.2} />
-          </motion.div>
+        <div className="relative h-24 w-24 rounded-3xl overflow-hidden shadow-[0_0_40px_hsl(var(--primary)/0.45)]">
+          <img src="/logo.png" alt="KickTime" className="h-full w-full object-cover" />
           <div className="absolute -bottom-2 -right-2 h-9 w-9 rounded-2xl bg-accent flex items-center justify-center shadow-lg">
             <Clock className="h-5 w-5 text-accent-foreground" strokeWidth={2.6} />
           </div>
