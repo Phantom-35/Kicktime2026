@@ -17,10 +17,12 @@ import {
 import { formatHourLabel } from "@/lib/time";
 import { REAL_TEAMS as TEAMS } from "@/data/teams";
 import { detectPushSupport, requestPushPermission } from "@/lib/notifications";
+import { ACCENT_THEMES } from "@/lib/accent-themes";
+import { motion } from "framer-motion";
 
 import { toast } from "sonner";
 import {
-  RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2, ExternalLink, Timer,
+  RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2, ExternalLink, Timer, Shirt,
 } from "lucide-react";
 
 const APP_VERSION = "4.0.0";
