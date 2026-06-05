@@ -23,6 +23,7 @@ import { useLiveSimulation } from "@/hooks/useLiveSimulation";
 import { useLiveApi } from "@/hooks/useLiveApi";
 import { useAlarmScheduler } from "@/hooks/useAlarmScheduler";
 import { runScheduleAudit } from "@/lib/scheduleAudit";
+import { applyAccentTheme, type AccentThemeId } from "@/lib/accent-themes";
 
 import appCss from "../styles.css?url";
 
@@ -111,7 +112,9 @@ function RootComponent() {
   const [appReady, setAppReady] = useState(false);
   const onboarded = useAppStore((s) => s.isOnboarded);
   const theme = useAppStore((s) => s.theme);
+  const accentTheme = useAppStore((s) => s.accentTheme);
   useThemeClass(theme);
+  useAccentTheme(accentTheme);
 
   useEffect(() => {
     let shouldShow = true;
@@ -214,4 +217,10 @@ function useThemeClass(theme: "dark" | "light") {
       root.classList.add("dark");
     }
   }, [theme]);
+}
+
+function useAccentTheme(id: AccentThemeId) {
+  useEffect(() => {
+    applyAccentTheme(id);
+  }, [id]);
 }

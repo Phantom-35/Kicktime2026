@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { AccentThemeId } from "@/lib/accent-themes";
 
 export type Window = { start: number; end: number }; // hours 0-24, end may be < start (cross-midnight)
 
@@ -16,6 +17,7 @@ type State = {
   autoAlarmFavorites: boolean;
   devSimulateLive: boolean;
   showCountdown: boolean;
+  accentTheme: AccentThemeId;
 };
 
 type Actions = {
@@ -33,6 +35,7 @@ type Actions = {
   setAutoAlarmFavorites: (v: boolean) => void;
   setDevSimulateLive: (v: boolean) => void;
   setShowCountdown: (v: boolean) => void;
+  setAccentTheme: (id: AccentThemeId) => void;
 };
 
 const detectTz = () => {
@@ -61,6 +64,7 @@ export const useAppStore = create<State & Actions>()(
       autoAlarmFavorites: true,
       devSimulateLive: false,
       showCountdown: true,
+      accentTheme: "pitch",
 
 
 
@@ -112,6 +116,7 @@ export const useAppStore = create<State & Actions>()(
       setAutoAlarmFavorites: (v) => set({ autoAlarmFavorites: v }),
       setDevSimulateLive: (v) => set({ devSimulateLive: v }),
       setShowCountdown: (v) => set({ showCountdown: v }),
+      setAccentTheme: (id) => set({ accentTheme: id }),
     }),
     { name: "kicktime-2026" }
   )
