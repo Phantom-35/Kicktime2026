@@ -35,6 +35,7 @@ type Actions = {
   setAutoAlarmFavorites: (v: boolean) => void;
   setDevSimulateLive: (v: boolean) => void;
   setShowCountdown: (v: boolean) => void;
+  setAccentTheme: (id: AccentThemeId) => void;
 };
 
 const detectTz = () => {
