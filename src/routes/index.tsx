@@ -101,24 +101,27 @@ function Dashboard() {
               onSelect={setSelected}
               indicator="perfect"
               footer={(m) => (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-full"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    try {
-                      addMatchToCalendar(m);
-                      toast.success("Kalender wird geöffnet…", {
-                        description: getLocalParts(m.utcTimestamp).fullStr,
-                      });
-                    } catch {
-                      toast.error("Konnte Kalender nicht öffnen");
-                    }
-                  }}
-                >
-                  <CalendarPlus className="h-4 w-4 mr-1.5" /> Zum Kalender hinzufügen
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="flex-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      try {
+                        addMatchToCalendar(m);
+                        toast.success("Kalender wird geöffnet…", {
+                          description: getLocalParts(m.utcTimestamp).fullStr,
+                        });
+                      } catch {
+                        toast.error("Konnte Kalender nicht öffnen");
+                      }
+                    }}
+                  >
+                    <CalendarPlus className="h-4 w-4 mr-1.5" /> Zum Kalender hinzufügen
+                  </Button>
+                  <AlarmBell match={m} />
+                </div>
               )}
             />
           </Section>
