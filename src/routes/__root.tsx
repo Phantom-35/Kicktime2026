@@ -23,6 +23,7 @@ import { useLiveSimulation } from "@/hooks/useLiveSimulation";
 import { useLiveApi } from "@/hooks/useLiveApi";
 import { useAlarmScheduler } from "@/hooks/useAlarmScheduler";
 import { runScheduleAudit } from "@/lib/scheduleAudit";
+import { applyAccentTheme, type AccentThemeId } from "@/lib/accent-themes";
 
 import appCss from "../styles.css?url";
 
