@@ -116,8 +116,20 @@ function RootComponent() {
   const onboarded = useAppStore((s) => s.isOnboarded);
   const theme = useAppStore((s) => s.theme);
   const accentTheme = useAppStore((s) => s.accentTheme);
+  const lastSeenVersion = useAppStore((s) => s.lastSeenVersion);
+  const setLastSeenVersion = useAppStore((s) => s.setLastSeenVersion);
+  const [whatsNewOpen, setWhatsNewOpen] = useState(false);
   useThemeClass(theme);
   useAccentTheme(accentTheme);
+
+  useEffect(() => {
+    if (!booted || !appReady) return;
+    if (!onboarded) return;
+    if (lastSeenVersion !== APP_VERSION) {
+      const t = setTimeout(() => setWhatsNewOpen(true), 400);
+      return () => clearTimeout(t);
+    }
+  }, [booted, appReady, onboarded, lastSeenVersion]);
 
   useEffect(() => {
     let shouldShow = true;
@@ -202,6 +214,14 @@ function RootComponent() {
         <div className="min-h-screen w-full bg-background" />
       )}
       {showSplash && <SplashScreen onDone={handleSplashDone} />}
+      <WhatsNewModal
+        open={whatsNewOpen}
+        version={APP_VERSION}
+        onClose={() => {
+          setWhatsNewOpen(false);
+          setLastSeenVersion(APP_VERSION);
+        }}
+      />
       <Toaster theme={theme} />
     </QueryClientProvider>
   );
