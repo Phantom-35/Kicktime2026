@@ -164,6 +164,13 @@ export function MatchDetailSheet({
             </div>
           </div>
 
+          {/* Prediction (Dein Tipp) */}
+          <PredictionSection match={match} />
+
+          {/* Share card */}
+          <ShareCardButton match={match} />
+
+
           {/* Stadium */}
           <div className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center gap-1.5 text-[10px] uppercase text-muted-foreground">
