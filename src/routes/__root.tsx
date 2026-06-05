@@ -218,3 +218,9 @@ function useThemeClass(theme: "dark" | "light") {
     }
   }, [theme]);
 }
+
+function useAccentTheme(id: AccentThemeId) {
+  useEffect(() => {
+    applyAccentTheme(id);
+  }, [id]);
+}
