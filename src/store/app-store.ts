@@ -13,6 +13,7 @@ type State = {
   alarms: Record<string, boolean>;
   theme: "dark" | "light";
   pushEnabled: boolean;
+  autoAlarmFavorites: boolean;
   devSimulateLive: boolean;
 };
 
@@ -24,9 +25,11 @@ type Actions = {
   setSpoiler: (v: boolean) => void;
   setOnboarded: (v: boolean) => void;
   toggleAlarm: (id: string) => void;
+  setAlarm: (id: string, v: boolean | null) => void;
   resetOnboarding: () => void;
   setTheme: (t: "dark" | "light") => void;
   setPushEnabled: (v: boolean) => void;
+  setAutoAlarmFavorites: (v: boolean) => void;
   setDevSimulateLive: (v: boolean) => void;
 };
 
@@ -53,6 +56,7 @@ export const useAppStore = create<State & Actions>()(
       alarms: {},
       theme: "dark",
       pushEnabled: false,
+      autoAlarmFavorites: true,
       devSimulateLive: false,
 
 
@@ -86,6 +90,13 @@ export const useAppStore = create<State & Actions>()(
       setOnboarded: (v) => set({ isOnboarded: v }),
       toggleAlarm: (id) =>
         set((s) => ({ alarms: { ...s.alarms, [id]: !s.alarms[id] } })),
+      setAlarm: (id, v) =>
+        set((s) => {
+          const next = { ...s.alarms };
+          if (v === null) delete next[id];
+          else next[id] = v;
+          return { alarms: next };
+        }),
       resetOnboarding: () =>
         set({
           isOnboarded: false,
@@ -95,6 +106,7 @@ export const useAppStore = create<State & Actions>()(
         }),
       setTheme: (t) => set({ theme: t }),
       setPushEnabled: (v) => set({ pushEnabled: v }),
+      setAutoAlarmFavorites: (v) => set({ autoAlarmFavorites: v }),
       setDevSimulateLive: (v) => set({ devSimulateLive: v }),
     }),
     { name: "kicktime-2026" }

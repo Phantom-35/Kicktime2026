@@ -1,44 +1,98 @@
-## 1. Tabellen-Tab: Sektion "Nächste Spiele dieser Gruppe"
+## Ziel
 
-Datei: `src/routes/tabellen.tsx`
+Erweiterung des Benachrichtigungssystems um Auto-Favoriten-Logik, eine kompakte Glocke neben jedem "Zum Kalender hinzufügen"-Button und konsistente Toast-Bestätigungen. Version → 3.4.0.
 
-- Neuer `useMemo`-Block unterhalb des bestehenden `standings`-Memos:
-  - Quelle: `matches` (bereits vorhanden via `useMatchStore(selectMatchList)`).
-  - `now` aus dem Store lesen (`useMatchStore((s) => s.now)`), damit der Filter live mit dem Clock-Tick aktualisiert. Fallback: `Date.now()` falls undefined.
-  - Filter: `m.group === activeGroup && m.stage === "group" && (m.status === "live" || new Date(m.utcTimestamp).getTime() >= now)`.
-  - Sortierung aufsteigend nach `utcTimestamp` (live zuerst, da deren Kickoff in der Vergangenheit liegt → zusätzlich Live-Matches an den Anfang sortieren).
-  - `.slice(0, 2)` → maximal 2 Einträge.
-- Neuer JSX-Block direkt nach `<GroupCard ... />`:
-  - Überschrift "Nächste Spiele dieser Gruppe" (gleicher Stil wie restliche Section-Headlines im Tab).
-  - Wenn Array leer → Infokarte (gerundete Card, `border-border bg-card p-4`, Text: „Die Gruppenphase für diese Gruppe ist beendet. Die Top 2 stehen in der K.-o.-Runde.").
-  - Sonst: Liste der Matches gerendert mit der **bestehenden** `MatchCard` aus `src/components/match/MatchCard.tsx` (identisch zum Spiele-Tab, inkl. TV-Sender-Footer).
-  - Für den "Zum Kalender hinzufügen"-Button: gleiche Integration wie im Spiele-Tab. Ich prüfe in `src/routes/spiele.tsx`, wie dort der Button an die Karte angefügt wird (entweder via `children`-Prop von `MatchCard` oder als Bottom-Sheet/Detail). Übernehme exakt dasselbe Pattern (vermutlich `MatchDetailSheet` per `onClick`, und der Kalender-Button lebt im Sheet — dann ist die Konsistenz automatisch gegeben, da `MatchCard` identisch verwendet wird).
+## 1. Store (`src/store/app-store.ts`)
 
-## 2. Splash-Flash beim Öffnen beheben
+- Neues Feld `autoAlarmFavorites: boolean` (Default `true`) + Setter `setAutoAlarmFavorites(v)`.
+- Bestehendes `alarms`/`toggleAlarm` bleibt unverändert (manuelle Overrides).
 
-Datei: `src/routes/__root.tsx`
+## 2. Helper: effektiver Alarm-Status
 
-Problem: `showSplash` startet als `false`, wird erst im `useEffect` nach dem ersten Render auf `true` gesetzt → für 1 Frame ist die App sichtbar.
+Neue kleine Datei `src/lib/alarms.ts`:
 
-Fix:
-- Initial-State für `showSplash` und `appReady` per Lazy-Initializer aus `sessionStorage` ermitteln, mit SSR-Guard:
-  ```ts
-  const [showSplash, setShowSplash] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try { return sessionStorage.getItem("splash_shown") !== "1"; }
-    catch { return false; }
-  });
-  const [appReady, setAppReady] = useState(() => !showSplashInitial);
-  ```
-- Den bisherigen `useEffect`, der `showSplash`/`appReady` setzt, entfernen.
-- Zusätzlich `motion.div`-Wrapper mit `initial={appReady ? false : { opacity: 0, y: 24 }}` lassen, damit kein Flash entsteht. Da SSR `showSplash=false` liefert, könnte der allererste Server-HTML-Frame trotzdem die App zeigen — daher den App-Container per inline-style auf `opacity: 0` rendern, solange `!appReady` UND `typeof window !== "undefined"` noch nicht hydratisiert ist. Praktischer Ansatz: motion `initial={false}` entfernen und stattdessen `initial={{ opacity: 0, y: 24 }}` setzen, damit der erste Client-Frame garantiert unsichtbar ist; bei `splash_shown==="1"` direkt `animate={{opacity:1,y:0}}` mit `duration: 0`.
+```ts
+export function isAlarmActive(match, alarms, autoFav, favorites) {
+  if (alarms[match.id]) return true;
+  if (autoFav && (favorites.includes(match.teamA) || favorites.includes(match.teamB))) return true;
+  return false;
+}
+```
 
-## 3. Version-Bump
+Wird in `useAlarmScheduler` und in der UI (Glocken-Icon) genutzt — eine Quelle der Wahrheit.
 
-Datei: `src/routes/profil.tsx` — `APP_VERSION` von `"3.2.3"` auf `"3.3.0"`.
+## 3. Scheduler (`src/hooks/useAlarmScheduler.ts`)
+
+- `alarms`, `autoAlarmFavorites`, `favoriteTeams` lesen.
+- Loop über alle Matches: nutze `isAlarmActive(...)`.
+- Notification-Text auf neuen Wording umstellen:
+  - Titel: `🏆 KickTime Erinnerung`
+  - Body: `In 15 Minuten startet {TeamA} gegen {TeamB}! Schalte rechtzeitig ein.`
+- Dependency-Array entsprechend erweitern.
+
+## 4. Glocken-Komponente (`src/components/match/AlarmBell.tsx`, neu)
+
+Kompakter Icon-Button (`h-8 w-8 rounded-lg border border-border`), Bell-Icon (`h-3.5 w-3.5`).
+
+Props: `match`.
+
+Logik:
+- Liest `alarms`, `autoAlarmFavorites`, `favoriteTeams`, `pushEnabled`, `toggleAlarm`.
+- `active = isAlarmActive(match, ...)`.
+- `isAuto = !alarms[match.id] && active` (Glocke ist nur durch Auto-Favoriten aktiv).
+- Styling:
+  - Aktiv: `bg-primary/15 border-primary text-primary` + `fill-current` auf Bell.
+  - Inaktiv: `text-muted-foreground hover:text-foreground`.
+- Klick:
+  - `e.stopPropagation()` (damit das umgebende `MatchCard onClick` nicht feuert).
+  - Wenn `isAuto` und Nutzer klickt: setze `alarms[id] = false` (expliziter Opt-out — siehe unten unter "Auto-Override").
+  - Sonst: `toggleAlarm(id)`.
+  - Toast: `Erinnerung für {a.name} vs. {b.name} aktiviert! 🔔` oder `… deaktiviert.`
+  - Wenn Hauptschalter aus / Permission fehlt: Toast-Hinweis `Aktiviere Push-Benachrichtigungen im Profil.`
+
+### Auto-Override (Edge Case)
+
+Damit „Auto an, aber dieses eine Spiel will ich nicht" funktioniert, erweitern wir `alarms` semantisch:
+- `alarms[id] === true` → manuell an.
+- `alarms[id] === false` (explizit gesetzt) → manuell aus, überschreibt Auto.
+- `alarms[id] === undefined` → folgt Auto-Logik.
+
+`isAlarmActive` und `toggleAlarm` werden entsprechend angepasst (Tri-State per `undefined`-Check). `toggleAlarm` cycelt: `undefined → true → false → undefined`.
+
+## 5. UI-Integration der Glocke
+
+In allen drei Stellen mit "Zum Kalender hinzufügen"-Button: Button + Glocke in einem `flex items-center gap-2`-Container nebeneinander platzieren.
+
+- `src/routes/index.tsx` (Perfect Matches Section, Z. 110–120)
+- `src/routes/spiele.tsx` (Z. 93–103)
+- `src/routes/tabellen.tsx` (Z. 150–161)
+
+Der Kalender-Button behält `flex-1`, die Glocke ist `shrink-0`.
+
+## 6. Profil-Tab (`src/routes/profil.tsx`)
+
+Innerhalb der bestehenden „Push-Benachrichtigungen"-Card unterhalb des Hauptschalters:
+
+```
+─ Hauptschalter "Push-Benachrichtigungen" [Switch]
+─ iOS-Hinweis (klein)
+─ Trenner (border-t border-border/50 pt-3 mt-3)
+─ Eingerückter Block (pl-3 border-l-2 border-border):
+   - Titel: "Automatisch für Favoriten"
+   - Beschreibung: "Aktiviert automatisch die Erinnerungs-Glocke für alle Spiele deiner Favoriten-Teams."
+   - Switch (disabled wenn !pushEnabled, optisch gedämpft)
+```
+
+Switch nutzt `autoAlarmFavorites` / `setAutoAlarmFavorites`.
+
+## 7. Version-Bump
+
+`APP_VERSION` in `src/routes/profil.tsx` → `"3.4.0"`.
 
 ## Technische Details
 
-- Keine Änderungen an `MatchCard`, `match-store`, oder `calendar.ts` notwendig.
-- Live-Update funktioniert automatisch via `useLiveClock` → `tickClock` → `now` ändert sich → `useMemo` re-evaluiert.
-- Kein neuer State, keine neuen Dependencies.
+- Keine neuen Dependencies.
+- `alarms`-Typ bleibt `Record<string, boolean>` — `undefined` ist bereits implizit valide.
+- Bestehende Toast-Komponente (in der letzten Iteration neu designt) wird automatisch genutzt — kein Style-Override nötig.
+- `useAlarmScheduler` reagiert dank Zustand-Subscription automatisch auf Änderungen von `autoAlarmFavorites` und `favoriteTeams`, sodass das Aktivieren des Auto-Schalters sofort alle Favoriten-Spiele scheduled.
+- `e.stopPropagation()` auf der Glocke verhindert, dass das `MatchDetailSheet` aufpoppt.
