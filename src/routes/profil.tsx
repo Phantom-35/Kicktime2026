@@ -25,7 +25,7 @@ import {
   RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2, ExternalLink, Timer, Shirt,
 } from "lucide-react";
 
-const APP_VERSION = "4.0.0";
+import { APP_VERSION } from "@/lib/version";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
