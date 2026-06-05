@@ -10,7 +10,11 @@ import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { getLocalParts } from "@/lib/time";
 import { hasAnyFreeTv, hasMagentaTv } from "@/lib/broadcaster";
-import { Tv, MapPin, History } from "lucide-react";
+import { Tv, MapPin, History, Share2, Trophy, Minus, Plus, X } from "lucide-react";
+import { toast } from "sonner";
+import { haptics } from "@/lib/haptics";
+import { generateShareCard, shareOrDownload } from "@/lib/share-card";
+import { scorePrediction, RESULT_LABEL } from "@/lib/predictions";
 
 
 function getBroadcasterUrl(broadcaster: string): string {
