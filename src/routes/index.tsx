@@ -116,6 +116,7 @@ function Dashboard() {
                       e.stopPropagation();
                       try {
                         addMatchToCalendar(m);
+                        haptics.tap();
                         toast.success("Kalender wird geöffnet…", {
                           description: getLocalParts(m.utcTimestamp).fullStr,
                         });

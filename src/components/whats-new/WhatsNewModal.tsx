@@ -17,13 +17,13 @@ const FEATURES: Feature[] = [
   },
   {
     icon: LayoutGrid,
-    title: "Homescreen-Shortcuts",
-    text: "Lange aufs App-Icon drücken: direkt zu Tipps, Tabellen oder Gastro.",
+    title: "Schneller am Ball",
+    text: "Optimierte Ladezeiten und direkter Zugriff über dein Homescreen-Icon.",
   },
   {
     icon: Vibrate,
-    title: "Fühl dich rein",
-    text: "Sanfte Vibrationen bei Glocke, Tipp & Co. (auf unterstützten Geräten).",
+    title: "Spürbares Feedback",
+    text: "Sanfte Vibrationen bei Top-Aktionen (auf unterstützten Android-Geräten).",
   },
 ];
 
