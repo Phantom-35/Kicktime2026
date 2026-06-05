@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { AccentThemeId } from "@/lib/accent-themes";
 
 export type Window = { start: number; end: number }; // hours 0-24, end may be < start (cross-midnight)
 
