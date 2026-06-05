@@ -64,6 +64,7 @@ export const useAppStore = create<State & Actions>()(
       autoAlarmFavorites: true,
       devSimulateLive: false,
       showCountdown: true,
+      accentTheme: "pitch",
 
 
 
