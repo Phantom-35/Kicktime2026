@@ -103,6 +103,47 @@ function ProfilPage() {
         </div>
 
         <div className="md:break-inside-avoid md:mb-5">
+          <Card icon={<Shirt className="h-4 w-4" />} title="Dein Fan-Style">
+            <p className="text-xs text-muted-foreground mb-3">
+              Wähle dein Trikot — die Akzentfarbe der gesamten App passt sich sofort an.
+            </p>
+            <div className="flex items-center gap-3 flex-wrap">
+              {ACCENT_THEMES.map((t) => {
+                const active = s.accentTheme === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => {
+                      s.setAccentTheme(t.id);
+                      toast(`Fan-Style: ${t.label}`);
+                    }}
+                    aria-label={t.label}
+                    aria-pressed={active}
+                    className="relative h-10 w-10 rounded-full transition-transform active:scale-90"
+                    style={{ background: t.swatch }}
+                  >
+                    {active && (
+                      <motion.span
+                        layoutId="accent-ring"
+                        className="absolute -inset-1 rounded-full border-2 border-foreground"
+                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-3 text-[10px] text-muted-foreground">
+              Aktiv: <span className="font-semibold text-foreground">
+                {ACCENT_THEMES.find((t) => t.id === s.accentTheme)?.label}
+              </span>
+            </p>
+          </Card>
+        </div>
+
+
+
+        <div className="md:break-inside-avoid md:mb-5">
           <Card icon={<Bell className="h-4 w-4" />} title="Push-Benachrichtigungen">
             <div className="flex items-center justify-between">
               <p className="text-xs text-muted-foreground pr-3">
