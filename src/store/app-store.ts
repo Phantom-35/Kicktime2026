@@ -116,6 +116,7 @@ export const useAppStore = create<State & Actions>()(
       setAutoAlarmFavorites: (v) => set({ autoAlarmFavorites: v }),
       setDevSimulateLive: (v) => set({ devSimulateLive: v }),
       setShowCountdown: (v) => set({ showCountdown: v }),
+      setAccentTheme: (id) => set({ accentTheme: id }),
     }),
     { name: "kicktime-2026" }
   )
