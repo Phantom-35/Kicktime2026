@@ -253,3 +253,168 @@ export function MatchDetailSheet({
     </Drawer>
   );
 }
+
+function PredictionSection({ match }: { match: Match }) {
+  const pred = useAppStore((s) => s.predictions[match.id]);
+  const setPrediction = useAppStore((s) => s.setPrediction);
+  const clearPrediction = useAppStore((s) => s.clearPrediction);
+  const a = getTeam(match.teamA);
+  const b = getTeam(match.teamB);
+  const [valA, setValA] = useState<number>(pred?.a ?? 0);
+  const [valB, setValB] = useState<number>(pred?.b ?? 0);
+
+  const finished = match.status === "finished" && !!match.score;
+  const result = pred && finished ? scorePrediction(pred, match.score!) : null;
+
+  const persist = (na: number, nb: number) => {
+    setPrediction(match.id, na, nb);
+    haptics.tap();
+  };
+
+  const step = (which: "a" | "b", delta: number) => {
+    if (finished) return;
+    if (which === "a") {
+      const next = Math.max(0, Math.min(19, valA + delta));
+      if (next === valA) return;
+      setValA(next);
+      persist(next, valB);
+    } else {
+      const next = Math.max(0, Math.min(19, valB + delta));
+      if (next === valB) return;
+      setValB(next);
+      persist(valA, next);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4">
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Trophy className="h-3.5 w-3.5" /> Dein Tipp
+        </div>
+        {pred && !finished && (
+          <button
+            onClick={() => {
+              clearPrediction(match.id);
+              setValA(0);
+              setValB(0);
+              haptics.tap();
+              toast("Tipp gelöscht");
+            }}
+            className="text-[11px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+          >
+            <X className="h-3 w-3" /> Tipp löschen
+          </button>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between gap-3">
+        <Stepper
+          label={`${a.flag} ${a.name}`}
+          value={valA}
+          onMinus={() => step("a", -1)}
+          onPlus={() => step("a", 1)}
+          disabled={finished}
+        />
+        <span className="text-2xl font-black text-muted-foreground">:</span>
+        <Stepper
+          label={`${b.flag} ${b.name}`}
+          value={valB}
+          onMinus={() => step("b", -1)}
+          onPlus={() => step("b", 1)}
+          disabled={finished}
+        />
+      </div>
+
+      {!pred && !finished && (
+        <p className="mt-3 text-[11px] text-muted-foreground text-center">
+          Tipp wird automatisch gespeichert.
+        </p>
+      )}
+
+      {finished && pred && result && (
+        <div className="mt-3 flex items-center justify-between rounded-xl border border-border/50 bg-background/40 px-3 py-2">
+          <div className="text-[11px]">
+            <div className="text-muted-foreground uppercase tracking-wider">Ergebnis</div>
+            <div className="font-semibold tabular-nums text-sm">
+              {match.score!.a} : {match.score!.b}
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              {RESULT_LABEL[result.result]}
+            </div>
+            <div className="font-bold tabular-nums text-sm">
+              {result.points > 0 ? `+${result.points} Punkte` : "0 Punkte"}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Stepper({
+  label, value, onMinus, onPlus, disabled,
+}: {
+  label: string;
+  value: number;
+  onMinus: () => void;
+  onPlus: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="flex-1 min-w-0">
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground text-center truncate mb-1.5">
+        {label}
+      </div>
+      <div className="flex items-center justify-center gap-1.5">
+        <button
+          type="button"
+          onClick={onMinus}
+          disabled={disabled || value === 0}
+          aria-label="Minus"
+          className="h-9 w-9 rounded-lg border border-border bg-background/60 inline-flex items-center justify-center active:scale-95 disabled:opacity-40"
+        >
+          <Minus className="h-4 w-4" />
+        </button>
+        <span className="w-10 text-center text-2xl font-black tabular-nums">{value}</span>
+        <button
+          type="button"
+          onClick={onPlus}
+          disabled={disabled}
+          aria-label="Plus"
+          className="h-9 w-9 rounded-lg border border-primary/50 bg-primary/10 text-primary inline-flex items-center justify-center active:scale-95 disabled:opacity-40"
+        >
+          <Plus className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ShareCardButton({ match }: { match: Match }) {
+  const [busy, setBusy] = useState(false);
+  const handle = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const blob = await generateShareCard(match);
+      const how = await shareOrDownload(match, blob);
+      haptics.tap();
+      toast.success(how === "shared" ? "Bereit zum Teilen ✨" : "Bild gespeichert ✨");
+    } catch (e) {
+      console.error(e);
+      toast.error("Konnte Bild nicht erzeugen");
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Button variant="outline" className="w-full h-11" onClick={handle} disabled={busy}>
+      <Share2 className="h-4 w-4 mr-2" />
+      {busy ? "Erzeuge Bild…" : "Als Bild teilen"}
+    </Button>
+  );
+}
+
