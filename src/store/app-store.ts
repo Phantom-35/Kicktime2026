@@ -13,6 +13,7 @@ type State = {
   alarms: Record<string, boolean>;
   theme: "dark" | "light";
   pushEnabled: boolean;
+  autoAlarmFavorites: boolean;
   devSimulateLive: boolean;
 };
 
@@ -24,9 +25,11 @@ type Actions = {
   setSpoiler: (v: boolean) => void;
   setOnboarded: (v: boolean) => void;
   toggleAlarm: (id: string) => void;
+  setAlarm: (id: string, v: boolean | null) => void;
   resetOnboarding: () => void;
   setTheme: (t: "dark" | "light") => void;
   setPushEnabled: (v: boolean) => void;
+  setAutoAlarmFavorites: (v: boolean) => void;
   setDevSimulateLive: (v: boolean) => void;
 };
 
