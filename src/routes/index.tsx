@@ -10,6 +10,7 @@ import { categorizeMatches } from "@/lib/categorize";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { AlarmBell } from "@/components/match/AlarmBell";
+import { TournamentCountdown } from "@/components/dashboard/TournamentCountdown";
 import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { toast } from "sonner";
@@ -65,9 +66,13 @@ function Dashboard() {
     });
   }, [cats.perfect, state.favoriteTeams, state.interestingTeams]);
   const [selected, setSelected] = useState<Match | null>(null);
+  const showCountdown = useAppStore((s) => s.showCountdown);
 
   return (
     <div className="p-4 pb-6">
+      <AnimatePresence>
+        {showCountdown && <TournamentCountdown key="countdown" />}
+      </AnimatePresence>
       <div className="mb-4 flex items-center justify-between gap-2">
         <h2 className="text-xl font-bold flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-accent" />
