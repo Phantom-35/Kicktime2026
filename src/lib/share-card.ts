@@ -82,7 +82,7 @@ export async function generateShareCard(match: Match): Promise<Blob> {
   } else {
     ctx.fillStyle = "rgba(255,255,255,0.55)";
     ctx.font = "500 32px system-ui, -apple-system, sans-serif";
-    ctx.fillText(local.dateStr.toUpperCase(), W / 2, 740);
+    ctx.fillText(local.dayStr.toUpperCase(), W / 2, 740);
     ctx.fillStyle = "#ffffff";
     ctx.font = "900 180px system-ui, -apple-system, sans-serif";
     ctx.fillText(local.timeStr, W / 2, 880);

@@ -7,7 +7,7 @@ function vibrate(pattern: number | number[]): void {
   const v = (navigator as Navigator & { vibrate?: (p: number | number[]) => boolean }).vibrate;
   if (typeof v !== "function") return;
   try {
-    v.call(navigator, pattern);
+    v.call(navigator, pattern as number[]);
   } catch {
     /* noop */
   }
