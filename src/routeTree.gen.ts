@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TippsRouteImport } from './routes/tipps'
 import { Route as TabellenRouteImport } from './routes/tabellen'
 import { Route as SpieleRouteImport } from './routes/spiele'
 import { Route as ProfilRouteImport } from './routes/profil'
 import { Route as BarsRouteImport } from './routes/bars'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TippsRoute = TippsRouteImport.update({
+  id: '/tipps',
+  path: '/tipps',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TabellenRoute = TabellenRouteImport.update({
   id: '/tabellen',
   path: '/tabellen',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/profil': typeof ProfilRoute
   '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
+  '/tipps': typeof TippsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/profil': typeof ProfilRoute
   '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
+  '/tipps': typeof TippsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,21 @@ export interface FileRoutesById {
   '/profil': typeof ProfilRoute
   '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
+  '/tipps': typeof TippsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/bars' | '/profil' | '/spiele' | '/tabellen'
+  fullPaths: '/' | '/bars' | '/profil' | '/spiele' | '/tabellen' | '/tipps'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bars' | '/profil' | '/spiele' | '/tabellen'
-  id: '__root__' | '/' | '/bars' | '/profil' | '/spiele' | '/tabellen'
+  to: '/' | '/bars' | '/profil' | '/spiele' | '/tabellen' | '/tipps'
+  id:
+    | '__root__'
+    | '/'
+    | '/bars'
+    | '/profil'
+    | '/spiele'
+    | '/tabellen'
+    | '/tipps'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,10 +93,18 @@ export interface RootRouteChildren {
   ProfilRoute: typeof ProfilRoute
   SpieleRoute: typeof SpieleRoute
   TabellenRoute: typeof TabellenRoute
+  TippsRoute: typeof TippsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tipps': {
+      id: '/tipps'
+      path: '/tipps'
+      fullPath: '/tipps'
+      preLoaderRoute: typeof TippsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tabellen': {
       id: '/tabellen'
       path: '/tabellen'
@@ -125,17 +149,8 @@ const rootRouteChildren: RootRouteChildren = {
   ProfilRoute: ProfilRoute,
   SpieleRoute: SpieleRoute,
   TabellenRoute: TabellenRoute,
+  TippsRoute: TippsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

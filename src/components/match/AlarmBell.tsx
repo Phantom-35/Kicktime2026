@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { useAppStore } from "@/store/app-store";
 import { getTeam } from "@/data/teams";
 import { isAlarmActive, isAutoFavoriteMatch } from "@/lib/alarms";
+import { haptics } from "@/lib/haptics";
 import type { Match } from "@/data/matches";
 
 export function AlarmBell({ match }: { match: Match }) {
@@ -24,9 +25,11 @@ export function AlarmBell({ match }: { match: Match }) {
     if (active) {
       // Turn OFF: if auto, set explicit false; else clear to undefined
       setAlarm(match.id, isAuto ? false : null);
+      haptics.tap();
       toast(`Erinnerung für ${a.name} vs. ${b.name} deaktiviert`);
     } else {
       setAlarm(match.id, true);
+      haptics.success();
       toast.success(`Erinnerung für ${a.name} vs. ${b.name} aktiviert! 🔔`);
       if (!pushEnabled) {
         toast("Aktiviere Push-Benachrichtigungen im Profil", {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
 import { useAppStore } from "@/store/app-store";
+import { APP_VERSION } from "@/lib/version";
 import { getSortedTeams, PRIORITY_CODES, type Team } from "@/data/teams";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -22,6 +23,7 @@ export function OnboardingFlow() {
     toggleFavorite, toggleInteresting,
     availability, setAvailability,
     setOnboarded,
+    setLastSeenVersion,
   } = useAppStore();
 
   // Scroll to top whenever the step changes so the new content is visible
@@ -110,6 +112,7 @@ export function OnboardingFlow() {
             <Button
               onClick={() => {
                 setOnboarded(true);
+                setLastSeenVersion(APP_VERSION);
                 if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
                 navigate({ to: "/", replace: true });
               }}

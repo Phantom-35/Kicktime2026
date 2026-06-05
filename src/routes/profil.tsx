@@ -18,6 +18,7 @@ import { formatHourLabel } from "@/lib/time";
 import { REAL_TEAMS as TEAMS } from "@/data/teams";
 import { detectPushSupport, requestPushPermission } from "@/lib/notifications";
 import { ACCENT_THEMES } from "@/lib/accent-themes";
+import { haptics } from "@/lib/haptics";
 import { motion } from "framer-motion";
 
 import { toast } from "sonner";
@@ -25,7 +26,7 @@ import {
   RotateCcw, Eye, Clock, Users, Moon, Sun, Bell, Trash2, ExternalLink, Timer, Shirt,
 } from "lucide-react";
 
-const APP_VERSION = "4.0.0";
+import { APP_VERSION } from "@/lib/version";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
@@ -229,6 +230,7 @@ function ProfilPage() {
                 const fav = s.favoriteTeams.includes(t.code);
                 const intg = s.interestingTeams.includes(t.code);
                 const cycle = () => {
+                  haptics.tap();
                   if (!fav && !intg) {
                     // none → favorite
                     s.toggleFavorite(t.code);

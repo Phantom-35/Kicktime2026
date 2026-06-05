@@ -18,6 +18,8 @@ type State = {
   devSimulateLive: boolean;
   showCountdown: boolean;
   accentTheme: AccentThemeId;
+  predictions: Record<string, { a: number; b: number; createdAt: number }>;
+  lastSeenVersion: string;
 };
 
 type Actions = {
@@ -36,6 +38,9 @@ type Actions = {
   setDevSimulateLive: (v: boolean) => void;
   setShowCountdown: (v: boolean) => void;
   setAccentTheme: (id: AccentThemeId) => void;
+  setPrediction: (matchId: string, a: number, b: number) => void;
+  clearPrediction: (matchId: string) => void;
+  setLastSeenVersion: (v: string) => void;
 };
 
 const detectTz = () => {
@@ -65,6 +70,8 @@ export const useAppStore = create<State & Actions>()(
       devSimulateLive: false,
       showCountdown: true,
       accentTheme: "pitch",
+      predictions: {},
+      lastSeenVersion: "",
 
 
 
@@ -117,6 +124,20 @@ export const useAppStore = create<State & Actions>()(
       setDevSimulateLive: (v) => set({ devSimulateLive: v }),
       setShowCountdown: (v) => set({ showCountdown: v }),
       setAccentTheme: (id) => set({ accentTheme: id }),
+      setPrediction: (matchId, a, b) =>
+        set((s) => ({
+          predictions: {
+            ...s.predictions,
+            [matchId]: { a, b, createdAt: s.predictions[matchId]?.createdAt ?? Date.now() },
+          },
+        })),
+      clearPrediction: (matchId) =>
+        set((s) => {
+          const next = { ...s.predictions };
+          delete next[matchId];
+          return { predictions: next };
+        }),
+      setLastSeenVersion: (v) => set({ lastSeenVersion: v }),
     }),
     { name: "kicktime-2026" }
   )
