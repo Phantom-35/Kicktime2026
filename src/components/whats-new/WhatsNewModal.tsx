@@ -1,29 +1,19 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Trophy, Share2, LayoutGrid, Vibrate } from "lucide-react";
+import { Smartphone, Trophy } from "lucide-react";
 
 type Feature = { icon: typeof Trophy; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
+    icon: Smartphone,
+    title: "Präzise Navigation",
+    text: "Die untere Menüleiste wurde für moderne Smartphones optimiert und sorgt für fehlerfreie Klicks.",
+  },
+  {
     icon: Trophy,
-    title: "Tipp dein Turnier",
-    text: "Eigener Tipps-Tab mit Statistik — wie gut bist du wirklich?",
-  },
-  {
-    icon: Share2,
-    title: "Teile dein Match",
-    text: "Erzeuge mit einem Tap ein schickes Share-Bild für deine Stories.",
-  },
-  {
-    icon: LayoutGrid,
-    title: "Schneller am Ball",
-    text: "Optimierte Ladezeiten und direkter Zugriff über dein Homescreen-Icon.",
-  },
-  {
-    icon: Vibrate,
-    title: "Spürbares Feedback",
-    text: "Sanfte Vibrationen bei Top-Aktionen (auf unterstützten Android-Geräten).",
+    title: "Tippspiel & Haptik",
+    text: "Manuelles Speichern deiner Tipps mit optimiertem Vibrationsfeedback für unterstützte Geräte.",
   },
 ];
 
@@ -44,7 +34,7 @@ export function WhatsNewModal({
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">
               v{version}
             </span>
-            <DialogTitle className="text-xl">Was ist neu?</DialogTitle>
+            <DialogTitle className="text-xl">Update auf v{version} — UX & Navigation</DialogTitle>
           </div>
           <p className="text-xs text-muted-foreground pt-1">
             Frische Features für dein WM-Erlebnis.

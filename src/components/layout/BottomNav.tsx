@@ -13,15 +13,18 @@ const tabs = [
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <nav className="md:hidden sticky bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
-      <ul className="grid grid-cols-6">
+    <nav
+      className="md:hidden sticky bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 px-2"
+      style={{ paddingBottom: "max(env(safe-area-inset-bottom), 12px)" }}
+    >
+      <ul className="grid grid-cols-6 h-16">
         {tabs.map(({ to, label, icon: Icon }) => {
           const active = pathname === to;
           return (
-            <li key={to}>
+            <li key={to} className="h-full">
               <Link
                 to={to}
-                className="relative flex flex-col items-center justify-center gap-1 py-2.5 active:scale-95 transition-transform"
+                className="relative flex h-full w-full flex-col items-center justify-center gap-1 active:scale-95 transition-transform"
               >
                 {active && (
                   <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />
