@@ -1,8 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Smartphone, Trophy } from "lucide-react";
+import { Smartphone } from "lucide-react";
 
-type Feature = { icon: typeof Trophy; title: string; text: string };
+type Feature = { icon: typeof Smartphone; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
