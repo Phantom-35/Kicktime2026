@@ -7,13 +7,8 @@ type Feature = { icon: typeof Trophy; title: string; text: string };
 const FEATURES: Feature[] = [
   {
     icon: Smartphone,
-    title: "Präzise Navigation",
-    text: "Die untere Menüleiste wurde für moderne Smartphones optimiert und sorgt für fehlerfreie Klicks.",
-  },
-  {
-    icon: Trophy,
-    title: "Tippspiel & Haptik",
-    text: "Manuelles Speichern deiner Tipps mit optimiertem Vibrationsfeedback für unterstützte Geräte.",
+    title: "Flüssiges Schließen",
+    text: "Das Match-Detailsheet reagiert jetzt absolut butterweich auf deine Wischgesten und gleitet elegant nach unten.",
   },
 ];
 
