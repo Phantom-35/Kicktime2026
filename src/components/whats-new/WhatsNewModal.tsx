@@ -34,7 +34,7 @@ export function WhatsNewModal({
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">
               v{version}
             </span>
-            <DialogTitle className="text-xl">Was ist neu?</DialogTitle>
+            <DialogTitle className="text-xl">Update auf v{version} — UX & Navigation</DialogTitle>
           </div>
           <p className="text-xs text-muted-foreground pt-1">
             Frische Features für dein WM-Erlebnis.
