@@ -1,19 +1,14 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Smartphone, Trophy } from "lucide-react";
+import { Smartphone } from "lucide-react";
 
-type Feature = { icon: typeof Trophy; title: string; text: string };
+type Feature = { icon: typeof Smartphone; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
     icon: Smartphone,
-    title: "Präzise Navigation",
-    text: "Die untere Menüleiste wurde für moderne Smartphones optimiert und sorgt für fehlerfreie Klicks.",
-  },
-  {
-    icon: Trophy,
-    title: "Tippspiel & Haptik",
-    text: "Manuelles Speichern deiner Tipps mit optimiertem Vibrationsfeedback für unterstützte Geräte.",
+    title: "Flüssiges Schließen",
+    text: "Das Match-Detailsheet reagiert jetzt absolut butterweich auf deine Wischgesten und gleitet elegant nach unten.",
   },
 ];
 
@@ -34,7 +29,7 @@ export function WhatsNewModal({
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">
               v{version}
             </span>
-            <DialogTitle className="text-xl">Update auf v{version} — UX & Navigation</DialogTitle>
+            <DialogTitle className="text-xl">Update auf v{version} — Smooth Sheets</DialogTitle>
           </div>
           <p className="text-xs text-muted-foreground pt-1">
             Frische Features für dein WM-Erlebnis.

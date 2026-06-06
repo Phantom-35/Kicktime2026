@@ -76,10 +76,18 @@ export function MatchDetailSheet({
   const showMagenta = hasMagentaTv(match);
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} shouldScaleBackground={false}>
-      <DrawerContent className="max-h-[90vh] border-border bg-background focus-visible:outline-none">
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+      shouldScaleBackground={false}
+      setBackgroundColorOnScale={false}
+      closeThreshold={0.2}
+      scrollLockTimeout={250}
+      repositionInputs={false}
+    >
+      <DrawerContent className="max-h-[90vh] border-border bg-background focus-visible:outline-none will-change-transform">
         {/* Drag handle area – vaul listens for drag gestures on the content; the inner scroll container below still scrolls normally */}
-        <DrawerHeader className="text-left pb-2 pt-2 cursor-grab active:cursor-grabbing">
+        <DrawerHeader className="text-left pb-2 pt-2 cursor-grab active:cursor-grabbing touch-none select-none">
           <DrawerTitle className="flex items-center gap-2">
 
             <span className="text-2xl">{a.flag}</span>
