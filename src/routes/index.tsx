@@ -302,14 +302,15 @@ function AlarmRow({ match }: { match: Match }) {
 
 function MissedStream({ matches, onSelect }: { matches: Match[]; onSelect: (m: Match) => void }) {
   const spoiler = useAppStore((s) => s.spoilerProtection);
-  const [revealed, setRevealed] = useState<Record<string, boolean>>({});
+  const revealedMap = useAppStore((s) => s.revealedMatches);
+  const revealMatch = useAppStore((s) => s.revealMatch);
   if (matches.length === 0) {
     return <p className="text-xs text-muted-foreground italic">Nichts verpasst.</p>;
   }
   return (
     <div className="space-y-3">
       {matches.map((m) => {
-        const hide = spoiler && !revealed[m.id];
+        const hide = spoiler && !revealedMap[m.id];
         return (
           <div key={m.id} className="relative">
             <MatchCard match={m} onClick={() => onSelect(m)} hideScore={hide}>
@@ -326,7 +327,7 @@ function MissedStream({ matches, onSelect }: { matches: Match[]; onSelect: (m: M
             </MatchCard>
             {hide && (
               <button
-                onClick={(e) => { e.stopPropagation(); setRevealed((r) => ({ ...r, [m.id]: true })); }}
+                onClick={(e) => { e.stopPropagation(); revealMatch(m.id); }}
                 className="absolute top-12 left-1/2 -translate-x-1/2 text-xs px-3 py-1.5 rounded-full bg-accent text-accent-foreground font-semibold shadow-lg"
               >
                 Ergebnis aufdecken
@@ -338,3 +339,4 @@ function MissedStream({ matches, onSelect }: { matches: Match[]; onSelect: (m: M
     </div>
   );
 }
+
