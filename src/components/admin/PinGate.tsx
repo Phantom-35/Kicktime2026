@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Lock } from "lucide-react";
 import { haptics } from "@/lib/haptics";
 
-const PIN = "5046";
+const PIN = "031011";
 
 export function PinGate({ onUnlock }: { onUnlock: () => void }) {
   const [value, setValue] = useState("");
