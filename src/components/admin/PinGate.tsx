@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Lock } from "lucide-react";
 import { haptics } from "@/lib/haptics";
 
-const PIN = "5046";
+const PIN = "031011";
 
 export function PinGate({ onUnlock }: { onUnlock: () => void }) {
   const [value, setValue] = useState("");
@@ -15,7 +15,7 @@ export function PinGate({ onUnlock }: { onUnlock: () => void }) {
   }, []);
 
   useEffect(() => {
-    if (value.length !== 4) return;
+    if (value.length !== 6) return;
     if (value === PIN) {
       haptics.success();
       onUnlock();
@@ -38,7 +38,7 @@ export function PinGate({ onUnlock }: { onUnlock: () => void }) {
       <div className="text-center">
         <div className="text-sm font-semibold">Admin-Bereich gesperrt</div>
         <p className="text-xs text-muted-foreground mt-1">
-          Bitte 4-stelligen PIN eingeben.
+          Bitte 6-stelligen PIN eingeben.
         </p>
       </div>
 
@@ -49,23 +49,23 @@ export function PinGate({ onUnlock }: { onUnlock: () => void }) {
           inputMode="numeric"
           pattern="[0-9]*"
           autoComplete="off"
-          maxLength={4}
+          maxLength={6}
           value={value}
-          onChange={(e) => setValue(e.target.value.replace(/\D/g, "").slice(0, 4))}
+          onChange={(e) => setValue(e.target.value.replace(/\D/g, "").slice(0, 6))}
           className="sr-only"
           aria-label="PIN"
         />
         <button
           type="button"
           onClick={() => inputRef.current?.focus()}
-          className={`flex gap-2 ${shake ? "animate-[shake_0.35s_ease-in-out]" : ""}`}
+          className={`flex gap-1.5 ${shake ? "animate-[shake_0.35s_ease-in-out]" : ""}`}
         >
-          {[0, 1, 2, 3].map((i) => {
+          {[0, 1, 2, 3, 4, 5].map((i) => {
             const filled = value.length > i;
             return (
               <span
                 key={i}
-                className={`h-12 w-10 rounded-lg border-2 flex items-center justify-center text-xl font-bold tabular-nums transition-colors ${
+                className={`h-12 w-8 rounded-lg border-2 flex items-center justify-center text-xl font-bold tabular-nums transition-colors ${
                   filled
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-border bg-background/60"
