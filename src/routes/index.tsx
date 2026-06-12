@@ -66,6 +66,16 @@ function Dashboard() {
       return new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime();
     });
   }, [cats.perfect, state.favoriteTeams, state.interestingTeams]);
+
+  const highlights = useMemo(() => {
+    const koStages: Match["stage"][] = ["r32", "r16", "qf", "sf", "third", "final"];
+    const koMatches = matches.filter((m) => koStages.includes(m.stage));
+    const opener = [...matches]
+      .filter((m) => m.stage === "group")
+      .sort((a, b) => new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime())[0];
+    const list = opener ? [opener, ...koMatches] : koMatches;
+    return list.sort((a, b) => new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime());
+  }, [matches]);
   const [selected, setSelected] = useState<Match | null>(null);
   const showCountdown = useAppStore((s) => s.showCountdown);
 
