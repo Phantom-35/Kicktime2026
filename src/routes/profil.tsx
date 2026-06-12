@@ -27,6 +27,9 @@ import {
 } from "lucide-react";
 
 import { APP_VERSION } from "@/lib/version";
+import { useRef, useState } from "react";
+import { haptics } from "@/lib/haptics";
+import { AdminPanel } from "@/components/admin/AdminPanel";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
@@ -324,9 +327,7 @@ function ProfilPage() {
       <p className="text-center text-[10px] text-muted-foreground pt-2">
         KickTime 2026 · Made by Phantom Studios
       </p>
-      <p className="text-center text-[10px] text-muted-foreground/70 -mt-3">
-        Version {APP_VERSION}
-      </p>
+      <VersionLine />
       <p className="text-center text-[10px] text-muted-foreground/50 -mt-3">
         <a
           href="https://kicktime2026.de"
@@ -342,6 +343,35 @@ function ProfilPage() {
         </a>
       </p>
     </div>
+  );
+}
+
+function VersionLine() {
+  const [open, setOpen] = useState(false);
+  const tapsRef = useRef<{ count: number; last: number }>({ count: 0, last: 0 });
+  const onTap = () => {
+    const now = Date.now();
+    const r = tapsRef.current;
+    if (now - r.last > 1500) r.count = 0;
+    r.count += 1;
+    r.last = now;
+    if (r.count >= 5) {
+      r.count = 0;
+      haptics.success();
+      setOpen(true);
+    }
+  };
+  return (
+    <>
+      <button
+        type="button"
+        onClick={onTap}
+        className="block mx-auto text-center text-[10px] text-muted-foreground/70 -mt-3 hover:text-muted-foreground transition-colors"
+      >
+        Version {APP_VERSION}
+      </button>
+      <AdminPanel open={open} onClose={() => setOpen(false)} />
+    </>
   );
 }
 

@@ -66,6 +66,16 @@ function Dashboard() {
       return new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime();
     });
   }, [cats.perfect, state.favoriteTeams, state.interestingTeams]);
+
+  const highlights = useMemo(() => {
+    const koStages: Match["stage"][] = ["r32", "r16", "qf", "sf", "third", "final"];
+    const koMatches = matches.filter((m) => koStages.includes(m.stage));
+    const opener = [...matches]
+      .filter((m) => m.stage === "group")
+      .sort((a, b) => new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime())[0];
+    const list = opener ? [opener, ...koMatches] : koMatches;
+    return list.sort((a, b) => new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime());
+  }, [matches]);
   const [selected, setSelected] = useState<Match | null>(null);
   const showCountdown = useAppStore((s) => s.showCountdown);
 
@@ -85,15 +95,18 @@ function Dashboard() {
       </div>
 
       <Tabs defaultValue="perfect" className="w-full">
-        <TabsList className="grid grid-cols-3 w-full h-11 bg-card">
-          <TabsTrigger value="perfect" className="text-xs">
+        <TabsList className="grid grid-cols-4 w-full h-11 bg-card">
+          <TabsTrigger value="perfect" className="text-[11px] px-1">
             🟢 Perfect <span className="ml-1 opacity-60">{cats.perfect.length}</span>
           </TabsTrigger>
-          <TabsTrigger value="night" className="text-xs">
+          <TabsTrigger value="night" className="text-[11px] px-1">
             🟡 Nacht <span className="ml-1 opacity-60">{cats.nightShift.length}</span>
           </TabsTrigger>
-          <TabsTrigger value="missed" className="text-xs">
+          <TabsTrigger value="missed" className="text-[11px] px-1">
             🔴 Verpasst <span className="ml-1 opacity-60">{cats.missed.length}</span>
+          </TabsTrigger>
+          <TabsTrigger value="highlights" className="text-[11px] px-1">
+            🏆 <span className="ml-1 opacity-60">{highlights.length}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -159,6 +172,44 @@ function Dashboard() {
             <MissedStream matches={cats.missed} onSelect={setSelected} />
           </Section>
         </TabsContent>
+
+        <TabsContent value="highlights" className="mt-4">
+          <Section
+            title="Turnier-Highlights"
+            subtitle="Eröffnung, K.-o.-Runde & Finale — egal welche Teams du markiert hast."
+            empty="Keine Highlights gefunden."
+          >
+            <Stream
+              matches={highlights}
+              onSelect={setSelected}
+              indicator={null}
+              footer={(m) => (
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="flex-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      try {
+                        addMatchToCalendar(m);
+                        haptics.tap();
+                        toast.success("Kalender wird geöffnet…", {
+                          description: getLocalParts(m.utcTimestamp).fullStr,
+                        });
+                      } catch {
+                        toast.error("Konnte Kalender nicht öffnen");
+                      }
+                    }}
+                  >
+                    <CalendarPlus className="h-4 w-4 mr-1.5" /> Zum Kalender hinzufügen
+                  </Button>
+                  <AlarmBell match={m} />
+                </div>
+              )}
+            />
+          </Section>
+        </TabsContent>
       </Tabs>
 
       <MatchDetailSheet match={selected} open={!!selected} onOpenChange={(v) => !v && setSelected(null)} />
@@ -188,7 +239,7 @@ function Stream({
 }: {
   matches: Match[];
   onSelect: (m: Match) => void;
-  indicator: "perfect" | "night";
+  indicator: "perfect" | "night" | null;
   footer?: (m: Match) => React.ReactNode;
 }) {
   if (matches.length === 0) {
@@ -251,14 +302,15 @@ function AlarmRow({ match }: { match: Match }) {
 
 function MissedStream({ matches, onSelect }: { matches: Match[]; onSelect: (m: Match) => void }) {
   const spoiler = useAppStore((s) => s.spoilerProtection);
-  const [revealed, setRevealed] = useState<Record<string, boolean>>({});
+  const revealedMap = useAppStore((s) => s.revealedMatches);
+  const revealMatch = useAppStore((s) => s.revealMatch);
   if (matches.length === 0) {
     return <p className="text-xs text-muted-foreground italic">Nichts verpasst.</p>;
   }
   return (
     <div className="space-y-3">
       {matches.map((m) => {
-        const hide = spoiler && !revealed[m.id];
+        const hide = spoiler && !revealedMap[m.id];
         return (
           <div key={m.id} className="relative">
             <MatchCard match={m} onClick={() => onSelect(m)} hideScore={hide}>
@@ -275,7 +327,7 @@ function MissedStream({ matches, onSelect }: { matches: Match[]; onSelect: (m: M
             </MatchCard>
             {hide && (
               <button
-                onClick={(e) => { e.stopPropagation(); setRevealed((r) => ({ ...r, [m.id]: true })); }}
+                onClick={(e) => { e.stopPropagation(); revealMatch(m.id); }}
                 className="absolute top-12 left-1/2 -translate-x-1/2 text-xs px-3 py-1.5 rounded-full bg-accent text-accent-foreground font-semibold shadow-lg"
               >
                 Ergebnis aufdecken
@@ -287,3 +339,4 @@ function MissedStream({ matches, onSelect }: { matches: Match[]; onSelect: (m: M
     </div>
   );
 }
+

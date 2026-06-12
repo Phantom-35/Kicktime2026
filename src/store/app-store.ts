@@ -20,6 +20,7 @@ type State = {
   accentTheme: AccentThemeId;
   predictions: Record<string, { a: number; b: number; createdAt: number }>;
   lastSeenVersion: string;
+  revealedMatches: Record<string, true>;
 };
 
 type Actions = {
@@ -41,6 +42,7 @@ type Actions = {
   setPrediction: (matchId: string, a: number, b: number) => void;
   clearPrediction: (matchId: string) => void;
   setLastSeenVersion: (v: string) => void;
+  revealMatch: (id: string) => void;
 };
 
 const detectTz = () => {
@@ -72,6 +74,7 @@ export const useAppStore = create<State & Actions>()(
       accentTheme: "pitch",
       predictions: {},
       lastSeenVersion: "",
+      revealedMatches: {},
 
 
 
@@ -138,6 +141,8 @@ export const useAppStore = create<State & Actions>()(
           return { predictions: next };
         }),
       setLastSeenVersion: (v) => set({ lastSeenVersion: v }),
+      revealMatch: (id) =>
+        set((s) => (s.revealedMatches[id] ? s : { revealedMatches: { ...s.revealedMatches, [id]: true } })),
     }),
     { name: "kicktime-2026" }
   )

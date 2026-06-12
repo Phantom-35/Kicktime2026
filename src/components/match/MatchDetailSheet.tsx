@@ -39,7 +39,8 @@ export function MatchDetailSheet({
 }) {
   const tz = useAppStore((s) => s.userTimezone);
   const spoiler = useAppStore((s) => s.spoilerProtection);
-  const [revealed, setRevealed] = useState(false);
+  const revealed = useAppStore((s) => (match ? !!s.revealedMatches[match.id] : false));
+  const revealMatch = useAppStore((s) => s.revealMatch);
   const allMatches = useMatchStore(selectMatchList);
 
   const history = useMemo(() => {
@@ -81,13 +82,13 @@ export function MatchDetailSheet({
       onOpenChange={onOpenChange}
       shouldScaleBackground={false}
       setBackgroundColorOnScale={false}
-      closeThreshold={0.2}
-      scrollLockTimeout={250}
+      closeThreshold={0.35}
+      scrollLockTimeout={100}
       repositionInputs={false}
     >
       <DrawerContent className="max-h-[90vh] border-border bg-background focus-visible:outline-none will-change-transform">
         {/* Drag handle area – vaul listens for drag gestures on the content; the inner scroll container below still scrolls normally */}
-        <DrawerHeader className="text-left pb-2 pt-2 cursor-grab active:cursor-grabbing touch-none select-none">
+        <DrawerHeader className="text-left pb-2 pt-2 cursor-grab active:cursor-grabbing touch-pan-y select-none">
           <DrawerTitle className="flex items-center gap-2">
 
             <span className="text-2xl">{a.flag}</span>
@@ -112,7 +113,7 @@ export function MatchDetailSheet({
               </div>
               {hideFinishedScore && (
                 <button
-                  onClick={() => setRevealed(true)}
+                  onClick={() => revealMatch(match.id)}
                   className="absolute inset-x-0 top-1/2 -translate-y-1/2 mx-auto w-fit text-xs px-3 py-1.5 rounded-full bg-accent text-accent-foreground font-semibold shadow-lg"
                 >
                   Ergebnis aufdecken
