@@ -4,6 +4,7 @@ import { useAppStore } from "@/store/app-store";
 import { getTeam } from "@/data/teams";
 import { isAlarmActive, isAutoFavoriteMatch } from "@/lib/alarms";
 import { haptics } from "@/lib/haptics";
+import { detectPushSupport } from "@/lib/notifications";
 import type { Match } from "@/data/matches";
 
 export function AlarmBell({ match }: { match: Match }) {
@@ -28,6 +29,14 @@ export function AlarmBell({ match }: { match: Match }) {
       haptics.tap();
       toast(`Erinnerung für ${a.name} vs. ${b.name} deaktiviert`);
     } else {
+      const support = detectPushSupport();
+      if (support === "ios-needs-pwa") {
+        toast.error("Für iPhone-Benachrichtigungen App zum Home-Bildschirm hinzufügen", {
+          description: "Safari → Teilen → 'Zum Home-Bildschirm'. Sonst kann iOS keine Push-Erinnerungen senden.",
+          duration: 7000,
+        });
+        return;
+      }
       setAlarm(match.id, true);
       haptics.success();
       toast.success(`Erinnerung für ${a.name} vs. ${b.name} aktiviert! 🔔`);
