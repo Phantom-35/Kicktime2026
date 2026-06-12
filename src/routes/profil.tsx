@@ -346,6 +346,35 @@ function ProfilPage() {
   );
 }
 
+function VersionLine() {
+  const [open, setOpen] = useState(false);
+  const tapsRef = useRef<{ count: number; last: number }>({ count: 0, last: 0 });
+  const onTap = () => {
+    const now = Date.now();
+    const r = tapsRef.current;
+    if (now - r.last > 1500) r.count = 0;
+    r.count += 1;
+    r.last = now;
+    if (r.count >= 5) {
+      r.count = 0;
+      haptics.success();
+      setOpen(true);
+    }
+  };
+  return (
+    <>
+      <button
+        type="button"
+        onClick={onTap}
+        className="block mx-auto text-center text-[10px] text-muted-foreground/70 -mt-3 hover:text-muted-foreground transition-colors"
+      >
+        Version {APP_VERSION}
+      </button>
+      <AdminPanel open={open} onClose={() => setOpen(false)} />
+    </>
+  );
+}
+
 function openExternalLink(url: string) {
   const ua = navigator.userAgent || "";
   const isAndroid = /Android/i.test(ua);
