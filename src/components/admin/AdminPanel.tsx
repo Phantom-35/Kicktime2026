@@ -15,7 +15,7 @@ type PingRow = {
   fav_team: string | null;
 };
 
-const PIN = "5046";
+const PIN = "031011";
 
 export function AdminPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [unlocked, setUnlocked] = useState(false);
