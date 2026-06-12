@@ -13,7 +13,7 @@ const FEATURES: Feature[] = [
   {
     icon: Lock,
     title: "🔒 PIN-Schutz",
-    text: "Das Admin-Dashboard ist ab sofort mit dem Code 5046 vor unbefugtem Zugriff geschützt.",
+    text: "Das Admin-Dashboard ist ab sofort vor unbefugtem Zugriff geschützt.",
   },
   {
     icon: Gamepad2,
