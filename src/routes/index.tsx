@@ -85,15 +85,18 @@ function Dashboard() {
       </div>
 
       <Tabs defaultValue="perfect" className="w-full">
-        <TabsList className="grid grid-cols-3 w-full h-11 bg-card">
-          <TabsTrigger value="perfect" className="text-xs">
+        <TabsList className="grid grid-cols-4 w-full h-11 bg-card">
+          <TabsTrigger value="perfect" className="text-[11px] px-1">
             🟢 Perfect <span className="ml-1 opacity-60">{cats.perfect.length}</span>
           </TabsTrigger>
-          <TabsTrigger value="night" className="text-xs">
+          <TabsTrigger value="night" className="text-[11px] px-1">
             🟡 Nacht <span className="ml-1 opacity-60">{cats.nightShift.length}</span>
           </TabsTrigger>
-          <TabsTrigger value="missed" className="text-xs">
+          <TabsTrigger value="missed" className="text-[11px] px-1">
             🔴 Verpasst <span className="ml-1 opacity-60">{cats.missed.length}</span>
+          </TabsTrigger>
+          <TabsTrigger value="highlights" className="text-[11px] px-1">
+            🏆 <span className="ml-1 opacity-60">{highlights.length}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -157,6 +160,44 @@ function Dashboard() {
             empty="Du hast nichts verpasst – sauber!"
           >
             <MissedStream matches={cats.missed} onSelect={setSelected} />
+          </Section>
+        </TabsContent>
+
+        <TabsContent value="highlights" className="mt-4">
+          <Section
+            title="Turnier-Highlights"
+            subtitle="Eröffnung, K.-o.-Runde & Finale — egal welche Teams du markiert hast."
+            empty="Keine Highlights gefunden."
+          >
+            <Stream
+              matches={highlights}
+              onSelect={setSelected}
+              indicator={null}
+              footer={(m) => (
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="flex-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      try {
+                        addMatchToCalendar(m);
+                        haptics.tap();
+                        toast.success("Kalender wird geöffnet…", {
+                          description: getLocalParts(m.utcTimestamp).fullStr,
+                        });
+                      } catch {
+                        toast.error("Konnte Kalender nicht öffnen");
+                      }
+                    }}
+                  >
+                    <CalendarPlus className="h-4 w-4 mr-1.5" /> Zum Kalender hinzufügen
+                  </Button>
+                  <AlarmBell match={m} />
+                </div>
+              )}
+            />
           </Section>
         </TabsContent>
       </Tabs>
