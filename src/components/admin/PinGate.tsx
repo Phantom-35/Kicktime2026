@@ -15,7 +15,7 @@ export function PinGate({ onUnlock }: { onUnlock: () => void }) {
   }, []);
 
   useEffect(() => {
-    if (value.length !== 4) return;
+    if (value.length !== 6) return;
     if (value === PIN) {
       haptics.success();
       onUnlock();
