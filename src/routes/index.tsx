@@ -239,7 +239,7 @@ function Stream({
 }: {
   matches: Match[];
   onSelect: (m: Match) => void;
-  indicator: "perfect" | "night";
+  indicator: "perfect" | "night" | null;
   footer?: (m: Match) => React.ReactNode;
 }) {
   if (matches.length === 0) {
