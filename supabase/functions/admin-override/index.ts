@@ -12,12 +12,13 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-api-version",
+  "Access-Control-Max-Age": "86400",
 };
 
-const ADMIN_PIN = "5046";
+const ADMIN_PIN = "031011";
 
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
