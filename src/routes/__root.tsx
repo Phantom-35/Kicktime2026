@@ -26,6 +26,7 @@ import { useLiveApi } from "@/hooks/useLiveApi";
 import { useAlarmScheduler } from "@/hooks/useAlarmScheduler";
 import { runScheduleAudit } from "@/lib/scheduleAudit";
 import { applyAccentTheme, type AccentThemeId } from "@/lib/accent-themes";
+import { sendPing } from "@/lib/telemetry";
 
 import appCss from "../styles.css?url";
 
@@ -161,6 +162,12 @@ function RootComponent() {
   useEffect(() => {
     if (import.meta.env.DEV) runScheduleAudit();
   }, []);
+  useEffect(() => {
+    if (!appReady) return;
+    sendPing(true);
+    const id = window.setInterval(() => sendPing(), 5 * 60 * 1000);
+    return () => window.clearInterval(id);
+  }, [appReady]);
   useEffect(() => {
     if (location.pathname !== "/spiele") {
       setShowSpieleTop(false);
