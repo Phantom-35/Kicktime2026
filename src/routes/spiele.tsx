@@ -23,6 +23,7 @@ function SpielePage() {
   const [selected, setSelected] = useState<Match | null>(null);
   const state = useAppStore();
   const spoiler = useAppStore((s) => s.spoilerProtection);
+  const revealedMap = useAppStore((s) => s.revealedMatches);
   const matches = useMatchStore(selectMatchList);
 
   const filtered = useMemo(() => {
