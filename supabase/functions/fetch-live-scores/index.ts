@@ -22,7 +22,7 @@ const CORS_HEADERS = {
 const CACHE_ID = "world-cup-2026";
 const LIVE_TTL_MS = 5 * 60_000;
 const IDLE_TTL_MS = 5 * 60_000;
-const UPSTREAM_URL = "https://api.openligadb.de/getmatchdata/wm/2026";
+const UPSTREAM_URL = "https://api.openligadb.de/getmatchdata/wm2026/2026";
 const MATCH_WINDOW_MS = 130 * 60 * 1000;
 
 type Override = {
