@@ -27,6 +27,9 @@ import {
 } from "lucide-react";
 
 import { APP_VERSION } from "@/lib/version";
+import { useRef, useState } from "react";
+import { haptics } from "@/lib/haptics";
+import { AdminPanel } from "@/components/admin/AdminPanel";
 
 export const Route = createFileRoute("/profil")({ component: ProfilPage });
 
@@ -324,9 +327,7 @@ function ProfilPage() {
       <p className="text-center text-[10px] text-muted-foreground pt-2">
         KickTime 2026 · Made by Phantom Studios
       </p>
-      <p className="text-center text-[10px] text-muted-foreground/70 -mt-3">
-        Version {APP_VERSION}
-      </p>
+      <VersionLine />
       <p className="text-center text-[10px] text-muted-foreground/50 -mt-3">
         <a
           href="https://kicktime2026.de"
