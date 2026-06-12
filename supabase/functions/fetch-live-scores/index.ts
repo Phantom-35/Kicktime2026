@@ -24,8 +24,8 @@ const CORS_HEADERS = {
 };
 
 const CACHE_ID = "world-cup-2026";
-const LIVE_TTL_MS = 60_000;
-const IDLE_TTL_MS = 4 * 60 * 60 * 1000;
+const LIVE_TTL_MS = 5 * 60_000; // 5 min — OpenLigaDB polling cadence
+const IDLE_TTL_MS = 5 * 60_000; // 5 min — keep idle in sync with live cadence
 const UPSTREAM_URL = "https://api.openligadb.de/getmatchdata/wm/2026";
 const MATCH_WINDOW_MS = 130 * 60 * 1000;
 

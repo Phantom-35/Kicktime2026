@@ -8,8 +8,8 @@ import {
 } from "@/services/footballApi";
 import { fetchMatchOverrides, applyOverridesToStore } from "@/lib/match-overrides";
 
-const IDLE_TTL_MS = 4 * 60 * 60 * 1000; // 4h
-const LIVE_POLL_MS = 90_000; // 90s while live window is active
+const IDLE_TTL_MS = 5 * 60 * 1000; // 5 min
+const LIVE_POLL_MS = 5 * 60 * 1000; // 5 min — OpenLigaDB cadence
 const LIVE_BUFFER_MS = 15 * 60 * 1000; // ±15min around kickoff/end
 const LAST_IDLE_KEY = "kicktime-last-idle-fetch";
 

@@ -23,6 +23,7 @@ function SpielePage() {
   const [selected, setSelected] = useState<Match | null>(null);
   const state = useAppStore();
   const spoiler = useAppStore((s) => s.spoilerProtection);
+  const revealedMap = useAppStore((s) => s.revealedMatches);
   const matches = useMatchStore(selectMatchList);
 
   const filtered = useMemo(() => {
@@ -83,7 +84,7 @@ function SpielePage() {
                     <MatchCard
                       match={m}
                       indicator={indicator}
-                      hideScore={spoiler && m.status === "finished"}
+                      hideScore={spoiler && m.status === "finished" && !revealedMap[m.id]}
                       onClick={() => setSelected(m)}
                     >
                       <div className="flex items-center gap-2 mt-2">
