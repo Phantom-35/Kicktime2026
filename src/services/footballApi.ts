@@ -22,6 +22,8 @@ export type LiveFixture = {
   city?: string;
 };
 
+export type FetchMode = "idle" | "live";
+
 type RawFixture = {
   fixture?: {
     date?: string;
@@ -36,14 +38,15 @@ export function isLiveDataEnabled(): boolean {
   return isSupabaseConfigured();
 }
 
-export async function fetchLiveWorldCupData(): Promise<LiveFixture[]> {
+export async function fetchLiveWorldCupData(mode: FetchMode = "live"): Promise<LiveFixture[]> {
   if (!isLiveDataEnabled()) return [];
 
   try {
     const { data, error } = await supabase.functions.invoke<{
       fixtures?: RawFixture[];
       error?: string;
-    }>("fetch-live-scores");
+      cache?: "hit" | "miss";
+    }>("fetch-live-scores", { body: { mode } });
 
     if (error) {
       console.warn("[footballApi] edge function error", error.message);
@@ -113,8 +116,6 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
       f.liveScore && flipped
         ? { a: f.liveScore.b, b: f.liveScore.a }
         : f.liveScore;
-    // Force-overwrite authoritative fixture metadata from the live feed
-    // so any stale static value in the store is instantly corrected.
     state.applyLiveUpdate(match.id, {
       status: f.status,
       liveScore,
