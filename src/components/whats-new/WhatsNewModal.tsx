@@ -1,29 +1,29 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Trophy, Zap, Timer, Bug } from "lucide-react";
+import { Radio, Lock, Gamepad2, Eye } from "lucide-react";
 
-type Feature = { icon: typeof Trophy; title: string; text: string };
+type Feature = { icon: typeof Radio; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
-    icon: Trophy,
-    title: "🏆 Turnier-Highlights",
-    text: "Verpasse kein Top-Spiel mehr mit dem neuen Highlight-Filter — Eröffnung bis Finale auf einen Tipp.",
+    icon: Radio,
+    title: "📡 OpenLigaDB",
+    text: "Vollständiger Wechsel auf die freie, quelloffene API – absolut krisensicher und ohne Sperren.",
   },
   {
-    icon: Zap,
-    title: "⚡ Smart-Data",
-    text: "Ergebnisse laden jetzt blitzschnell bei deutlich weniger Datenverbrauch.",
+    icon: Lock,
+    title: "🔒 PIN-Schutz",
+    text: "Das Admin-Dashboard ist ab sofort mit dem Code 5046 vor unbefugtem Zugriff geschützt.",
   },
   {
-    icon: Timer,
-    title: "⏱️ Live-Präzision",
-    text: "Spielminuten sekundengenau — auch bei verspätetem Anpfiff stimmt die Anzeige.",
+    icon: Gamepad2,
+    title: "🎮 Live-Override",
+    text: "Der Admin kann Spielstände im Notfall live manuell überschreiben, falls die API verzögert ist.",
   },
   {
-    icon: Bug,
-    title: "🐞 UX-Feinschliff",
-    text: "Detailsheets schließen butterweich auf dem iPhone. Push-Glocke führt dich sauber durch iOS.",
+    icon: Eye,
+    title: "👁️ Spoiler-Fix",
+    text: "Einmal aufgedeckte Ergebnisse bleiben jetzt auch auf den Dashboard-Karten dauerhaft sichtbar.",
   },
 ];
 
@@ -44,7 +44,7 @@ export function WhatsNewModal({
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">
               v{version}
             </span>
-            <DialogTitle className="text-xl">Update auf v{version} — Smart & Live</DialogTitle>
+            <DialogTitle className="text-xl">Update auf v{version} — Unabhängig & Sicher</DialogTitle>
           </div>
           <p className="text-xs text-muted-foreground pt-1">
             Frische Features für dein WM-Erlebnis.
