@@ -20,7 +20,7 @@ export function PinGate({ onUnlock }: { onUnlock: () => void }) {
       haptics.success();
       onUnlock();
     } else {
-      haptics.error?.();
+      haptics.warn();
       setShake(true);
       setTimeout(() => {
         setShake(false);
