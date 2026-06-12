@@ -1,10 +1,10 @@
 /**
  * Supabase Edge Function: fetch-live-scores
  *
- * - OpenLigaDB upstream (free, no key): /getmatchdata/wm/2026
+ * - OpenLigaDB Upstream (frei, ohne Key): /getmatchdata/wm/2026
  * - 5-Minuten-Cache in `live_fixtures_cache`
  * - Manuelle Admin-Overrides aus `match_overrides` gewinnen IMMER gegen Upstream
- * - Vollständige CORS-Header auf ALLEN Responses (Erfolg + Fehler + Preflight)
+ * - Vollständige CORS-Header auf ALLEN Responses (Preflight, Success, Error)
  */
 
 // deno-lint-ignore-file no-explicit-any
@@ -35,7 +35,6 @@ type Override = {
 };
 
 serve(async (req: Request) => {
-  // 1) Preflight zuerst — sofortige Antwort mit allen CORS-Headern.
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
@@ -47,33 +46,18 @@ serve(async (req: Request) => {
       if (body?.mode === "idle") mode = "idle";
     }
 
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) return json({ error: "Unauthorized", fixtures: [] }, 401);
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return json({ error: "Service temporarily unavailable.", fixtures: [] }, 500);
+    if (!supabaseUrl) {
+      return json({ error: "Service not configured", fixtures: [] }, 500);
     }
-
-    // 2) Auth check (anon-Client mit User-JWT)
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: { user }, error: authErr } = await supabase.auth.getUser(
-      authHeader.replace("Bearer ", ""),
-    );
-    if (authErr || !user) return json({ error: "Unauthorized", fixtures: [] }, 401);
 
     const admin = supabaseServiceKey
       ? createClient(supabaseUrl, supabaseServiceKey)
       : null;
 
-    // 3) Admin-Overrides VOR allem anderen laden — gewinnen immer.
     const overrides = await loadOverrides(admin);
 
-    // 4) Cache prüfen
     const ttl = mode === "live" ? LIVE_TTL_MS : IDLE_TTL_MS;
     let cached: { payload: any; fetched_at: string } | null = null;
     if (admin) {
@@ -93,7 +77,6 @@ serve(async (req: Request) => {
       }
     }
 
-    // 5) Upstream call (OpenLigaDB)
     try {
       const upstream = await fetch(UPSTREAM_URL, {
         headers: { accept: "application/json" },
@@ -113,13 +96,11 @@ serve(async (req: Request) => {
       const payload = { response };
 
       if (admin) {
-        await admin
-          .from("live_fixtures_cache")
-          .upsert({
-            id: CACHE_ID,
-            payload,
-            fetched_at: new Date().toISOString(),
-          });
+        await admin.from("live_fixtures_cache").upsert({
+          id: CACHE_ID,
+          payload,
+          fetched_at: new Date().toISOString(),
+        });
       }
 
       const merged = mergeOverrides(response, overrides);
@@ -134,7 +115,6 @@ serve(async (req: Request) => {
     }
   } catch (err) {
     console.error("[fetch-live-scores] fatal:", err);
-    // Auch im Catch: CORS-Header mitsenden!
     return json({ error: "Internal error", fixtures: [] }, 500);
   }
 });
@@ -156,20 +136,13 @@ async function loadOverrides(admin: any): Promise<Override[]> {
   }
 }
 
-/**
- * Manuelle Admin-Einträge IMMER bevorzugen — selbst wenn Upstream leer ist
- * oder andere Werte liefert. Existiert ein Fixture nicht im Upstream, wird
- * ein synthetischer Eintrag aus dem Override erzeugt.
- */
 function mergeOverrides(fixtures: any[], overrides: Override[]): any[] {
   if (overrides.length === 0) return fixtures;
-
   const byId = new Map<string, any>();
   for (const f of fixtures) {
     const id = String(f?.fixture?.id ?? "");
     if (id) byId.set(id, f);
   }
-
   for (const o of overrides) {
     if (!o.is_manual) continue;
     const id = String(o.match_id);
@@ -198,7 +171,6 @@ function mergeOverrides(fixtures: any[], overrides: Override[]): any[] {
       });
     }
   }
-
   return [...byId.values()];
 }
 
@@ -208,7 +180,6 @@ function overridesOnly(overrides: Override[]): any[] {
 
 function mapOpenLigaMatch(m: any): any | null {
   if (!m || !m.team1 || !m.team2) return null;
-
   const dateIso = m.matchDateTimeUTC
     ? new Date(m.matchDateTimeUTC).toISOString()
     : undefined;
