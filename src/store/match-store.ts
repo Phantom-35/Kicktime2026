@@ -136,12 +136,15 @@ function rollMatches(
       next[id] = { ...m, status: "finished", score: finalScore, liveScore: undefined, matchMinute: undefined };
       changed = true;
     } else if (now >= kickoff) {
-      const minute = Math.min(90, Math.max(1, Math.floor((now - kickoff) / 60000)));
+      // Prefer real elapsed minute from API; fall back to wall-clock estimate.
+      const estimated = Math.min(90, Math.max(1, Math.floor((now - kickoff) / 60000)));
       if (m.status !== "live") {
+        const minute = m.matchMinute ?? estimated;
         next[id] = { ...m, status: "live", matchMinute: minute, liveScore: m.liveScore ?? { a: 0, b: 0 } };
         changed = true;
-      } else if (m.matchMinute !== minute) {
-        next[id] = { ...m, matchMinute: minute };
+      } else if (m.matchMinute === undefined && m.matchMinute !== estimated) {
+        // Only update from wall-clock when API hasn't supplied a real value yet.
+        next[id] = { ...m, matchMinute: estimated };
         changed = true;
       }
     }

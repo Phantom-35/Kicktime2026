@@ -2,7 +2,7 @@ import { getTeam } from "@/data/teams";
 import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { useAppStore } from "@/store/app-store";
-import { getBroadcastersForMatch } from "@/lib/broadcaster";
+import { getBroadcastersForMatch, hasAnyFreeTv, hasMagentaTv } from "@/lib/broadcaster";
 import { Tv, MapPin } from "lucide-react";
 
 type MatchLike = Match & {
@@ -78,7 +78,7 @@ export function MatchCard({
 
       <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
         <span className="flex items-center gap-1">
-          <Tv className="h-3 w-3" /> {getBroadcastersForMatch(match).join(" · ")}
+          <Tv className="h-3 w-3" /> {formatBroadcasters(match)}
         </span>
         <span className="flex items-center gap-1">
           <MapPin className="h-3 w-3" /> {match.city}
@@ -97,4 +97,15 @@ function TeamSide({ flag, name, align = "left" }: { flag: string; name: string; 
       <span className="text-sm font-semibold leading-tight">{name}</span>
     </div>
   );
+}
+
+function formatBroadcasters(match: Match): string {
+  const parts: string[] = [];
+  if (hasAnyFreeTv(match)) parts.push("ARD/ZDF");
+  if (hasMagentaTv(match)) parts.push("MagentaTV");
+  if (parts.length === 0) {
+    const list = getBroadcastersForMatch(match);
+    return list.join(" · ");
+  }
+  return parts.join(" · ");
 }
