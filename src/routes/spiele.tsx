@@ -84,7 +84,7 @@ function SpielePage() {
                     <MatchCard
                       match={m}
                       indicator={indicator}
-                      hideScore={spoiler && m.status === "finished"}
+                      hideScore={spoiler && m.status === "finished" && !revealedMap[m.id]}
                       onClick={() => setSelected(m)}
                     >
                       <div className="flex items-center gap-2 mt-2">
