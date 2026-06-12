@@ -6,6 +6,7 @@ import {
   fetchLiveWorldCupData,
   isLiveDataEnabled,
 } from "@/services/footballApi";
+import { fetchMatchOverrides, applyOverridesToStore } from "@/lib/match-overrides";
 
 const IDLE_TTL_MS = 4 * 60 * 60 * 1000; // 4h
 const LIVE_POLL_MS = 90_000; // 90s while live window is active
@@ -15,10 +16,8 @@ const LAST_IDLE_KEY = "kicktime-last-idle-fetch";
 const MATCH_DURATION_MS = 115 * 60 * 1000;
 
 /**
- * Adaptive poller:
- *  - Live window (a match is live OR kickoff within ±15 min OR ended <15 min ago):
- *    polls every 90s with mode "live" (60s server-side cache).
- *  - Otherwise: at most one "idle" fetch per 4 hours (cached server-side too).
+ * Adaptive poller. Manual admin overrides are applied AFTER upstream so they
+ * always win against API data.
  */
 export function useLiveApi(): void {
   const simulating = useAppStore((s) => s.devSimulateLive);
@@ -26,7 +25,6 @@ export function useLiveApi(): void {
   const now = useMatchStore((s) => s.now);
   const intervalRef = useRef<number | null>(null);
 
-  // Compute whether we're in a "live window".
   const inLiveWindow = matches.some((m) => {
     if (m.status === "live") return true;
     const kickoff = new Date(m.utcTimestamp).getTime();
@@ -45,13 +43,24 @@ export function useLiveApi(): void {
       }
     };
 
+    const applyOverrides = async () => {
+      const overrides = await fetchMatchOverrides();
+      if (cancelled) return;
+      applyOverridesToStore(overrides);
+    };
+
     const runIdle = async () => {
       try {
         const last = Number(localStorage.getItem(LAST_IDLE_KEY) ?? "0");
-        if (Date.now() - last < IDLE_TTL_MS) return;
+        if (Date.now() - last < IDLE_TTL_MS) {
+          // still fetch overrides — admins may have manual updates
+          await applyOverrides();
+          return;
+        }
         const fixtures = await fetchLiveWorldCupData("idle");
         if (cancelled) return;
         applyLiveFixturesToStore(fixtures);
+        await applyOverrides();
         localStorage.setItem(LAST_IDLE_KEY, String(Date.now()));
       } catch {
         /* noop */
@@ -62,6 +71,7 @@ export function useLiveApi(): void {
       const fixtures = await fetchLiveWorldCupData("live");
       if (cancelled) return;
       applyLiveFixturesToStore(fixtures);
+      await applyOverrides();
     };
 
     if (inLiveWindow) {

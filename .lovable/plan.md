@@ -1,147 +1,121 @@
-# KickTime v5.4.0 — Highlights, Smart-Data, Live-Präzision & Admin
 
-Großes Update mit neuer Telemetrie-Tabelle in Supabase, intelligentem API-Caching, UX-Polish und einem versteckten Admin-Dashboard. Kein Breaking Change am bestehenden Schema.
+# KickTime v6.0.0 — Unabhängig & Sicher
+
+Großer Schnitt: Wir lösen uns komplett von API-Football und ziehen auf die freie OpenLigaDB-API um. Das Admin-Panel bekommt einen PIN-Schutz (5046) und ein Live-Override für Spielstände. Außerdem ein harter Bugfix für den Spoilerschutz.
 
 ---
 
-## 1. Version & „Was ist neu" (v5.4.0)
+## 1. Version & "Was ist neu"-Modal
 
-- `src/lib/version.ts` → `APP_VERSION = "5.4.0"`.
-- `WhatsNewModal.tsx`: Titel **„Update auf v5.4.0 — Smart & Live"**, 4 Karten in motivierendem Ton:
-  - 🏆 **Turnier-Highlights** — Neuer „Highlights"-Filter zeigt Eröffnung, Viertel-/Halbfinale & Finale.
-  - ⚡ **Smart-Data** — Live-Caching schont das API-Kontingent und lädt blitzschnell.
-  - ⏱️ **Live-Präzision** — Spielminuten jetzt aus echter API-`elapsed`-Zeit (verspäteter Anpfiff egal).
-  - 🐞 **iOS-Feinschliff** — Butterweiches Schließen der Detailsheets + robustere Push-Glocke.
-- `__root.tsx`: Trigger bleibt wie gehabt (Version-Vergleich → einmaliges Anzeigen pro Update). Bestehende Nutzer sehen das Modal nach dem ersten Start zwingend, weil `lastSeenVersion !== "5.4.0"`.
+- `src/lib/version.ts` → `APP_VERSION = "6.0.0"`.
+- `WhatsNewModal.tsx`: Titel **„Update auf v6.0.0 — Unabhängig & Sicher"**, 4 Features (Icons: Radio/📡, Lock/🔒, Gamepad2/🎮, Eye/👁️):
+  - 📡 **OpenLigaDB** — Vollständiger Wechsel auf die freie, quelloffene API – absolut krisensicher und ohne Sperren.
+  - 🔒 **PIN-Schutz** — Das Admin-Dashboard ist ab sofort mit dem Code 5046 vor unbefugtem Zugriff geschützt.
+  - 🎮 **Live-Override** — Der Admin kann Spielstände im Notfall live manuell überschreiben, falls die API verzögert ist.
+  - 👁️ **Spoiler-Fix** — Einmal aufgedeckte Ergebnisse bleiben jetzt auch auf den Dashboard-Karten dauerhaft sichtbar.
+- Trigger bleibt im `__root.tsx`: `lastSeenVersion !== "6.0.0"` → Modal öffnet zwingend einmal nach dem Update.
 
-## 2. Smart Live-Caching (API-Schutzschild)
+## 2. Edge Function auf OpenLigaDB umstellen
 
-**Neue Supabase-Tabelle `live_fixtures_cache`** als Server-Cache zwischen App und API-Football:
+`supabase/functions/fetch-live-scores/index.ts` wird komplett neu verdrahtet:
 
-```text
-live_fixtures_cache
-  id            text primary key      -- "world-cup-2026"
-  payload       jsonb not null        -- letzte Response von API-Football
-  fetched_at    timestamptz not null
-```
-
-`supabase/functions/fetch-live-scores/index.ts` erweitern:
-- Body-Parameter `{ mode: "idle" | "live" }`. App entscheidet, was sie braucht.
-- Vor Upstream-Call: Cache aus `live_fixtures_cache` lesen.
-  - `mode === "live"` → Cache gilt für 60 s.
-  - `mode === "idle"` → Cache gilt für 4 h.
-  - Bei Cache-Hit: gecachte `payload` zurückgeben, **kein** Upstream-Hit.
-- Bei Miss: Upstream + `upsert` in `live_fixtures_cache`. Fehlerfall: letzten Cache zurückgeben (graceful).
-- API-Key-Header bleibt `x-apisports-key: $API_FOOTBALL_KEY` (der neu hinterlegte Key).
-
-`src/hooks/useLiveApi.ts` umbauen zum **adaptiven Poller**:
-- „Live-Fenster" = ein Match ist `live` **oder** Anpfiff in ≤15 min **oder** Abpfiff vor ≤15 min.
-- Live-Fenster: Poll alle 90 s, `mode: "live"`.
-- Außerhalb: 1× beim Mount (wenn letzter Fetch >4 h zurück, persisted in `localStorage` als `kicktime-last-idle-fetch`), dann kein Interval.
-- `fetchLiveWorldCupData(mode)` nimmt jetzt einen Mode-Parameter und reicht ihn an die Edge Function durch.
-
-## 3. Spoiler-Sync Dashboard ↔ Detailsheet
-
-- Neuer State im `useAppStore`: `revealedMatches: Record<string, true>` + `revealMatch(id)`.
-- `MatchDetailSheet.tsx`: lokales `revealed` ersetzen durch Store-Lookup. Klick auf „Ergebnis aufdecken" → `revealMatch(match.id)`.
-- `routes/index.tsx` `MissedStream`: lokales `revealed`-Record ersetzen durch Store-Lookup; Button schreibt ebenfalls in Store. Folge: Schließen des Sheets lässt Score auf der Karte sofort sichtbar.
-- Persistiert automatisch via `zustand/persist` (kein Migration-Block nötig — fehlender Key fällt auf `{}` zurück).
-
-## 4. Echte Spielminute
-
-- `match-store.rollMatches`: Live-Minute nicht mehr aus `now − kickoff` berechnen, **außer** wenn die API noch keine `matchMinute` geliefert hat. Heißt: `applyLiveUpdate` setzt `matchMinute` aus `fixture.status.elapsed` (passiert bereits in `footballApi.ts`) und `rollMatches` lässt den Wert unangetastet, solange `status === "live"` und `matchMinute` aus dem letzten Update vorhanden ist.
-- Konkret: Wenn `m.status === "live"` und `m.matchMinute` gesetzt → nur `status` nicht zurücksetzen. Fallback-Berechnung nur greift, wenn `matchMinute === undefined` (Pre-API-Phase / Simulator).
-
-## 5. ARD/ZDF-Kombi-Label auf der Karte
-
-- `MatchCard.tsx` Render-Logik der Sender-Zeile: wenn `getBroadcastersForMatch` ein Free-TV-Element (ARD oder ZDF) enthält → Label `"ARD/ZDF"` rendern (statt einzelnem Namen). MagentaTV ggf. mit `·` angehängt.
-- Pure UI-Änderung, keine Logik-Anpassung in `broadcaster.ts`.
-
-## 6. Highlights-Filter (4. Tab)
-
-- `routes/index.tsx`: `TabsList` von `grid-cols-3` → `grid-cols-4`, neuer Tab **„🏆 Highlights"**.
-- Neue Hilfsfunktion `selectHighlightMatches(matches)`:
-  - Eröffnungsspiel = chronologisch erstes Match mit `stage === "group"`.
-  - Alle Matches mit `stage` in `{"quarter","semi","final","third-place"}` (an `MatchStage`-Enum angepasst — bei abweichenden Namen entsprechend mappen).
-- Tab zeigt diese Liste **unabhängig** von Favoriten/Interessant/Verfügbarkeit. Wiederverwendet die bestehende `Stream`-Komponente mit `indicator={null}` und Footer = Kalender-Button + AlarmBell.
-
-## 7. iOS Touch-Fix Detailsheet
-
-- `MatchDetailSheet.tsx`: Drawer-Konfiguration auf vaul-Best-Practice für iOS:
-  - `snapPoints={[1]}` weglassen (volle Drag-Range).
-  - `dismissible` bleibt true; `closeThreshold={0.35}` (etwas weniger zackig als 0.2).
-  - `DrawerContent` zusätzliche Klassen: `transition-none` entfernen falls vorhanden; `touch-pan-y` auf den Header lassen; **inneren Scroll-Container** mit `overscroll-behavior: contain` und `data-vaul-no-drag` markieren, damit Scrollen ≠ Drag.
-- `DrawerHeader`: `touch-none` raus (blockt sonst flüssiges Drag-Tracking), stattdessen `touch-pan-y select-none`.
-- CSS-Hint global: in `styles.css` `[data-vaul-drawer] { -webkit-overflow-scrolling: touch; }` ergänzen.
-
-## 8. Robusterer iOS-Push-Trigger
-
-- `AlarmBell.tsx`: Vor `setAlarm(match.id, true)` `detectPushSupport()` aufrufen. Wenn `"ios-needs-pwa"` → `toast` mit Hinweis „App zuerst zum Home-Bildschirm hinzufügen, sonst kann iOS keine Benachrichtigungen senden." und Alarm **nicht** setzen. Andere Werte verhalten sich wie bisher.
-- `notifications.ts`: keine Änderung nötig.
-
-## 9. Anonymes Admin-Telemetrie-Dashboard
-
-**Neue Supabase-Tabelle `app_pings`:**
+- Entferne `API_FOOTBALL_KEY` und den `v3.football.api-sports.io`-Call.
+- Neuer Upstream: `GET https://api.openligadb.de/getmatchdata/wm/2026` — kein Header, kein Key.
+- Cache-Schicht bleibt unverändert (Tabelle `live_fixtures_cache`, Modi `live` → 60 s, `idle` → 4 h, Graceful-Fallback bei Upstream-Fehler).
+- **Mapping** OpenLigaDB → bisheriges `RawFixture`-Schema, damit `footballApi.ts` nicht angefasst werden muss:
 
 ```text
-app_pings
-  client_id    text primary key       -- random uuid aus localStorage
-  last_ping    timestamptz not null
-  app_version  text not null
-  fav_team     text                   -- erstes favoriteTeams[0] oder null
-  updated_at   timestamptz default now()
+matchID            → fixture.id
+matchDateTimeUTC   → fixture.date (ISO)
+team1.shortName    → teams.home.name   (Mapping über apiNameToCode greift)
+team2.shortName    → teams.away.name
+matchIsFinished    → status.short = "FT" sonst …
+matchResults[ResultTypeID==2|Endergebnis] → goals.home/away (final)
+matchResults[ResultTypeID==1|Halbzeit]    → Fallback bei Halbzeit
+location.locationStadium / locationCity   → fixture.venue
 ```
 
-RLS:
-- Tabelle hat RLS enabled.
-- Policy `anon upsert own ping`: `INSERT/UPDATE` für Rolle `anon` mit `USING (true) WITH CHECK (true)` (Daten sind anonym; kein PII).
-- Grants: `GRANT SELECT, INSERT, UPDATE ON public.app_pings TO anon, authenticated;` + `GRANT ALL TO service_role;`.
-- **Kein IP-Logging** — Supabase-Default schreibt nichts personenbezogen in die Tabelle.
+- **Spielminuten / Live-Erkennung:** OpenLigaDB liefert keine `elapsed`-Minute, aber Goals mit `matchMinute`. Live-Status = `!matchIsFinished && now ≥ matchDateTimeUTC && now ≤ matchDateTimeUTC + 130 min`. `status.elapsed` = `min(120, floor((now − kickoff) / 60_000))`, Halbzeitpause-Korrektur (45–60 min → cap auf 45). Goals werden auf höchste `matchMinute` summiert, damit der Live-Score während des Spiels stimmt.
+- **Manual-Override-Merge (siehe §3):** Nach Mapping liest die Function `match_overrides` (Tabelle, siehe SQL unten) und überschreibt im Response-Array Score/Minute/Status für jedes Match mit `is_manual = true`. Cache-Hits werden ebenfalls durch Overrides geschickt, damit eine Admin-Änderung sofort wirkt (Cache enthält rohen Upstream, Overrides werden bei jeder Antwort frisch gemerged).
 
-**Client-Code:**
-- Neues Modul `src/lib/telemetry.ts`:
-  - `getClientId()` — generiert/persistiert `crypto.randomUUID()` in `localStorage["kicktime-client-id"]`.
-  - `sendPing()` — `supabase.from("app_pings").upsert({ client_id, last_ping: new Date().toISOString(), app_version: APP_VERSION, fav_team: favoriteTeams[0] ?? null })`.
-  - Throttle: maximal 1 Ping/5 min (per `localStorage["kicktime-last-ping"]`).
-- In `__root.tsx` einmalig nach `appReady` aufrufen + `setInterval` 5 min.
+## 3. Admin-Panel: PIN + Live-Override
 
-**Easter-Egg & Admin-Modal:**
-- `routes/profil.tsx`: Versionsnummer in `<button>` umbauen. Klick-Counter mit 1.5 s-Reset-Fenster. Bei 5 Klicks → `haptics.success()` + `setAdminOpen(true)`.
-- Neue Komponente `src/components/admin/AdminPanel.tsx` (Dialog):
-  - Lädt einmalig: `supabase.from("app_pings").select("client_id, last_ping, app_version, fav_team")`.
-  - Metriken im Client berechnen:
-    - **Aktive Nutzer (5 min):** `count(last_ping >= now-5min)`.
-    - **Geräte gesamt:** `total rows`.
-    - **Versions-Verteilung:** Gruppierung nach `app_version` mit Prozent.
-    - **Top-Fanteams:** `fav_team` nicht-null gruppieren, sortiert absteigend, Top 5.
-  - Minimalistisches Dark-Layout (Listen + Balken), Refresh-Button.
+### PIN-Gate (`AdminPanel.tsx`)
+- Statt direkt Telemetrie zu zeigen: erster Schritt ist ein minimalistisches PIN-Eingabefeld (4 Ziffern, `inputMode="numeric"`, autoFocus, kein Submit-Button — bei 4 Ziffern automatisch validieren).
+- Hardcoded Vergleich gegen `"5046"`. Bei Erfolg: `haptics.success()`, Inhalt freischalten. Bei Falscheingabe: Shake-Animation, Feld leeren, `haptics.error()`.
+- Erfolgreiche Eingabe gilt für die Lebensdauer des Dialogs; beim Schließen wird `unlocked` zurückgesetzt.
 
-## 10. API-Key-Verifikation
+### Live-Override-Tab
+Admin-Panel bekommt Tabs **„📊 Telemetrie"** (bisheriger Inhalt) und **„🎮 Live-Override"**.
 
-- Edge Function loggt erfolgreichen Upstream-Call mit Status. Nach Deploy 1× per `stack_modern--server-function-logs` prüfen (falls erforderlich nach Build).
-- Falls API-Key abgelaufen: Fehlerpfad gibt nun letzten Cache-Eintrag zurück → App bleibt funktional.
+Live-Override-Tab:
+- Lädt alle Matches aus `useMatchStore` (clientseitig — kein Extra-Fetch), sortiert: heute/live zuerst, dann kommende, dann finished. Suchfeld „Team oder Datum".
+- Pro Match eine Zeile mit: Flag/Code beider Teams, Anpfiff-Zeit, kleinem Formular:
+  - 2× NumberStepper Tore (0–20)
+  - Spielminuten-Input (0–120)
+  - Status-Select: `scheduled | live | finished`
+  - Button **„Änderungen live schalten"** → schreibt in Supabase `match_overrides` (Upsert nach `match_id`).
+- Roter Button **„Override entfernen"** löscht den Eintrag wieder.
+- Visualisierung: aktive Overrides bekommen einen pulsierenden roten Dot + Label „MANUELL LIVE".
+
+Schreiben passiert via neuer Server-Function `src/lib/admin.functions.ts`:
+- `setMatchOverride({ matchId, scoreA, scoreB, minute, status })` und `clearMatchOverride({ matchId })`.
+- Beide validieren PIN (Body-Param `pin === "5046"`) — kein Supabase-Auth nötig, weil App komplett anonym betrieben wird. Das ist Defense-in-Depth zusätzlich zum Client-Gate.
+- Server-Function nutzt `supabaseAdmin` (Service Role) für den Upsert in `match_overrides`. Import passiert **innerhalb** des Handlers (Best Practice für `*.functions.ts`).
+
+## 4. Bugfix Spoiler-Sync auf Dashboard
+
+Aktueller Stand: `revealedMatches` liegt bereits in `useAppStore` und der Store ist via `zustand/persist` unter Key `kicktime-2026` persistiert. Bug liegt darin, dass die Dashboard-Karte (`MatchCard` über `Stream` in `routes/index.tsx`) den Reveal-Zustand nicht aus dem Store liest, sondern aus lokalem `useState`, das beim Re-Render durch Live-Polling verloren geht.
+
+Fix:
+- `routes/index.tsx`: lokale `revealed`-Records im `MissedStream`/`Stream` entfernen. Stattdessen `const revealedMatches = useAppStore((s) => s.revealedMatches)` und `const reveal = useAppStore((s) => s.revealMatch)`. `match.id in revealedMatches` ist Single Source of Truth.
+- `MatchDetailSheet.tsx` ebenfalls — Klick auf „Ergebnis aufdecken" ruft nur noch `reveal(match.id)`. Kein lokaler State mehr.
+- Sanity-Check: `partialize` ist im Store **nicht** gesetzt → `revealedMatches` wird automatisch mitpersistiert. Kein Migration-Block nötig (fehlender Key → leeres Objekt).
+
+## 5. Telemetry-Modul
+
+Keine Änderung — `src/lib/telemetry.ts` sendet weiterhin Pings mit `APP_VERSION = "6.0.0"`. Das Admin-Panel zeigt die neue Version dann automatisch in der Verteilung.
 
 ---
 
 ## Technische Details (Dateien)
 
-- **Edit:** `src/lib/version.ts`, `src/components/whats-new/WhatsNewModal.tsx`, `src/store/app-store.ts`, `src/store/match-store.ts`, `src/services/footballApi.ts`, `src/hooks/useLiveApi.ts`, `src/components/match/MatchDetailSheet.tsx`, `src/components/match/MatchCard.tsx`, `src/components/match/AlarmBell.tsx`, `src/routes/index.tsx`, `src/routes/profil.tsx`, `src/routes/__root.tsx`, `src/styles.css`, `supabase/functions/fetch-live-scores/index.ts`.
-- **Neu:** `src/lib/telemetry.ts`, `src/components/admin/AdminPanel.tsx`.
-- **Migration (SQL):** Tabellen `live_fixtures_cache` + `app_pings` inkl. RLS & Grants. Wird per Migration-Tool ausgeführt.
+- **Edit:** `src/lib/version.ts`, `src/components/whats-new/WhatsNewModal.tsx`, `src/components/admin/AdminPanel.tsx`, `src/routes/index.tsx`, `src/components/match/MatchDetailSheet.tsx`, `supabase/functions/fetch-live-scores/index.ts`.
+- **Neu:** `src/lib/admin.functions.ts` (Server-Functions für Override-Upsert/Delete inkl. PIN-Check), `src/components/admin/PinGate.tsx`, `src/components/admin/LiveOverridePanel.tsx`.
+- **Migration (automatisch):** Neue Tabelle `match_overrides` inkl. RLS-Policies & Grants. `live_fixtures_cache` und `app_pings` bleiben wie sie sind.
+
+```sql
+-- match_overrides: manuelle Live-Steuerung durch Admin
+CREATE TABLE IF NOT EXISTS public.match_overrides (
+  match_id      text PRIMARY KEY,
+  score_a       int  NOT NULL,
+  score_b       int  NOT NULL,
+  minute        int,
+  status        text NOT NULL,
+  is_manual     boolean NOT NULL DEFAULT true,
+  updated_at    timestamptz NOT NULL DEFAULT now()
+);
+GRANT SELECT ON public.match_overrides TO anon, authenticated;
+GRANT ALL    ON public.match_overrides TO service_role;
+ALTER TABLE public.match_overrides ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "anyone can read overrides" ON public.match_overrides
+  FOR SELECT TO anon, authenticated USING (true);
+-- Schreiben passiert ausschließlich über service_role aus der Edge-/Server-Function.
+```
+
+---
 
 ## Was DU manuell im Supabase-Dashboard tun musst
 
-Die Migration legt Tabellen, RLS-Policies und Grants automatisch an. **Nichts SQL-mäßig manuell nötig.** Du musst nur:
+Die neue Tabelle `match_overrides` (inkl. RLS und Grants) wird per Migration automatisch angelegt. Der `API_FOOTBALL_KEY` wird **nicht mehr gebraucht**:
 
-1. **API-Football-Key prüfen:** Im Supabase-Dashboard → Edge Functions → Secrets sicherstellen, dass `API_FOOTBALL_KEY` auf den neuen Wert gesetzt ist (du sagst, das ist erledigt — Code geht davon aus).
-2. **Edge Function neu deployen** ist nicht nötig — Lovable deployt automatisch, sobald die Datei geändert wird.
-3. Nichts weiter — `live_fixtures_cache` und `app_pings` werden per Migration angelegt und sind sofort einsatzbereit.
+1. **Optional aufräumen:** Im Supabase-Dashboard → Edge Functions → Secrets das alte Secret `API_FOOTBALL_KEY` löschen. Schadet nicht, wenn es bleibt — die neue Function liest es einfach nicht mehr.
+2. **Sonst nichts.** Keine manuellen SQL-Befehle, keine RLS-Anpassungen, keine zusätzlichen Grants nötig. Die Edge Function wird beim Deploy automatisch aktualisiert.
 
-## Validierung (nach Build)
+## Validierung nach dem Build
 
-- Modal öffnet sich nach erstem Start (lastSeenVersion ≠ 5.4.0).
-- Highlights-Tab zeigt Eröffnung + KO-Runde unabhängig von Favoriten.
-- Aufdecken im Sheet → Karte zeigt Score sofort ohne Blur.
-- ARD/ZDF-Label sichtbar.
-- Versions-Tap (5×) öffnet Admin-Panel mit Live-Metriken (sobald Pings existieren).
-- Edge-Function-Logs zeigen Cache-Hits/Misses.
+- App öffnen → Modal „Update auf v6.0.0" erscheint genau einmal.
+- Im Profil 5× auf Versionsnummer tippen → PIN-Dialog. Falsche PIN → Shake. „5046" → Admin-Dashboard mit Tabs.
+- Im „Live-Override"-Tab ein beliebiges Match wählen, Tore + Minute + Status setzen, „Änderungen live schalten" → innerhalb einer Polling-Runde (max 90 s) zeigt das Dashboard die manuellen Werte.
+- „Ergebnis aufdecken" im Detailsheet schließen → Dashboard-Karte bleibt **dauerhaft** unverschwommen, auch nach Reload und Live-Polling.
+- Edge-Function-Logs zeigen `cache HIT/MISS` und keinen Verweis mehr auf API-Football.

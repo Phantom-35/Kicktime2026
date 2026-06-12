@@ -1,9 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { getTeam } from "@/data/teams";
 import { Users, Smartphone, RefreshCw, Activity, Trophy } from "lucide-react";
+import { PinGate } from "./PinGate";
+import { LiveOverridePanel } from "./LiveOverridePanel";
 
 type PingRow = {
   client_id: string;
@@ -12,7 +15,51 @@ type PingRow = {
   fav_team: string | null;
 };
 
+const PIN = "5046";
+
 export function AdminPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [unlocked, setUnlocked] = useState(false);
+
+  // Reset PIN lock when the dialog closes
+  useEffect(() => {
+    if (!open) setUnlocked(false);
+  }, [open]);
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-md rounded-2xl border-primary/30 bg-card/95 backdrop-blur max-h-[88vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-lg flex items-center gap-2">
+            <Activity className="h-4 w-4 text-primary" /> Admin · Kontrollzentrum
+          </DialogTitle>
+        </DialogHeader>
+
+        {!unlocked ? (
+          <PinGate onUnlock={() => setUnlocked(true)} />
+        ) : (
+          <Tabs defaultValue="telemetry" className="w-full">
+            <TabsList className="grid grid-cols-2 w-full h-10 bg-background/60">
+              <TabsTrigger value="telemetry" className="text-xs">📊 Telemetrie</TabsTrigger>
+              <TabsTrigger value="override" className="text-xs">🎮 Live-Override</TabsTrigger>
+            </TabsList>
+            <TabsContent value="telemetry" className="mt-3">
+              <TelemetryView />
+            </TabsContent>
+            <TabsContent value="override" className="mt-3">
+              <LiveOverridePanel pin={PIN} />
+            </TabsContent>
+          </Tabs>
+        )}
+
+        <p className="text-[10px] text-muted-foreground text-center pt-1">
+          Anonyme Daten · keine IP · keine personenbezogenen Infos
+        </p>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function TelemetryView() {
   const [rows, setRows] = useState<PingRow[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -33,8 +80,8 @@ export function AdminPanel({ open, onClose }: { open: boolean; onClose: () => vo
   }, []);
 
   useEffect(() => {
-    if (open) load();
-  }, [open, load]);
+    load();
+  }, [load]);
 
   const now = Date.now();
   const activeNow = (rows ?? []).filter(
@@ -49,50 +96,42 @@ export function AdminPanel({ open, onClose }: { open: boolean; onClose: () => vo
   );
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-md rounded-2xl border-primary/30 bg-card/95 backdrop-blur max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center justify-between gap-2">
-            <DialogTitle className="text-lg flex items-center gap-2">
-              <Activity className="h-4 w-4 text-primary" /> Admin · Live-Telemetrie
-            </DialogTitle>
-            <Button size="icon" variant="ghost" onClick={load} disabled={loading} aria-label="Aktualisieren">
-              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            </Button>
-          </div>
-        </DialogHeader>
-
-        {err && (
-          <div className="text-xs text-destructive bg-destructive/10 border border-destructive/30 rounded-lg p-2">
-            {err}
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-2">
-          <Metric icon={<Users className="h-4 w-4" />} label="Aktiv (5 min)" value={activeNow} />
-          <Metric icon={<Smartphone className="h-4 w-4" />} label="Geräte gesamt" value={total} />
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          Live-Telemetrie
         </div>
+        <Button size="icon" variant="ghost" onClick={load} disabled={loading} aria-label="Aktualisieren">
+          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+        </Button>
+      </div>
 
-        <Section title="App-Versionen">
-          <BarList rows={versionDist} total={total} />
-        </Section>
+      {err && (
+        <div className="text-xs text-destructive bg-destructive/10 border border-destructive/30 rounded-lg p-2">
+          {err}
+        </div>
+      )}
 
-        <Section title="Top Fanteams" icon={<Trophy className="h-4 w-4" />}>
-          <BarList
-            rows={teamDist.slice(0, 5)}
-            total={teamDist.reduce((s, r) => s + r.count, 0)}
-            renderLabel={(code) => {
-              const t = getTeam(code);
-              return `${t.flag} ${t.name}`;
-            }}
-          />
-        </Section>
+      <div className="grid grid-cols-2 gap-2">
+        <Metric icon={<Users className="h-4 w-4" />} label="Aktiv (5 min)" value={activeNow} />
+        <Metric icon={<Smartphone className="h-4 w-4" />} label="Geräte gesamt" value={total} />
+      </div>
 
-        <p className="text-[10px] text-muted-foreground text-center pt-1">
-          Anonyme Daten · keine IP · keine personenbezogenen Infos
-        </p>
-      </DialogContent>
-    </Dialog>
+      <Section title="App-Versionen">
+        <BarList rows={versionDist} total={total} />
+      </Section>
+
+      <Section title="Top Fanteams" icon={<Trophy className="h-4 w-4" />}>
+        <BarList
+          rows={teamDist.slice(0, 5)}
+          total={teamDist.reduce((s, r) => s + r.count, 0)}
+          renderLabel={(code) => {
+            const t = getTeam(code);
+            return `${t.flag} ${t.name}`;
+          }}
+        />
+      </Section>
+    </div>
   );
 }
 
