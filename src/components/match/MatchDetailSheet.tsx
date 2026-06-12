@@ -113,7 +113,7 @@ export function MatchDetailSheet({
               </div>
               {hideFinishedScore && (
                 <button
-                  onClick={() => setRevealed(true)}
+                  onClick={() => revealMatch(match.id)}
                   className="absolute inset-x-0 top-1/2 -translate-y-1/2 mx-auto w-fit text-xs px-3 py-1.5 rounded-full bg-accent text-accent-foreground font-semibold shadow-lg"
                 >
                   Ergebnis aufdecken
