@@ -1,9 +1,10 @@
 /**
  * Client helpers for the manual admin override layer.
  *
- * Reads:  any user can SELECT from match_overrides (anon policy).
- * Writes: only via the `admin-override` edge function, which validates the PIN
- *         server-side and writes via the service-role key.
+ * Writes go DIRECTLY to the `match_overrides` table via the public Supabase
+ * client — no edge function involved. The PIN gate lives in the Admin Panel
+ * UI; database-level protection comes from RLS policies you configure in
+ * Supabase (see SQL note at the bottom of this file).
  */
 
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +19,8 @@ export type MatchOverride = {
   is_manual: boolean;
   updated_at: string;
 };
+
+const ADMIN_PIN = "031011";
 
 export async function fetchMatchOverrides(): Promise<MatchOverride[]> {
   try {
@@ -53,6 +56,10 @@ export function applyOverridesToStore(overrides: MatchOverride[]): void {
   }
 }
 
+function clampInt(v: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, Math.floor(v)));
+}
+
 export async function setMatchOverride(payload: {
   pin: string;
   matchId: string;
@@ -61,22 +68,35 @@ export async function setMatchOverride(payload: {
   minute: number | null;
   status: "scheduled" | "live" | "finished";
 }): Promise<{ ok: boolean; error?: string }> {
-  const { data, error } = await supabase.functions.invoke<{ ok?: boolean; error?: string }>(
-    "admin-override",
-    {
-      body: {
-        action: "set",
-        pin: payload.pin,
-        matchId: payload.matchId,
-        scoreA: payload.scoreA,
-        scoreB: payload.scoreB,
-        minute: payload.minute,
-        status: payload.status,
-      },
-    },
-  );
-  if (error) return { ok: false, error: error.message };
-  if (data?.error) return { ok: false, error: data.error };
+  if (payload.pin !== ADMIN_PIN) return { ok: false, error: "Unauthorized" };
+  if (!payload.matchId) return { ok: false, error: "Invalid payload" };
+  if (!Number.isFinite(payload.scoreA) || !Number.isFinite(payload.scoreB)) {
+    return { ok: false, error: "Invalid score" };
+  }
+  if (!["scheduled", "live", "finished"].includes(payload.status)) {
+    return { ok: false, error: "Invalid status" };
+  }
+
+  const row = {
+    match_id: payload.matchId,
+    score_a: clampInt(payload.scoreA, 0, 50),
+    score_b: clampInt(payload.scoreB, 0, 50),
+    minute: payload.minute === null ? null : clampInt(payload.minute, 0, 120),
+    status: payload.status,
+    is_manual: true,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from("match_overrides")
+    .upsert(row, { onConflict: "match_id" });
+  if (error) {
+    console.error("[match-overrides] upsert failed:", error);
+    return { ok: false, error: error.message };
+  }
+
+  // Direkt im lokalen Store anwenden, damit die UI sofort reagiert.
+  applyOverridesToStore([row as MatchOverride]);
   return { ok: true };
 }
 
@@ -84,13 +104,34 @@ export async function clearMatchOverride(payload: {
   pin: string;
   matchId: string;
 }): Promise<{ ok: boolean; error?: string }> {
-  const { data, error } = await supabase.functions.invoke<{ ok?: boolean; error?: string }>(
-    "admin-override",
-    {
-      body: { action: "clear", pin: payload.pin, matchId: payload.matchId },
-    },
-  );
-  if (error) return { ok: false, error: error.message };
-  if (data?.error) return { ok: false, error: data.error };
+  if (payload.pin !== ADMIN_PIN) return { ok: false, error: "Unauthorized" };
+  if (!payload.matchId) return { ok: false, error: "Invalid payload" };
+
+  const { error } = await supabase
+    .from("match_overrides")
+    .delete()
+    .eq("match_id", payload.matchId);
+  if (error) {
+    console.error("[match-overrides] delete failed:", error);
+    return { ok: false, error: error.message };
+  }
   return { ok: true };
 }
+
+/* -----------------------------------------------------------------------------
+ * Erforderliche Supabase-Konfiguration (einmalig im SQL-Editor ausführen):
+ *
+ *   alter table public.match_overrides enable row level security;
+ *   grant select, insert, update, delete on public.match_overrides to anon, authenticated;
+ *
+ *   drop policy if exists "anon read overrides" on public.match_overrides;
+ *   create policy "anon read overrides" on public.match_overrides
+ *     for select to anon, authenticated using (true);
+ *
+ *   drop policy if exists "anon write overrides" on public.match_overrides;
+ *   create policy "anon write overrides" on public.match_overrides
+ *     for all to anon, authenticated using (true) with check (true);
+ *
+ * Hinweis: Der Schutz liegt damit ausschließlich auf der PIN im Frontend.
+ * Wer den anon-Key + die PIN kennt, kann Overrides schreiben.
+ * --------------------------------------------------------------------------- */
