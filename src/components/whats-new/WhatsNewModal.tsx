@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Radio, Lock, Gamepad2, Eye } from "lucide-react";
+import { Radio, Eye, Zap, Shield } from "lucide-react";
 
 type Feature = { icon: typeof Radio; title: string; text: string };
 
@@ -11,14 +11,14 @@ const FEATURES: Feature[] = [
     text: "Vollständiger Wechsel auf die freie, quelloffene API – absolut krisensicher und ohne Sperren.",
   },
   {
-    icon: Lock,
-    title: "🔒 PIN-Schutz",
-    text: "Das Admin-Dashboard ist ab sofort vor unbefugtem Zugriff geschützt.",
+    icon: Zap,
+    title: "⚡ Schnellere Updates",
+    text: "Live-Daten kommen jetzt noch zuverlässiger und mit weniger Verzögerung bei dir an.",
   },
   {
-    icon: Gamepad2,
-    title: "🎮 Live-Override",
-    text: "Der Admin kann Spielstände im Notfall live manuell überschreiben, falls die API verzögert ist.",
+    icon: Shield,
+    title: "🛡️ Stabilität",
+    text: "Im Hintergrund haben wir die App gegen Ausfälle und API-Engpässe abgesichert.",
   },
   {
     icon: Eye,
