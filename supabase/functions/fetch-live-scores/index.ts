@@ -147,6 +147,23 @@ function mergeOverrides(fixtures: any[], overrides: Override[]): any[] {
     if (!o.is_manual) continue;
     const id = String(o.match_id);
     const existing = byId.get(id);
+
+    // Dynamische Invalidierung: Sobald die API "frischer" ist als der
+    // manuelle Eintrag, ignorieren wir das Override komplett — so friert
+    // ein veralteter Admin-Eintrag das Spiel nicht für immer ein.
+    if (existing) {
+      const apiStatus: string = existing.fixture?.status?.short ?? "NS";
+      const apiHome: number | null = existing.goals?.home ?? null;
+      const apiAway: number | null = existing.goals?.away ?? null;
+      const apiSum = (apiHome ?? 0) + (apiAway ?? 0);
+      const ovrSum = (o.score_a ?? 0) + (o.score_b ?? 0);
+      const apiFinished = apiStatus === "FT" || apiStatus === "AET" || apiStatus === "PEN";
+      const apiLive = apiStatus === "1H" || apiStatus === "2H" || apiStatus === "HT" || apiStatus === "ET";
+      if (apiFinished) continue;
+      if (apiSum > ovrSum) continue;
+      if (apiLive && o.status === "scheduled") continue;
+    }
+
     const statusShort =
       o.status === "finished" ? "FT" : o.status === "live" ? "1H" : "NS";
     if (existing) {
