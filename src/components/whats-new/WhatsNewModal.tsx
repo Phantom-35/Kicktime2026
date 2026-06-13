@@ -1,29 +1,29 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { BellRing, Smartphone, Trash2, Sparkles } from "lucide-react";
+import { Tv, MessageCircle, BellRing, Sparkles } from "lucide-react";
 
-type Feature = { icon: typeof BellRing; title: string; text: string };
+type Feature = { icon: typeof Tv; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
+    icon: Tv,
+    title: "📺 TV-Sender-Updates",
+    text: "Feste Zuordnung für ARD, ZDF und MagentaTV in der Gruppen- und K.-o.-Phase integriert.",
+  },
+  {
+    icon: MessageCircle,
+    title: "💬 Dein Feedback zählt",
+    text: "Eine optionale Blitz-Abfrage zur Zufriedenheit hinzugefügt, um die App noch besser zu machen.",
+  },
+  {
     icon: BellRing,
     title: "🔔 Echte Push-Benachrichtigungen",
-    text: "Wir senden dir jetzt echte Sperrbildschirm-Erinnerungen 15 Min vor Anpfiff — auch wenn die App geschlossen ist.",
-  },
-  {
-    icon: Smartphone,
-    title: "📲 iPhone & Android",
-    text: "Funktioniert auf allen Geräten als installierte PWA (iOS 16.4+). Glocke antippen, erlauben, fertig.",
-  },
-  {
-    icon: Trash2,
-    title: "🧹 UI aufgeräumt",
-    text: 'Der Bereich „Spoilerfreie Highlights" ist weg — die OpenLigaDB liefert dafür keine Daten.',
+    text: "Wir senden dir echte Sperrbildschirm-Erinnerungen 15 Min vor Anpfiff — auch wenn die App geschlossen ist.",
   },
   {
     icon: Sparkles,
     title: "✨ Stabiler & schneller",
-    text: "Match-Erinnerungen sind strikt pro Gerät registriert — keine fremden Pings mehr.",
+    text: "Kleine Performance-Verbesserungen und Bugfixes unter der Haube.",
   },
 ];
 
@@ -44,7 +44,7 @@ export function WhatsNewModal({
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">
               v{version}
             </span>
-            <DialogTitle className="text-xl">Update v{version} — Push ist da</DialogTitle>
+            <DialogTitle className="text-xl">Update v{version}</DialogTitle>
           </div>
           <p className="text-xs text-muted-foreground pt-1">
             Frische Features für dein WM-Erlebnis.
