@@ -2,6 +2,7 @@ import { create } from "zustand";
 import scheduleJson from "@/data/world_cup_2026_schedule.json";
 import type { Match, MatchStage, Broadcaster } from "@/data/matches";
 import { calculateTableStandings } from "@/lib/standings";
+import { applyTvOverride } from "@/lib/tv-overrides";
 
 export type MatchStatus = "scheduled" | "live" | "finished";
 
@@ -46,7 +47,7 @@ const MATCH_DURATION_MS = 115 * 60 * 1000;
 function seed(): Record<string, RuntimeMatch> {
   const out: Record<string, RuntimeMatch> = {};
   for (const raw of scheduleJson as Array<Omit<Match, "status"> & { broadcasters?: Broadcaster[] }>) {
-    const m: RuntimeMatch = {
+    const base: RuntimeMatch = {
       ...raw,
       stage: raw.stage as MatchStage,
       broadcaster: raw.broadcaster as Broadcaster,
@@ -54,6 +55,7 @@ function seed(): Record<string, RuntimeMatch> {
       hostCountry: raw.hostCountry as Match["hostCountry"],
       status: "scheduled",
     };
+    const m = applyTvOverride(base);
     out[m.id] = m;
   }
   return out;
