@@ -213,3 +213,94 @@ function countBy<T>(arr: T[], key: (x: T) => string): { key: string; count: numb
     .map(([key, count]) => ({ key, count }))
     .sort((a, b) => b.count - a.count);
 }
+
+type FeedbackSummaryRow = { rating: number; count: number };
+
+function FeedbackView() {
+  const [rows, setRows] = useState<FeedbackSummaryRow[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setErr(null);
+    const { data, error } = await supabase.rpc("get_feedback_summary");
+    if (error) {
+      setErr(error.message);
+      setRows([]);
+    } else {
+      const normalized: FeedbackSummaryRow[] = ((data as Array<{ rating: number; count: number | string }>) ?? []).map(
+        (r) => ({ rating: Number(r.rating), count: Number(r.count) })
+      );
+      setRows(normalized);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const get = (rating: number) =>
+    rows?.find((r) => r.rating === rating)?.count ?? 0;
+  const up = get(1);
+  const mid = get(0);
+  const down = get(-1);
+  const total = up + mid + down;
+  const pct = (n: number) => (total > 0 ? Math.round((n / total) * 100) : 0);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          User-Feedback
+        </div>
+        <Button size="icon" variant="ghost" onClick={load} disabled={loading} aria-label="Aktualisieren">
+          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+        </Button>
+      </div>
+
+      {err && (
+        <div className="text-xs text-destructive bg-destructive/10 border border-destructive/30 rounded-lg p-2">
+          {err}
+        </div>
+      )}
+
+      <div className="grid grid-cols-3 gap-2">
+        <FeedbackTile emoji="👍" label="Super" count={up} pct={pct(up)} tone="text-emerald-500" />
+        <FeedbackTile emoji="😐" label="Geht so" count={mid} pct={pct(mid)} tone="text-amber-500" />
+        <FeedbackTile emoji="👎" label="Schlecht" count={down} pct={pct(down)} tone="text-destructive" />
+      </div>
+
+      <div className="flex items-center justify-between rounded-xl border border-border bg-background/60 px-3 py-2">
+        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+          <MessageCircle className="h-3.5 w-3.5" /> Bewertungen gesamt
+        </div>
+        <div className="text-lg font-black tabular-nums">{total}</div>
+      </div>
+    </div>
+  );
+}
+
+function FeedbackTile({
+  emoji,
+  label,
+  count,
+  pct,
+  tone,
+}: {
+  emoji: string;
+  label: string;
+  count: number;
+  pct: number;
+  tone: string;
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-background/60 p-3 text-center">
+      <div className="text-2xl">{emoji}</div>
+      <div className={`text-xl font-black tabular-nums ${tone}`}>{count}</div>
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="text-[10px] text-muted-foreground tabular-nums">{pct}%</div>
+    </div>
+  );
+}
