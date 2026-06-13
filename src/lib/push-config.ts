@@ -13,7 +13,7 @@
  * Der Public-Key ist öffentlich und unkritisch — er darf im Client liegen.
  */
 
-const FALLBACK_PUBLIC_KEY = "BKFWXiVQSxPVui3tUO1t31-bFQ6_p0s1yeJm5Svlxhdk4nLZ14JC0GEkpca1gERR7DutB4PGІwМy0YqX4wLY9wU"; // <-- TODO:hier deinen VAPID Public Key reinkopieren
+const FALLBACK_PUBLIC_KEY = "BKFWXiVQSxPVui3tUO1t31-bFQ6_pOs1yeJm5Svlxhdk4nLZ14JC0GEkpca1gERR7DutB4PGIwMy0YqX4wLY9wU"; // <-- TODO:hier deinen VAPID Public Key reinkopieren
 
 export function getVapidPublicKey(): string {
   // Vite ersetzt import.meta.env.* zur Build-Zeit
