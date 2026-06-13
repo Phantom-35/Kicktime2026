@@ -18,7 +18,7 @@ const FEATURES: Feature[] = [
   {
     icon: Trash2,
     title: "🧹 UI aufgeräumt",
-    text: "Der „Spoilerfreie Highlights"-Bereich ist weg — die OpenLigaDB liefert dafür keine Daten.",
+    text: 'Der Bereich „Spoilerfreie Highlights" ist weg — die OpenLigaDB liefert dafür keine Daten.',
   },
   {
     icon: Sparkles,
