@@ -102,9 +102,13 @@ export async function subscribeForPush(): Promise<SerializedSubscription | null>
   // Auf bestehende Subscription zurückgreifen, sonst neu anlegen
   let sub = await reg.pushManager.getSubscription();
   if (!sub) {
+    const key = urlBase64ToUint8Array(getVapidPublicKey());
     sub = await reg.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(getVapidPublicKey()),
+      applicationServerKey: key.buffer.slice(
+        key.byteOffset,
+        key.byteOffset + key.byteLength
+      ) as ArrayBuffer,
     });
   }
   return serialize(sub);
