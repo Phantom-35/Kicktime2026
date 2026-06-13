@@ -14,7 +14,7 @@ import { TournamentCountdown } from "@/components/dashboard/TournamentCountdown"
 import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { toast } from "sonner";
-import { CalendarPlus, BellRing, Play, Sparkles } from "lucide-react";
+import { CalendarPlus, BellRing, Sparkles } from "lucide-react";
 import { addMatchToCalendar } from "@/lib/calendar";
 import { haptics } from "@/lib/haptics";
 
@@ -67,15 +67,6 @@ function Dashboard() {
     });
   }, [cats.perfect, state.favoriteTeams, state.interestingTeams]);
 
-  const highlights = useMemo(() => {
-    const koStages: Match["stage"][] = ["r32", "r16", "qf", "sf", "third", "final"];
-    const koMatches = matches.filter((m) => koStages.includes(m.stage));
-    const opener = [...matches]
-      .filter((m) => m.stage === "group")
-      .sort((a, b) => new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime())[0];
-    const list = opener ? [opener, ...koMatches] : koMatches;
-    return list.sort((a, b) => new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime());
-  }, [matches]);
   const [selected, setSelected] = useState<Match | null>(null);
   const showCountdown = useAppStore((s) => s.showCountdown);
 
@@ -95,7 +86,7 @@ function Dashboard() {
       </div>
 
       <Tabs defaultValue="perfect" className="w-full">
-        <TabsList className="grid grid-cols-4 w-full h-11 bg-card">
+        <TabsList className="grid grid-cols-3 w-full h-11 bg-card">
           <TabsTrigger value="perfect" className="text-[11px] px-1">
             🟢 Perfect <span className="ml-1 opacity-60">{cats.perfect.length}</span>
           </TabsTrigger>
@@ -104,9 +95,6 @@ function Dashboard() {
           </TabsTrigger>
           <TabsTrigger value="missed" className="text-[11px] px-1">
             🔴 Verpasst <span className="ml-1 opacity-60">{cats.missed.length}</span>
-          </TabsTrigger>
-          <TabsTrigger value="highlights" className="text-[11px] px-1">
-            🏆 <span className="ml-1 opacity-60">{highlights.length}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -173,43 +161,6 @@ function Dashboard() {
           </Section>
         </TabsContent>
 
-        <TabsContent value="highlights" className="mt-4">
-          <Section
-            title="Turnier-Highlights"
-            subtitle="Eröffnung, K.-o.-Runde & Finale — egal welche Teams du markiert hast."
-            empty="Keine Highlights gefunden."
-          >
-            <Stream
-              matches={highlights}
-              onSelect={setSelected}
-              indicator={null}
-              footer={(m) => (
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="flex-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      try {
-                        addMatchToCalendar(m);
-                        haptics.tap();
-                        toast.success("Kalender wird geöffnet…", {
-                          description: getLocalParts(m.utcTimestamp).fullStr,
-                        });
-                      } catch {
-                        toast.error("Konnte Kalender nicht öffnen");
-                      }
-                    }}
-                  >
-                    <CalendarPlus className="h-4 w-4 mr-1.5" /> Zum Kalender hinzufügen
-                  </Button>
-                  <AlarmBell match={m} />
-                </div>
-              )}
-            />
-          </Section>
-        </TabsContent>
       </Tabs>
 
       <MatchDetailSheet match={selected} open={!!selected} onOpenChange={(v) => !v && setSelected(null)} />
@@ -313,18 +264,7 @@ function MissedStream({ matches, onSelect }: { matches: Match[]; onSelect: (m: M
         const hide = spoiler && !revealedMap[m.id];
         return (
           <div key={m.id} className="relative">
-            <MatchCard match={m} onClick={() => onSelect(m)} hideScore={hide}>
-              <Button
-                size="sm"
-                className="w-full bg-primary/90 hover:bg-primary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toast.success("Spoilerfreie Highlights werden geladen…");
-                }}
-              >
-                <Play className="h-4 w-4 mr-1.5" /> Spoilerfreie Highlights ansehen
-              </Button>
-            </MatchCard>
+            <MatchCard match={m} onClick={() => onSelect(m)} hideScore={hide} />
             {hide && (
               <button
                 onClick={(e) => { e.stopPropagation(); revealMatch(m.id); }}
