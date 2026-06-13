@@ -115,6 +115,10 @@ export async function clearMatchOverride(payload: {
     console.error("[match-overrides] delete failed:", error);
     return { ok: false, error: error.message };
   }
+  // Sofort lokal entfernen — kein Wackeln, syncWithRealTime füllt Live-Status
+  // beim nächsten Tick wieder aus den Kickoff-Zeiten / API-Daten.
+  useMatchStore.getState().clearLiveOverlay(payload.matchId);
+  useMatchStore.getState().syncWithRealTime();
   return { ok: true };
 }
 

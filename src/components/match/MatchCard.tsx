@@ -3,6 +3,7 @@ import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { useAppStore } from "@/store/app-store";
 import { getBroadcastersForMatch, hasAnyFreeTv, hasMagentaTv } from "@/lib/broadcaster";
+import { getMatchPhaseLabel } from "@/lib/match-phase";
 import { Tv, MapPin } from "lucide-react";
 
 type MatchLike = Match & {
@@ -49,7 +50,7 @@ export function MatchCard({
                 <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75 animate-ping" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-destructive" />
               </span>
-              Live {match.matchMinute ?? 0}'
+              Live · {getMatchPhaseLabel(match)}
             </span>
           )}
         </div>

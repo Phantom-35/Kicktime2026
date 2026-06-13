@@ -1,40 +1,63 @@
-# Plan: Edge Function `fetch-live-scores` auf neuen OpenLigaDB-Endpunkt umstellen
+# Plan: Live-Logik, Phase-Anzeige, Live-Badge, Version 6.1
 
-## Ziel
-Die Edge Function nutzt aktuell `https://api.openligadb.de/getmatchdata/wm/2026`. Wir stellen sie auf den verifizierten Endpunkt `https://api.openligadb.de/getmatchdata/wm2026/2026` um — ohne sonstige Logik anzufassen.
+## 1. Dynamische Admin-Overrides (Edge Function)
 
-## Änderungen in `supabase/functions/fetch-live-scores/index.ts`
+`supabase/functions/fetch-live-scores/index.ts` – `mergeOverrides()` so anpassen, dass das manuelle Override automatisch **verworfen** wird (Override schreibt nicht), sobald die API "frischer" ist:
 
-1. **Konstante `UPSTREAM_URL`**
-   - alt: `https://api.openligadb.de/getmatchdata/wm/2026`
-   - neu: `https://api.openligadb.de/getmatchdata/wm2026/2026`
+- API liefert `statusShort = "FT"` (Spiel beendet) → API gewinnt, Override wird ignoriert.
+- API-Tor-Summe (`home+away`) > Override-Summe → API gewinnt.
+- API-Status `1H/2H/HT` und Override-Status `scheduled` → API gewinnt.
+- Sonst: Override gewinnt wie bisher.
 
-2. **Unverändert bleiben (explizit geprüft):**
-   - `CORS_HEADERS` inkl. OPTIONS-Preflight (204).
-   - 5-Minuten-Cache (`LIVE_TTL_MS = IDLE_TTL_MS = 300_000`) in `live_fixtures_cache`.
-   - `loadOverrides()` + `mergeOverrides()` — manuelle Admin-Einträge aus `match_overrides` (`is_manual = true`) überschreiben IMMER die API-Daten (Tore, Status, Minute).
-   - Fallback-Kette bei Upstream-Fehler: stale Cache → reine Overrides → `{ fixtures: [] }` mit CORS-Headern.
-   - `mapOpenLigaMatch()` (Mapping auf das interne API-Football-ähnliche Format) bleibt identisch — das OpenLigaDB-Schema ist für beide Endpunkte gleich.
+Lokales JSON-Fallback: Aktuell gibt es im Edge-Function-Code **keinen** lokalen JSON-Fallback (nur Cache-Stale + Overrides-Only). Ich baue zusätzlich einen minimalen statischen Fallback **inline** in die Edge Function, damit bei totalem API-Ausfall und leerem Cache eine leere, aber konsistente Antwort kommt (Verhalten wie bisher: `{ fixtures: overridesOnly }`). Das echte Schedule-JSON lebt im Client (`src/data/world_cup_2026_schedule.json`) und ist die UI-Quelle der Wahrheit – das bleibt so.
 
-3. **Hinweis zum lokalen JSON-Fallback**
-   Im aktuellen Code gibt es KEINEN Fallback auf `src/data/world_cup_2026_schedule.json` — das wäre auch in Edge-Functions schwierig (Datei liegt im Frontend-Bundle). Stattdessen ist der Fallback der Cache + Overrides. Ich behalte dieses Verhalten bei. Wenn du wirklich den lokalen Spielplan als zusätzliche Reserve in die Edge Function packen willst, müsste ich den Spielplan in die Function einbetten (eigenes JSON unter `supabase/functions/fetch-live-scores/`) — sag kurz Bescheid, dann ergänze ich das in einem separaten Schritt.
+URL `https://api.openligadb.de/getmatchdata/wm2026/2026`, 5-Min-Cache, CORS-Header und OPTIONS-Preflight bleiben unverändert.
 
-## Manuelles Deployment (nach Implementierung)
+## 2. Frontend-Reset (Mülleimer im Admin)
 
-Da das Projekt **keine** Supabase-CLI-Integration nutzt und nur eine einzige Edge Function im Dashboard liegt:
+`LiveOverridePanel.tsx` hat bereits einen Trash-Button, der `clearMatchOverride` aufruft. Ergänzungen:
 
-1. Supabase Dashboard → **Edge Functions** → `fetch-live-scores` → **Code**.
-2. Inhalt komplett ersetzen durch den neuen `index.ts`-Block (kommt nach Approval).
-3. **Deploy** klicken und auf „Deployed“-Status warten.
-4. Im Dashboard → **Edge Functions → fetch-live-scores → Logs** prüfen: erster Aufruf sollte `cache: "miss"` und Statuscode 200 zeigen.
-5. Optional Smoke-Test im Browser-Devtools (Network) auf `/spiele`: erster Fetch nach Cache-Ablauf muss 200 zurückgeben, `fixtures.length > 0`.
-6. Admin-Panel testen: Override setzen → in der Spiele-Liste muss sofort der manuelle Wert erscheinen und auch nach 5 min (nächster Upstream-Refresh) erhalten bleiben.
+- Nach erfolgreichem `clearMatchOverride`: lokal aus dem Store das `liveScore`/`matchMinute` zurücksetzen und Status auf API-Wert zurückführen (sofort sichtbar, kein Wackeln beim nächsten Poll). Umsetzung: neue Action `clearLiveOverlay(id)` im match-store, die `liveScore`, `matchMinute` und `status` (bei nicht-finished) löscht; danach `useLiveApi` Poll triggern (best effort: erneutes `fetchLiveWorldCupData` über bereits exportierten Helper).
+- Tooltip/aria "Manuellen Override entfernen".
 
-Keine SQL-Änderungen nötig — `match_overrides` und `live_fixtures_cache` sind bereits korrekt aufgesetzt.
+`match-overrides.ts` → `clearMatchOverride`: nach DB-delete sofort `clearLiveOverlay` im Store aufrufen.
 
-## Output nach Approval
-Im Build-Schritt liefere ich:
-- den **vollständigen** `index.ts`-Code in einem einzigen Code-Block (Copy-Paste-fertig),
-- die obige Deployment-Checkliste in Kurzform unter dem Code.
+## 3. Spielphase statt Minute
 
-Soll ich so umsetzen?
+`src/components/match/MatchCard.tsx` Zeile 52: `Live {minute}'` wird ersetzt durch dynamischen Phasen-Text per neuer Helper-Funktion `getMatchPhaseLabel(match)`:
+
+```text
+finished                           → "Beendet"
+live + minute >= 46                → "2. Halbzeit"
+live + minute zwischen 45-46 / HT  → "Halbzeitpause"
+live + sonst                       → "1. Halbzeit"
+```
+
+Helper liegt in `src/lib/match-phase.ts`. Nutzung überall, wo aktuell die Minute angezeigt wird (MatchCard, TournamentCountdown – wenn vorhanden).
+
+Hinweis: Die API liefert keinen separaten `HT`-Status; ich leite "Halbzeitpause" aus `matchMinute === 45` plus stehendem Timer ab (Edge Function `mapOpenLigaMatch` setzt schon `mm = 45` für 45 < raw < 60 — also der Halbzeit-Korridor, perfekt).
+
+## 4. Live-Badge im MatchDetailSheet
+
+`MatchDetailSheet.tsx` `DrawerHeader` ergänzen: wenn `match.status === "live"`, eine pulsierende rote `LIVE`-Pille (gleicher Stil wie auf den MatchCards) neben dem Titel + darunter Phase-Text aus `getMatchPhaseLabel`.
+
+## 5. Version 6.1
+
+`src/lib/version.ts`: `APP_VERSION = "6.1.0"`.
+
+## Manuelle Schritte für dich
+
+1. **Edge Function neu deployen**: Supabase Dashboard → Edge Functions → `fetch-live-scores` → Code aus dem ausgegebenen Block einfügen → Deploy.
+2. Keine SQL-Änderungen, keine Secrets-Änderungen nötig.
+3. Test: Manuelles Override setzen, dann im Admin Mülleimer klicken → Overlay verschwindet sofort, nach <5 Min liefert API wieder die reinen Daten.
+
+## Geänderte / neue Dateien
+
+- `supabase/functions/fetch-live-scores/index.ts` (dynamische Override-Merge-Regeln)
+- `src/lib/match-overrides.ts` (lokaler Reset nach delete)
+- `src/store/match-store.ts` (`clearLiveOverlay` Action)
+- `src/lib/match-phase.ts` (neu)
+- `src/components/match/MatchCard.tsx` (Phase statt Minute)
+- `src/components/match/MatchDetailSheet.tsx` (Live-Badge im Header)
+- `src/components/admin/LiveOverridePanel.tsx` (Tooltip + Reset-Refresh)
+- `src/lib/version.ts` (6.1.0)

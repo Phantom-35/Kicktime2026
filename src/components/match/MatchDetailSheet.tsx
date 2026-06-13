@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { haptics } from "@/lib/haptics";
 import { generateShareCard, shareOrDownload } from "@/lib/share-card";
 import { scorePrediction, RESULT_LABEL } from "@/lib/predictions";
+import { getMatchPhaseLabel } from "@/lib/match-phase";
 
 
 function getBroadcasterUrl(broadcaster: string): string {
@@ -89,6 +90,17 @@ export function MatchDetailSheet({
       <DrawerContent className="max-h-[90vh] border-border bg-background focus-visible:outline-none will-change-transform">
         {/* Drag handle area – vaul listens for drag gestures on the content; the inner scroll container below still scrolls normally */}
         <DrawerHeader className="text-left pb-2 pt-2 cursor-grab active:cursor-grabbing touch-pan-y select-none">
+          {match.status === "live" && (
+            <div className="mb-1.5">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-destructive bg-destructive/15 border border-destructive/40 rounded-full px-2.5 py-0.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75 animate-ping" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-destructive" />
+                </span>
+                Live · {getMatchPhaseLabel(match as never)}
+              </span>
+            </div>
+          )}
           <DrawerTitle className="flex items-center gap-2">
 
             <span className="text-2xl">{a.flag}</span>

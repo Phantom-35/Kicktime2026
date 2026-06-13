@@ -28,6 +28,7 @@ type State = {
 type Actions = {
   applyLiveUpdate: (id: string, u: LiveUpdate) => void;
   finishMatch: (id: string, finalScore: { a: number; b: number }) => void;
+  clearLiveOverlay: (id: string) => void;
   tickClock: (deltaMs: number) => void;
   syncWithRealTime: () => void;
   setNow: (ts: number) => void;
@@ -90,6 +91,19 @@ export const useMatchStore = create<State & Actions>((set) => ({
         matches: {
           ...s.matches,
           [id]: { ...cur, status: "finished", score: finalScore, liveScore: undefined, matchMinute: undefined },
+        },
+      };
+    }),
+
+  clearLiveOverlay: (id) =>
+    set((s) => {
+      const cur = s.matches[id];
+      if (!cur) return s;
+      // Reset to a clean scheduled state — the next API poll re-fills it.
+      return {
+        matches: {
+          ...s.matches,
+          [id]: { ...cur, status: "scheduled", liveScore: undefined, matchMinute: undefined, score: cur.status === "finished" ? cur.score : undefined },
         },
       };
     }),
