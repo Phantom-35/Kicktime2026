@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { getTeam } from "@/data/teams";
-import { Users, Smartphone, RefreshCw, Activity, Trophy } from "lucide-react";
+import { Users, Smartphone, RefreshCw, Activity, Trophy, MessageCircle } from "lucide-react";
 import { PinGate } from "./PinGate";
 import { LiveOverridePanel } from "./LiveOverridePanel";
 
@@ -38,15 +38,19 @@ export function AdminPanel({ open, onClose }: { open: boolean; onClose: () => vo
           <PinGate onUnlock={() => setUnlocked(true)} />
         ) : (
           <Tabs defaultValue="telemetry" className="w-full">
-            <TabsList className="grid grid-cols-2 w-full h-10 bg-background/60">
+            <TabsList className="grid grid-cols-3 w-full h-10 bg-background/60">
               <TabsTrigger value="telemetry" className="text-xs">📊 Telemetrie</TabsTrigger>
-              <TabsTrigger value="override" className="text-xs">🎮 Live-Override</TabsTrigger>
+              <TabsTrigger value="override" className="text-xs">🎮 Override</TabsTrigger>
+              <TabsTrigger value="feedback" className="text-xs">💬 Feedback</TabsTrigger>
             </TabsList>
             <TabsContent value="telemetry" className="mt-3">
               <TelemetryView />
             </TabsContent>
             <TabsContent value="override" className="mt-3">
               <LiveOverridePanel pin={PIN} />
+            </TabsContent>
+            <TabsContent value="feedback" className="mt-3">
+              <FeedbackView />
             </TabsContent>
           </Tabs>
         )}

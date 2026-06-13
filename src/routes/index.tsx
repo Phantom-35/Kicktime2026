@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { AlarmBell } from "@/components/match/AlarmBell";
 import { TournamentCountdown } from "@/components/dashboard/TournamentCountdown";
+import { FeedbackModal } from "@/components/feedback/FeedbackModal";
+import { incrementOpenCount, shouldShowFeedback, markFeedbackShown } from "@/lib/open-counter";
 import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { toast } from "sonner";
@@ -69,6 +71,17 @@ function Dashboard() {
 
   const [selected, setSelected] = useState<Match | null>(null);
   const showCountdown = useAppStore((s) => s.showCountdown);
+
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  useEffect(() => {
+    const count = incrementOpenCount();
+    if (shouldShowFeedback(count)) {
+      markFeedbackShown(count);
+      // small delay so it doesn't fight with WhatsNew / splash
+      const t = setTimeout(() => setFeedbackOpen(true), 1500);
+      return () => clearTimeout(t);
+    }
+  }, []);
 
   return (
     <div className="p-4 pb-6">
@@ -164,6 +177,7 @@ function Dashboard() {
       </Tabs>
 
       <MatchDetailSheet match={selected} open={!!selected} onOpenChange={(v) => !v && setSelected(null)} />
+      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </div>
   );
 }
