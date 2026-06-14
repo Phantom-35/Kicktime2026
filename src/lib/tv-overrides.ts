@@ -1,46 +1,80 @@
 /**
- * Hardcoded TV broadcaster overrides for the FIFA 2026 schedule.
+ * TV broadcaster overrides driven by `wm2026_uebertragung.json` (sportschau.de).
  *
- * Applied on top of `world_cup_2026_schedule.json` in the match store
- * seed so all consumers (MatchCard, MatchDetailSheet, filters etc.)
- * automatically see the curated ARD/ZDF/MagentaTV mapping.
+ * - Group stage: lookup by team-pair (order-independent).
+ * - Knockout stage: lookup by FIFA match number (`match` field in schedule JSON
+ *   == `spiel_nr` in the source). Currently only the Final has a fixed value (ZDF);
+ *   all other KO entries are `null` → no override.
  *
- * Knockout logic (auto):
- *  - Final: ZDF
- *  - Any KO match involving GER: ARD + ZDF
- *  - All other KO matches: ARD + ZDF (free TV default)
+ * `anbieter` value → Broadcaster list:
+ *   "ARD" → ["ARD"], "ZDF" → ["ZDF"], "Magenta" → ["MagentaTV"], null → skip.
  */
 
 import type { Broadcaster, Match } from "@/data/matches";
+import source from "@/data/wm2026_uebertragung.json";
 
-type Pair = [string, string];
+// German team names (as in source JSON) → internal team codes (src/data/teams.ts)
+const NAME_TO_CODE: Record<string, string> = {
+  "Mexiko": "MEX",
+  "Südafrika": "RSA",
+  "Südkorea": "KOR",
+  "Tschechien": "CZE",
+  "Kanada": "CAN",
+  "Bosnien-Herzegowina": "BIH",
+  "Katar": "QAT",
+  "Schweiz": "SUI",
+  "Brasilien": "BRA",
+  "Marokko": "MAR",
+  "Haiti": "HAI",
+  "Schottland": "SCO",
+  "USA": "USA",
+  "Paraguay": "PAR",
+  "Australien": "AUS",
+  "Türkei": "TUR",
+  "Deutschland": "GER",
+  "Curaçao": "CUW",
+  "Elfenbeinküste": "CIV",
+  "Ecuador": "ECU",
+  "Niederlande": "NED",
+  "Japan": "JPN",
+  "Schweden": "SWE",
+  "Tunesien": "TUN",
+  "Belgien": "BEL",
+  "Ägypten": "EGY",
+  "Iran": "IRN",
+  "Neuseeland": "NZL",
+  "Spanien": "ESP",
+  "Kap Verde": "CPV",
+  "Saudi-Arabien": "KSA",
+  "Uruguay": "URU",
+  "Frankreich": "FRA",
+  "Senegal": "SEN",
+  "Irak": "IRQ",
+  "Norwegen": "NOR",
+  "Argentinien": "ARG",
+  "Algerien": "ALG",
+  "Österreich": "AUT",
+  "Jordanien": "JOR",
+  "Portugal": "POR",
+  "DR Kongo": "COD",
+  "Usbekistan": "UZB",
+  "Kolumbien": "COL",
+  "England": "ENG",
+  "Kroatien": "CRO",
+  "Ghana": "GHA",
+  "Panama": "PAN",
+};
 
-const GROUP_OVERRIDES: Array<{ pair: Pair; broadcasters: Broadcaster[] }> = [
-  { pair: ["MEX", "RSA"], broadcasters: ["ZDF"] },
-  { pair: ["KOR", "CZE"], broadcasters: ["ARD", "ZDF"] },
-  { pair: ["CAN", "BIH"], broadcasters: ["ARD"] },
-  { pair: ["QAT", "SUI"], broadcasters: ["ZDF"] },
-  { pair: ["BRA", "MAR"], broadcasters: ["ZDF"] },
-  { pair: ["HAI", "SCO"], broadcasters: ["ARD"] },
-  { pair: ["GER", "CUW"], broadcasters: ["ARD"] },
-  { pair: ["FRA", "SEN"], broadcasters: ["MagentaTV"] },
-  { pair: ["CZE", "RSA"], broadcasters: ["ARD", "ZDF"] },
-  { pair: ["MEX", "KOR"], broadcasters: ["ARD", "ZDF"] },
-  { pair: ["GER", "CIV"], broadcasters: ["ZDF"] },
-  { pair: ["ECU", "CUW"], broadcasters: ["ARD", "ZDF"] },
-  { pair: ["CZE", "MEX"], broadcasters: ["ARD", "ZDF"] },
-  { pair: ["RSA", "KOR"], broadcasters: ["ARD", "ZDF"] },
-  { pair: ["ECU", "GER"], broadcasters: ["ARD"] },
-  { pair: ["CUW", "CIV"], broadcasters: ["MagentaTV"] },
-];
+function providerToList(p: unknown): Broadcaster[] | null {
+  if (p === "ARD") return ["ARD"];
+  if (p === "ZDF") return ["ZDF"];
+  if (p === "Magenta" || p === "MagentaTV") return ["MagentaTV"];
+  return null;
+}
 
 function keyFor(a: string, b: string): string {
   return [a, b].sort().join("|");
 }
-
-const GROUP_MAP: Map<string, Broadcaster[]> = new Map(
-  GROUP_OVERRIDES.map((o) => [keyFor(o.pair[0], o.pair[1]), o.broadcasters])
-);
 
 function pickPrimary(list: Broadcaster[]): Broadcaster {
   if (list.includes("ARD")) return "ARD";
@@ -48,20 +82,48 @@ function pickPrimary(list: Broadcaster[]): Broadcaster {
   return list[0] ?? "MagentaTV";
 }
 
-export function applyTvOverride<T extends Match>(match: T): T {
+type GroupEntry = { heim: string; gast: string; anbieter: string | null };
+type KoEntry = { spiel_nr: number; anbieter: string | null };
+
+const GROUP_MAP = new Map<string, Broadcaster[]>();
+const KO_MAP = new Map<number, Broadcaster[]>();
+
+(function buildMaps() {
+  const src = source as {
+    vorrunde: Record<string, GroupEntry[]>;
+    ko_phase: Record<string, KoEntry[]>;
+  };
+
+  for (const day of Object.values(src.vorrunde)) {
+    for (const m of day) {
+      const list = providerToList(m.anbieter);
+      if (!list) continue;
+      const a = NAME_TO_CODE[m.heim];
+      const b = NAME_TO_CODE[m.gast];
+      if (!a || !b) {
+        console.warn("[tv-overrides] unknown team name:", m.heim, m.gast);
+        continue;
+      }
+      GROUP_MAP.set(keyFor(a, b), list);
+    }
+  }
+
+  for (const round of Object.values(src.ko_phase)) {
+    for (const m of round) {
+      const list = providerToList(m.anbieter);
+      if (!list) continue;
+      KO_MAP.set(m.spiel_nr, list);
+    }
+  }
+})();
+
+export function applyTvOverride<T extends Match & { match?: number }>(match: T): T {
   let broadcasters: Broadcaster[] | undefined;
 
   if (match.stage === "group") {
     broadcasters = GROUP_MAP.get(keyFor(match.teamA, match.teamB));
-  } else {
-    // Knockout rounds (r32, r16, qf, sf, third, final)
-    if (match.stage === "final") {
-      broadcasters = ["ZDF"];
-    } else if (match.teamA === "GER" || match.teamB === "GER") {
-      broadcasters = ["ARD", "ZDF"];
-    } else {
-      broadcasters = ["ARD", "ZDF"];
-    }
+  } else if (typeof match.match === "number") {
+    broadcasters = KO_MAP.get(match.match);
   }
 
   if (!broadcasters || broadcasters.length === 0) return match;

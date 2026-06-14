@@ -1,0 +1,143 @@
+{
+  "turnier": "FIFA WM 2026",
+  "zeitzone": "MESZ",
+  "quelle": "sportschau.de",
+  "stand": "13.06.2026",
+  "anbieter": {
+    "ARD": "Free-TV",
+    "ZDF": "Free-TV",
+    "Magenta": "Pay-TV (MagentaTV)"
+  },
+  "hinweise": [
+    "MagentaTV überträgt alle Spiele; ARD und ZDF zeigen nur eine Auswahl im Free-TV.",
+    "Spiele mit ARD oder ZDF laufen im Free-TV (und zusätzlich bei Magenta). Spiele mit 'Magenta' nur bei MagentaTV.",
+    "Die fünf Spiele vom 11.-13.06. zeigt die Quelle nur mit Ergebnis, ohne Sender (anbieter = null).",
+    "In der K.-o.-Phase sind die Sender noch nicht eingetragen, nur das Finale steht fest (ZDF)."
+  ],
+  "vorrunde": {
+    "spieltag_1": [
+      { "datum": "11.06.", "zeit": "21:00", "heim": "Mexiko", "gast": "Südafrika", "anbieter": null, "status": "gespielt", "ergebnis": "2:0" },
+      { "datum": "12.06.", "zeit": "04:00", "heim": "Südkorea", "gast": "Tschechien", "anbieter": null, "status": "gespielt", "ergebnis": "2:1" },
+      { "datum": "12.06.", "zeit": "21:00", "heim": "Kanada", "gast": "Bosnien-Herzegowina", "anbieter": null, "status": "gespielt", "ergebnis": "1:1" },
+      { "datum": "13.06.", "zeit": "03:00", "heim": "USA", "gast": "Paraguay", "anbieter": null, "status": "gespielt", "ergebnis": "4:1" },
+      { "datum": "13.06.", "zeit": "21:00", "heim": "Katar", "gast": "Schweiz", "anbieter": null, "status": "gespielt", "ergebnis": null },
+      { "datum": "14.06.", "zeit": "00:00", "heim": "Brasilien", "gast": "Marokko", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "14.06.", "zeit": "03:00", "heim": "Haiti", "gast": "Schottland", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "14.06.", "zeit": "06:00", "heim": "Australien", "gast": "Türkei", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "14.06.", "zeit": "19:00", "heim": "Deutschland", "gast": "Curaçao", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "14.06.", "zeit": "22:00", "heim": "Niederlande", "gast": "Japan", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "15.06.", "zeit": "01:00", "heim": "Elfenbeinküste", "gast": "Ecuador", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "15.06.", "zeit": "04:00", "heim": "Schweden", "gast": "Tunesien", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "15.06.", "zeit": "18:00", "heim": "Spanien", "gast": "Kap Verde", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "15.06.", "zeit": "21:00", "heim": "Belgien", "gast": "Ägypten", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "16.06.", "zeit": "00:00", "heim": "Saudi-Arabien", "gast": "Uruguay", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "16.06.", "zeit": "03:00", "heim": "Iran", "gast": "Neuseeland", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "16.06.", "zeit": "21:00", "heim": "Frankreich", "gast": "Senegal", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "17.06.", "zeit": "00:00", "heim": "Irak", "gast": "Norwegen", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "17.06.", "zeit": "03:00", "heim": "Argentinien", "gast": "Algerien", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "17.06.", "zeit": "06:00", "heim": "Österreich", "gast": "Jordanien", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "17.06.", "zeit": "19:00", "heim": "Portugal", "gast": "DR Kongo", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "17.06.", "zeit": "22:00", "heim": "England", "gast": "Kroatien", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "18.06.", "zeit": "01:00", "heim": "Ghana", "gast": "Panama", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "18.06.", "zeit": "04:00", "heim": "Usbekistan", "gast": "Kolumbien", "anbieter": "Magenta", "status": "geplant", "ergebnis": null }
+    ],
+    "spieltag_2": [
+      { "datum": "18.06.", "zeit": "18:00", "heim": "Tschechien", "gast": "Südafrika", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "18.06.", "zeit": "21:00", "heim": "Schweiz", "gast": "Bosnien-Herzegowina", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "19.06.", "zeit": "00:00", "heim": "Kanada", "gast": "Katar", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "19.06.", "zeit": "03:00", "heim": "Mexiko", "gast": "Südkorea", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "19.06.", "zeit": "21:00", "heim": "USA", "gast": "Australien", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "20.06.", "zeit": "00:00", "heim": "Schottland", "gast": "Marokko", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "20.06.", "zeit": "03:00", "heim": "Brasilien", "gast": "Haiti", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "20.06.", "zeit": "05:00", "heim": "Türkei", "gast": "Paraguay", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "20.06.", "zeit": "19:00", "heim": "Niederlande", "gast": "Schweden", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "20.06.", "zeit": "22:00", "heim": "Deutschland", "gast": "Elfenbeinküste", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "21.06.", "zeit": "02:00", "heim": "Ecuador", "gast": "Curaçao", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "21.06.", "zeit": "06:00", "heim": "Tunesien", "gast": "Japan", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "21.06.", "zeit": "18:00", "heim": "Spanien", "gast": "Saudi-Arabien", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "21.06.", "zeit": "21:00", "heim": "Belgien", "gast": "Iran", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "22.06.", "zeit": "00:00", "heim": "Uruguay", "gast": "Kap Verde", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "22.06.", "zeit": "03:00", "heim": "Neuseeland", "gast": "Ägypten", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "22.06.", "zeit": "19:00", "heim": "Argentinien", "gast": "Österreich", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "22.06.", "zeit": "23:00", "heim": "Frankreich", "gast": "Irak", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "23.06.", "zeit": "02:00", "heim": "Norwegen", "gast": "Senegal", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "23.06.", "zeit": "05:00", "heim": "Jordanien", "gast": "Algerien", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "23.06.", "zeit": "19:00", "heim": "Portugal", "gast": "Usbekistan", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "23.06.", "zeit": "22:00", "heim": "England", "gast": "Ghana", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "24.06.", "zeit": "01:00", "heim": "Panama", "gast": "Kroatien", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "24.06.", "zeit": "04:00", "heim": "Kolumbien", "gast": "DR Kongo", "anbieter": "ARD", "status": "geplant", "ergebnis": null }
+    ],
+    "spieltag_3": [
+      { "datum": "24.06.", "zeit": "21:00", "heim": "Schweiz", "gast": "Kanada", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "24.06.", "zeit": "21:00", "heim": "Bosnien-Herzegowina", "gast": "Katar", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "25.06.", "zeit": "00:00", "heim": "Schottland", "gast": "Brasilien", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "25.06.", "zeit": "00:00", "heim": "Marokko", "gast": "Haiti", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "25.06.", "zeit": "03:00", "heim": "Tschechien", "gast": "Mexiko", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "25.06.", "zeit": "03:00", "heim": "Südafrika", "gast": "Südkorea", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "25.06.", "zeit": "22:00", "heim": "Curaçao", "gast": "Elfenbeinküste", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "25.06.", "zeit": "22:00", "heim": "Ecuador", "gast": "Deutschland", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "26.06.", "zeit": "01:00", "heim": "Japan", "gast": "Schweden", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "26.06.", "zeit": "01:00", "heim": "Tunesien", "gast": "Niederlande", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "26.06.", "zeit": "04:00", "heim": "Türkei", "gast": "USA", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "26.06.", "zeit": "04:00", "heim": "Paraguay", "gast": "Australien", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "26.06.", "zeit": "21:00", "heim": "Norwegen", "gast": "Frankreich", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "26.06.", "zeit": "21:00", "heim": "Senegal", "gast": "Irak", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "27.06.", "zeit": "02:00", "heim": "Kap Verde", "gast": "Saudi-Arabien", "anbieter": "ARD", "status": "geplant", "ergebnis": null },
+      { "datum": "27.06.", "zeit": "02:00", "heim": "Uruguay", "gast": "Spanien", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "27.06.", "zeit": "05:00", "heim": "Ägypten", "gast": "Iran", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "27.06.", "zeit": "05:00", "heim": "Neuseeland", "gast": "Belgien", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "27.06.", "zeit": "23:00", "heim": "Panama", "gast": "England", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "27.06.", "zeit": "23:00", "heim": "Kroatien", "gast": "Ghana", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "28.06.", "zeit": "01:30", "heim": "Kolumbien", "gast": "Portugal", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "28.06.", "zeit": "01:30", "heim": "DR Kongo", "gast": "Usbekistan", "anbieter": "Magenta", "status": "geplant", "ergebnis": null },
+      { "datum": "28.06.", "zeit": "04:00", "heim": "Algerien", "gast": "Österreich", "anbieter": "ZDF", "status": "geplant", "ergebnis": null },
+      { "datum": "28.06.", "zeit": "04:00", "heim": "Jordanien", "gast": "Argentinien", "anbieter": "Magenta", "status": "geplant", "ergebnis": null }
+    ]
+  },
+  "ko_phase": {
+    "sechzehntelfinale": [
+      { "datum": "28.06.", "zeit": "21:00", "begegnung": "Zweiter Gruppe A - Zweiter Gruppe B", "spiel_nr": 73, "anbieter": null },
+      { "datum": "29.06.", "zeit": "19:00", "begegnung": "Erster Gruppe C - Zweiter Gruppe F", "spiel_nr": 76, "anbieter": null },
+      { "datum": "29.06.", "zeit": "22:30", "begegnung": "Erster Gruppe E - Dritter Gruppe A/B/C/D/F", "spiel_nr": 74, "anbieter": null },
+      { "datum": "30.06.", "zeit": "03:00", "begegnung": "Erster Gruppe F - Zweiter Gruppe C", "spiel_nr": 75, "anbieter": null },
+      { "datum": "30.06.", "zeit": "19:00", "begegnung": "Zweiter Gruppe E - Zweiter Gruppe I", "spiel_nr": 78, "anbieter": null },
+      { "datum": "30.06.", "zeit": "23:00", "begegnung": "Erster Gruppe I - Dritter Gruppe C/D/F/G/H", "spiel_nr": 77, "anbieter": null },
+      { "datum": "01.07.", "zeit": "03:00", "begegnung": "Erster Gruppe A - Dritter Gruppe C/E/F/H/I", "spiel_nr": 79, "anbieter": null },
+      { "datum": "01.07.", "zeit": "18:00", "begegnung": "Erster Gruppe L - Dritter Gruppe E/H/I/J/K", "spiel_nr": 80, "anbieter": null },
+      { "datum": "01.07.", "zeit": "22:00", "begegnung": "Erster Gruppe G - Dritter Gruppe A/E/H/I/J", "spiel_nr": 82, "anbieter": null },
+      { "datum": "02.07.", "zeit": "02:00", "begegnung": "Erster Gruppe D - Dritter Gruppe B/E/F/I/J", "spiel_nr": 81, "anbieter": null },
+      { "datum": "02.07.", "zeit": "21:00", "begegnung": "Erster Gruppe H - Zweiter Gruppe J", "spiel_nr": 84, "anbieter": null },
+      { "datum": "03.07.", "zeit": "01:00", "begegnung": "Zweiter Gruppe K - Zweiter Gruppe L", "spiel_nr": 83, "anbieter": null },
+      { "datum": "03.07.", "zeit": "05:00", "begegnung": "Erster Gruppe B - Dritter Gruppe E/F/G/I/J", "spiel_nr": 85, "anbieter": null },
+      { "datum": "03.07.", "zeit": "20:00", "begegnung": "Zweiter Gruppe D - Zweiter Gruppe G", "spiel_nr": 88, "anbieter": null },
+      { "datum": "04.07.", "zeit": "00:00", "begegnung": "Erster Gruppe J - Zweiter Gruppe H", "spiel_nr": 86, "anbieter": null },
+      { "datum": "04.07.", "zeit": "03:30", "begegnung": "Erster Gruppe K - Dritter Gruppe D/E/I/J/L", "spiel_nr": 87, "anbieter": null }
+    ],
+    "achtelfinale": [
+      { "datum": "04.07.", "zeit": "19:00", "begegnung": "Sieger Spiel 73 - Sieger Spiel 75", "spiel_nr": 90, "anbieter": null },
+      { "datum": "04.07.", "zeit": "23:00", "begegnung": "Sieger Spiel 74 - Sieger Spiel 77", "spiel_nr": 89, "anbieter": null },
+      { "datum": "05.07.", "zeit": "22:00", "begegnung": "Sieger Spiel 76 - Sieger Spiel 78", "spiel_nr": 91, "anbieter": null },
+      { "datum": "06.07.", "zeit": "02:00", "begegnung": "Sieger Spiel 79 - Sieger Spiel 80", "spiel_nr": 92, "anbieter": null },
+      { "datum": "06.07.", "zeit": "21:00", "begegnung": "Sieger Spiel 83 - Sieger Spiel 84", "spiel_nr": 93, "anbieter": null },
+      { "datum": "07.07.", "zeit": "02:00", "begegnung": "Sieger Spiel 81 - Sieger Spiel 82", "spiel_nr": 94, "anbieter": null },
+      { "datum": "07.07.", "zeit": "18:00", "begegnung": "Sieger Spiel 86 - Sieger Spiel 88", "spiel_nr": 95, "anbieter": null },
+      { "datum": "07.07.", "zeit": "22:00", "begegnung": "Sieger Spiel 85 - Sieger Spiel 87", "spiel_nr": 96, "anbieter": null }
+    ],
+    "viertelfinale": [
+      { "datum": "09.07.", "zeit": "22:00", "begegnung": "Sieger Spiel 89 - Sieger Spiel 90", "spiel_nr": 97, "anbieter": null },
+      { "datum": "10.07.", "zeit": "21:00", "begegnung": "Sieger Spiel 93 - Sieger Spiel 94", "spiel_nr": 98, "anbieter": null },
+      { "datum": "11.07.", "zeit": "23:00", "begegnung": "Sieger Spiel 91 - Sieger Spiel 92", "spiel_nr": 99, "anbieter": null },
+      { "datum": "12.07.", "zeit": "03:00", "begegnung": "Sieger Spiel 95 - Sieger Spiel 96", "spiel_nr": 100, "anbieter": null }
+    ],
+    "halbfinale": [
+      { "datum": "14.07.", "zeit": "21:00", "begegnung": "Sieger Spiel 97 - Sieger Spiel 98", "spiel_nr": 101, "anbieter": null },
+      { "datum": "15.07.", "zeit": "21:00", "begegnung": "Sieger Spiel 99 - Sieger Spiel 100", "spiel_nr": 102, "anbieter": null }
+    ],
+    "spiel_um_platz_3": [
+      { "datum": "18.07.", "zeit": "23:00", "begegnung": "Verlierer Spiel 101 - Verlierer Spiel 102", "spiel_nr": 103, "anbieter": null }
+    ],
+    "finale": [
+      { "datum": "19.07.", "zeit": "21:00", "begegnung": "Sieger Spiel 101 - Sieger Spiel 102", "spiel_nr": 104, "anbieter": "ZDF" }
+    ]
+  }
+}
