@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Bell } from "lucide-react";
 import { toast } from "sonner";
 import { useAppStore } from "@/store/app-store";
@@ -12,6 +13,7 @@ import {
   removeMatchAlarm,
   upsertPushSubscription,
 } from "@/lib/push-subscriptions";
+import { PushPermissionModal } from "./PushPermissionModal";
 import type { Match } from "@/data/matches";
 
 export function AlarmBell({ match }: { match: Match }) {
@@ -20,6 +22,7 @@ export function AlarmBell({ match }: { match: Match }) {
   const favorites = useAppStore((s) => s.favoriteTeams);
   const setAlarm = useAppStore((s) => s.setAlarm);
   const setPushEnabled = useAppStore((s) => s.setPushEnabled);
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
 
   const active = isAlarmActive(match, alarms, autoFav, favorites);
   const isAuto =
@@ -34,12 +37,11 @@ export function AlarmBell({ match }: { match: Match }) {
       setAlarm(match.id, isAuto ? false : null);
       haptics.tap();
       toast(`Erinnerung für ${a.name} vs. ${b.name} deaktiviert`);
-      // Best-effort Cleanup in DB — Fehler ignorieren
       removeMatchAlarm(match.id).catch(() => undefined);
       return;
     }
 
-    const support = detectPushSupport();
+    let support = detectPushSupport();
     if (support === "ios-needs-pwa") {
       toast.error("Für iPhone-Benachrichtigungen App zum Home-Bildschirm hinzufügen", {
         description:
@@ -53,12 +55,28 @@ export function AlarmBell({ match }: { match: Match }) {
       return;
     }
 
-    // 1) UI sofort umschalten — der DB-Roundtrip läuft im Hintergrund
+    // Bei "default" einmalig Permission anfragen
+    if (support === "default" && typeof Notification !== "undefined") {
+      try {
+        const res = await Notification.requestPermission();
+        support = res as typeof support;
+      } catch {
+        support = "denied";
+      }
+    }
+
+    // Wenn weiterhin nicht granted → Modal zeigen, NICHT abonnieren
+    if (support !== "granted") {
+      haptics.tap();
+      setShowPermissionModal(true);
+      return;
+    }
+
+    // UI sofort umschalten
     setAlarm(match.id, true);
     haptics.success();
     toast.success(`Erinnerung für ${a.name} vs. ${b.name} aktiviert! 🔔`);
 
-    // 2) Push-Abo registrieren + in Supabase persistieren
     if (!hasVapidPublicKey()) {
       toast("Push-Server noch nicht konfiguriert", {
         description: "Admin muss VAPID-Keys hinterlegen. Lokale Erinnerung läuft trotzdem.",
@@ -74,7 +92,7 @@ export function AlarmBell({ match }: { match: Match }) {
         return;
       }
       await upsertPushSubscription(sub);
-      await addMatchAlarm(match.id, match.utcTimestamp);
+      await addMatchAlarm(match.id, match.utcTimestamp, a.name, b.name);
       setPushEnabled(true);
     } catch (err) {
       console.warn("[AlarmBell] push setup failed", err);
@@ -83,18 +101,24 @@ export function AlarmBell({ match }: { match: Match }) {
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      aria-label={active ? "Erinnerung deaktivieren" : "Erinnerung aktivieren"}
-      aria-pressed={active}
-      className={`shrink-0 h-7 w-7 inline-flex items-center justify-center rounded-lg border transition-colors active:scale-95 ${
-        active
-          ? "bg-primary/15 border-primary text-primary"
-          : "bg-transparent border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
-      }`}
-    >
-      <Bell className={`h-3.5 w-3.5 ${active ? "fill-current" : ""}`} />
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={handleClick}
+        aria-label={active ? "Erinnerung deaktivieren" : "Erinnerung aktivieren"}
+        aria-pressed={active}
+        className={`shrink-0 h-7 w-7 inline-flex items-center justify-center rounded-lg border transition-colors active:scale-95 ${
+          active
+            ? "bg-primary/15 border-primary text-primary"
+            : "bg-transparent border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
+        }`}
+      >
+        <Bell className={`h-3.5 w-3.5 ${active ? "fill-current" : ""}`} />
+      </button>
+      <PushPermissionModal
+        open={showPermissionModal}
+        onClose={() => setShowPermissionModal(false)}
+      />
+    </>
   );
 }
