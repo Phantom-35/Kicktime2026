@@ -33,6 +33,8 @@ type AlarmRow = {
   match_id: string;
   kickoff_utc: string;
   lead_minutes: number;
+  team_a_name: string | null;
+  team_b_name: string | null;
   push_subscriptions: {
     endpoint: string;
     p256dh: string;
@@ -72,7 +74,7 @@ serve(async (req: Request) => {
     const { data, error } = await supabase
       .from("match_alarm_subscriptions")
       .select(
-        "device_id, match_id, kickoff_utc, lead_minutes, push_subscriptions ( endpoint, p256dh, auth )"
+        "device_id, match_id, kickoff_utc, lead_minutes, team_a_name, team_b_name, push_subscriptions ( endpoint, p256dh, auth )"
       )
       .is("notified_at", null)
       .gte("kickoff_utc", nowIso)
@@ -100,12 +102,15 @@ serve(async (req: Request) => {
       const sub = row.push_subscriptions;
       if (!sub) continue;
 
+      const minutesLeft = Math.max(
+        1,
+        Math.round((kickoff - dueNow.getTime()) / 60000)
+      );
+      const teamA = row.team_a_name ?? "Team A";
+      const teamB = row.team_b_name ?? "Team B";
       const payload = JSON.stringify({
-        title: "🏆 KickTime Erinnerung",
-        body: `In ${Math.max(
-          1,
-          Math.round((kickoff - dueNow.getTime()) / 60000)
-        )} Minuten Anpfiff! Bereit für dein Spiel?`,
+        title: "Anpfiff steht bevor! 🏆",
+        body: `${teamA} - ${teamB} startet in ${minutesLeft} Minuten!`,
         url: "/",
         tag: `match-${row.match_id}`,
       });
