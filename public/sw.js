@@ -21,8 +21,8 @@ self.addEventListener("push", (event) => {
     }
   }
 
-  const title = payload.title || "🏆 KickTime Erinnerung";
-  const body = payload.body || "Gleich startet ein Spiel!";
+  const title = payload.title || "Anpfiff steht bevor! 🏆";
+  const body = payload.body || "Gleich startet dein Spiel!";
   const url = payload.url || "/";
   const tag = payload.tag || "kicktime-match";
 

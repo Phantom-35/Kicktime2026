@@ -28,7 +28,12 @@ export async function upsertPushSubscription(
   if (error) console.warn("[push-subscriptions] upsert failed:", error.message);
 }
 
-export async function addMatchAlarm(matchId: string, kickoffUtc: string): Promise<void> {
+export async function addMatchAlarm(
+  matchId: string,
+  kickoffUtc: string,
+  teamAName?: string,
+  teamBName?: string
+): Promise<void> {
   const device_id = getDeviceId();
   const { error } = await supabase
     .from("match_alarm_subscriptions")
@@ -39,6 +44,8 @@ export async function addMatchAlarm(matchId: string, kickoffUtc: string): Promis
         kickoff_utc: kickoffUtc,
         lead_minutes: 15,
         notified_at: null,
+        team_a_name: teamAName ?? null,
+        team_b_name: teamBName ?? null,
       },
       { onConflict: "device_id,match_id" }
     );

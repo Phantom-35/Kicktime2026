@@ -1,19 +1,19 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Tv, MessageCircle } from "lucide-react";
+import { Bell, MessageSquare } from "lucide-react";
 
-type Feature = { icon: typeof Tv; title: string; text: string };
+type Feature = { icon: typeof Bell; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
-    icon: Tv,
-    title: "📺 TV-Sender-Update",
-    text: "Alle Übertragungsrechte wurden erfolgreich über die neue JSON-Datenstruktur aktualisiert.",
+    icon: Bell,
+    title: "🔔 Smarter Push-Check",
+    text: "Die Erinnerungs-Glocken prüfen jetzt deinen Systemstatus. Fehlen die Rechte, erinnert dich die App direkt an deine Geräteeinstellungen.",
   },
   {
-    icon: MessageCircle,
-    title: "💬 Feedback-Optimierung",
-    text: "Die Blitz-Abfrage erscheint nun in optimierten Abständen alle 8 App-Öffnungen.",
+    icon: MessageSquare,
+    title: "💬 Personalisierte Benachrichtigungen",
+    text: "Push-Nachrichten zeigen dir ab jetzt direkt auf dem Sperrbildschirm an, welches Match in 15 Minuten startet!",
   },
 ];
 
