@@ -1,29 +1,19 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Tv, MessageCircle, BellRing, Sparkles } from "lucide-react";
+import { Tv, MessageCircle } from "lucide-react";
 
 type Feature = { icon: typeof Tv; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
     icon: Tv,
-    title: "📺 TV-Sender-Updates",
-    text: "Feste Zuordnung für ARD, ZDF und MagentaTV in der Gruppen- und K.-o.-Phase integriert.",
+    title: "📺 TV-Sender-Update",
+    text: "Alle Übertragungsrechte wurden erfolgreich über die neue JSON-Datenstruktur aktualisiert.",
   },
   {
     icon: MessageCircle,
-    title: "💬 Dein Feedback zählt",
-    text: "Eine optionale Blitz-Abfrage zur Zufriedenheit hinzugefügt, um die App noch besser zu machen.",
-  },
-  {
-    icon: BellRing,
-    title: "🔔 Echte Push-Benachrichtigungen",
-    text: "Wir senden dir echte Sperrbildschirm-Erinnerungen 15 Min vor Anpfiff — auch wenn die App geschlossen ist.",
-  },
-  {
-    icon: Sparkles,
-    title: "✨ Stabiler & schneller",
-    text: "Kleine Performance-Verbesserungen und Bugfixes unter der Haube.",
+    title: "💬 Feedback-Optimierung",
+    text: "Die Blitz-Abfrage erscheint nun in optimierten Abständen alle 8 App-Öffnungen.",
   },
 ];
 

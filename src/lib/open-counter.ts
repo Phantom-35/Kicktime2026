@@ -5,7 +5,7 @@
 
 const COUNT_KEY = "kicktime.openCount";
 const LAST_SHOWN_KEY = "kicktime.feedback.lastShownCount";
-const FREQUENCY = 15;
+const FREQUENCY = 8;
 
 function safeStorage(): Storage | null {
   if (typeof window === "undefined") return null;
