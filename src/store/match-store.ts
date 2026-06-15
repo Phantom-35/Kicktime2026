@@ -155,7 +155,7 @@ function rollMatches(
       if (finalScore) {
         next[id] = { ...m, status: "finished", score: finalScore, liveScore: undefined, matchMinute: undefined };
         changed = true;
-      } else if (m.status !== "finished") {
+      } else {
         next[id] = { ...m, status: "finished", score: undefined, liveScore: undefined, matchMinute: undefined };
         changed = true;
       }
