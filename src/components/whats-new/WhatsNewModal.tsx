@@ -1,19 +1,14 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Bell, MessageSquare } from "lucide-react";
+import { Tv } from "lucide-react";
 
-type Feature = { icon: typeof Bell; title: string; text: string };
+type Feature = { icon: typeof Tv; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
-    icon: Bell,
-    title: "🔔 Smarter Push-Check",
-    text: "Die Erinnerungs-Glocken prüfen jetzt deinen Systemstatus. Fehlen die Rechte, erinnert dich die App direkt an deine Geräteeinstellungen.",
-  },
-  {
-    icon: MessageSquare,
-    title: "💬 Personalisierte Benachrichtigungen",
-    text: "Push-Nachrichten zeigen dir ab jetzt direkt auf dem Sperrbildschirm an, welches Match in 15 Minuten startet!",
+    icon: Tv,
+    title: "📺 MagentaTV bei jedem Spiel",
+    text: "MagentaTV überträgt alle WM-Partien und wird ab jetzt bei jedem Spiel angezeigt – zusätzlich zu ARD oder ZDF, wenn das Spiel auch im Free-TV läuft.",
   },
 ];
 
