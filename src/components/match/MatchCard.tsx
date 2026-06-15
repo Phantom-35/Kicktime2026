@@ -70,6 +70,8 @@ export function MatchCard({
             <div className={`text-xl font-bold tabular-nums ${hideScore ? "blur-md select-none" : ""}`}>
               {match.score.a} : {match.score.b}
             </div>
+          ) : match.status === "finished" ? (
+            <div className="text-xl font-bold tabular-nums text-muted-foreground">- : -</div>
           ) : (
             <div className="text-xs font-medium text-muted-foreground">VS</div>
           )}

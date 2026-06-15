@@ -148,9 +148,17 @@ function rollMatches(
     const kickoff = new Date(m.utcTimestamp).getTime();
     const endsAt = kickoff + MATCH_DURATION_MS;
     if (now >= endsAt) {
-      const finalScore = m.liveScore ?? m.score ?? { a: 0, b: 0 };
-      next[id] = { ...m, status: "finished", score: finalScore, liveScore: undefined, matchMinute: undefined };
-      changed = true;
+      // Only finalize when we actually have a score from API/live data.
+      // Otherwise leave status as-is so the UI shows a neutral placeholder
+      // ("-:-") instead of fabricating a fake 0:0 result.
+      const finalScore = m.liveScore ?? m.score;
+      if (finalScore) {
+        next[id] = { ...m, status: "finished", score: finalScore, liveScore: undefined, matchMinute: undefined };
+        changed = true;
+      } else {
+        next[id] = { ...m, status: "finished", score: undefined, liveScore: undefined, matchMinute: undefined };
+        changed = true;
+      }
     } else if (now >= kickoff) {
       // Prefer real elapsed minute from API; fall back to wall-clock estimate.
       const estimated = Math.min(90, Math.max(1, Math.floor((now - kickoff) / 60000)));
