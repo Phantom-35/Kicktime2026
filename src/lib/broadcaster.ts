@@ -25,7 +25,7 @@ export function hasAnyFreeTv(match: Match): boolean {
   return list.some((b) => b === "ARD" || b === "ZDF");
 }
 
-export function hasMagentaTv(match: Match): boolean {
-  const list = match.broadcasters ?? [match.broadcaster];
-  return list.includes("MagentaTV");
+export function hasMagentaTv(_match: Match): boolean {
+  // MagentaTV holds rights to every WM 2026 match.
+  return true;
 }
