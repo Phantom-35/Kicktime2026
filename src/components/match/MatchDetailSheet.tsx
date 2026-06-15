@@ -115,6 +115,15 @@ export function MatchDetailSheet({
         <div className="px-4 pb-6 overflow-y-auto space-y-5">
 
           {/* Score (finished) with spoiler */}
+          {match.status === "finished" && !match.score && (
+            <div className="rounded-2xl border border-border bg-card p-4 text-center">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                Endstand
+              </div>
+              <div className="text-3xl font-black tabular-nums text-muted-foreground">- : -</div>
+              <div className="mt-1 text-[11px] text-muted-foreground">Ergebnis wird geladen…</div>
+            </div>
+          )}
           {match.status === "finished" && match.score && (
             <div className="rounded-2xl border border-border bg-card p-4 text-center relative">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
