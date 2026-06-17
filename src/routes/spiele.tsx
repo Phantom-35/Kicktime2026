@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Match } from "@/data/matches";
 import { isPerfectFor, isNightShift } from "@/lib/categorize";
 import { getTeam } from "@/data/teams";
@@ -11,6 +11,7 @@ import { haptics } from "@/lib/haptics";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { AlarmBell } from "@/components/match/AlarmBell";
+import { LiveNowBar } from "@/components/match/LiveNowBar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, CalendarPlus } from "lucide-react";
@@ -25,6 +26,7 @@ function SpielePage() {
   const spoiler = useAppStore((s) => s.spoilerProtection);
   const revealedMap = useAppStore((s) => s.revealedMatches);
   const matches = useMatchStore(selectMatchList);
+  const didScrollRef = useRef(false);
 
   const filtered = useMemo(() => {
     const ql = q.trim().toLowerCase();
