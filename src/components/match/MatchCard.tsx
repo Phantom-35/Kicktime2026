@@ -28,10 +28,13 @@ export function MatchCard({
   const a = getTeam(match.teamA);
   const b = getTeam(match.teamB);
   const local = getLocalParts(match.utcTimestamp, tz);
+  const isLive = match.status === "live";
   return (
     <div
       onClick={onClick}
-      className="rounded-2xl border border-border bg-card p-4 active:scale-[0.98] transition-transform cursor-pointer"
+      className={`rounded-2xl bg-card p-4 active:scale-[0.98] transition-transform cursor-pointer ${
+        isLive ? "border-2 border-destructive ring-2 ring-destructive/30" : "border border-border"
+      }`}
     >
       <div className="flex items-center justify-between mb-3 gap-2">
         <div className="flex items-center gap-1.5 min-w-0">

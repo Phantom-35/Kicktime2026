@@ -1,14 +1,24 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Tv } from "lucide-react";
+import { Radio, ArrowUpToLine, Star } from "lucide-react";
 
-type Feature = { icon: typeof Tv; title: string; text: string };
+type Feature = { icon: typeof Radio; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
-    icon: Tv,
-    title: "📺 MagentaTV bei jedem Spiel",
-    text: "MagentaTV überträgt alle WM-Partien und wird ab jetzt bei jedem Spiel angezeigt – zusätzlich zu ARD oder ZDF, wenn das Spiel auch im Free-TV läuft.",
+    icon: Radio,
+    title: "🔴 Live-Fokus",
+    text: "Laufende Spiele springen dir direkt ins Auge! Eine kompakte Live-Sektion bringt dich mit einem Klick zu den Details, alle laufenden Partien bekommen einen dynamischen roten Rahmen.",
+  },
+  {
+    icon: ArrowUpToLine,
+    title: "⬆️ Smart-Scroll im Spielplan",
+    text: "Kein endloses Scrollen mehr an alten Partien vorbei. Der Spiele-Tab springt ab jetzt automatisch zum aktuellen Tag.",
+  },
+  {
+    icon: Star,
+    title: "⭐ Top-Spiele Filter",
+    text: "Über die neue Filter-Pille auf dem Dashboard findest du absolute Highlight-Matches und K.o.-Spiele blitzschnell auf einen Blick.",
   },
 ];
 

@@ -1,104 +1,63 @@
-# Update v6.5.0 — Smarter Push & personalisierte Inhalte
+# Update v7.0.0 — Live-Fokus, Smart-Scroll & Top-Spiele
 
-## 1. Version
-- `src/lib/version.ts` → `6.5.0`
-- `package.json` → `6.5.0`
+Alle bestehenden Funktionen bleiben unverändert. Nur Ergänzungen.
 
-## 2. Intelligenter Push-Berechtigungs-Check (`src/components/match/AlarmBell.tsx`)
+## 1) Kompakte "Jetzt live"-Sektion
 
-Neuer Flow vor jedem Aktivieren:
+**Neue Komponente:** `src/components/match/LiveNowBar.tsx`
+- Liest `useMatchStore(selectMatchList)` und filtert auf `status === "live"`.
+- Rendert nichts, wenn 0 Live-Spiele laufen (auto-hide).
+- Eine schmale Zeile mit pulsierendem roten Dot, Text "Jetzt live · N Spiel(e)" und kompakter Teamliste (Flaggen + Score).
+- Props: `onOpenMatch(match)` und `onOpenList(matches)`.
+- Klick-Logik:
+  - 1 Spiel → ruft `onOpenMatch(theMatch)` auf → öffnet `MatchDetailSheet`.
+  - ≥2 Spiele → öffnet kompakten internen Sheet/Dialog mit Liste; Klick auf Eintrag → `onOpenMatch(match)`.
 
-1. `detectPushSupport()` aufrufen.
-2. Wenn nicht `"granted"`:
-   - **iOS ohne PWA** → bestehender Toast bleibt.
-   - **`"denied"` oder `"default"`** → KEIN `setAlarm(true)`, KEIN Subscribe.
-     Stattdessen ein neues, unaufdringliches Modal anzeigen mit Text:
-     *"Um Spiel-Erinnerungen zu erhalten, aktiviere bitte zuerst die Mitteilungen in deinen Geräteeinstellungen für diese App."*
-   - Bei `"default"` versuchen wir vorher einmalig `Notification.requestPermission()`; wenn der User ablehnt → gleiches Modal.
-3. Nur wenn final `"granted"` → wie bisher Sub + DB-Upsert + Alarm setzen.
+**Einbau:**
+- `src/routes/index.tsx`: direkt über dem `Tabs`-Block, unter dem Countdown.
+- `src/routes/spiele.tsx`: ganz oben über dem Suchfeld.
+- Beide Routes verwalten den bereits vorhandenen `selected`-State für das DetailSheet.
 
-Bell-Optik: Wenn Permission ≠ granted (und nicht iOS-needs-pwa), Bell visuell als "deaktiviert" rendern (dimmed), Klick zeigt direkt das Hinweis-Modal. Aktiv-Status (gefüllte Glocke) nur bei tatsächlich granted + aktivem Alarm.
+**Roter Rahmen für Live-Karten:**
+- `src/components/match/MatchCard.tsx`: Wenn `match.status === "live"`, ergänze die Outer-`className` um `border-destructive ring-2 ring-destructive/40` (statt nur `border-border`). Restliches Styling unberührt.
 
-### Neue Komponente: `src/components/match/PushPermissionModal.tsx`
-- Dialog (shadcn), 1 Button "Verstanden", optional Link "Einstellungen öffnen" (nur Text-Hinweis, da Browser keinen API-Call dafür hat).
-- Wiederverwendbar via `open`/`onClose`-Props.
+## 2) Auto-Scroll im Spiele-Tab
 
-## 3. Dynamische Push-Inhalte
+**`src/routes/spiele.tsx`:**
+- Neuer `useEffect` beim Mount: Findet die erste Tagesgruppe, deren `dayKey >= heutigem dayKey`, sucht das DOM-Element per `data-day-key={key}` und ruft `el.scrollIntoView({ behavior: "smooth", block: "start" })`.
+- Wrapper-`<div>` jeder Tagesgruppe bekommt das `data-day-key`-Attribut und `scroll-mt-20` (für sticky Header).
+- Läuft nur wenn `q === ""` (nicht in Suche reinscrollen).
 
-### 3a. `match_alarm_subscriptions` um Teamnamen erweitern
-Neue Spalten **`team_a_name TEXT`**, **`team_b_name TEXT`** (nullable, kein Default).
-- `addMatchAlarm()` (`src/lib/push-subscriptions.ts`) erhält 2 neue Parameter `teamAName`, `teamBName` und schreibt sie beim Upsert mit.
-- Aufrufer `src/components/match/AlarmBell.tsx` übergibt `getTeam(match.teamA).name` und `getTeam(match.teamB).name`.
+## 3) Vierte Filter-Pille "Besondere Spiele"
 
-Begründung: Edge Function läuft serverseitig und kennt nur DB-Daten; Teamnamen direkt im Alarm-Row hält die Function simpel und vermeidet Joins zu Schedule-JSON.
-
-### 3b. Edge Function `supabase/functions/send-push-reminders/index.ts`
-- `select(...)` ergänzen um `team_a_name, team_b_name`.
-- Payload-Aufbau ändern:
+**`src/routes/index.tsx`:**
+- `TabsList` von `grid-cols-3` auf `grid-cols-4`; neuer `TabsTrigger value="special"` mit Label "⭐ Top".
+- Neuer `TabsContent value="special"` mit Section "Besondere Spiele · K.o. & Deutschland".
+- Berechnung:
   ```ts
-  const teamA = row.team_a_name ?? "Team A";
-  const teamB = row.team_b_name ?? "Team B";
-  const payload = JSON.stringify({
-    title: "Anpfiff steht bevor! 🏆",
-    body: `${teamA} - ${teamB} startet in ${minutesLeft} Minuten!`,
-    url: "/",
-    tag: `match-${row.match_id}`,
-  });
+  const special = phaseMatches.filter(m =>
+    m.teamA === "DEU" || m.teamB === "DEU" ||
+    (m.stage !== "group" && m.stage !== "round32")  // Achtel & später
+  ).sort(byTime);
   ```
-- `minutesLeft = Math.max(1, Math.round((kickoff - now) / 60000))`.
+  Stage-Werte werden vorher mit dem tatsächlichen Schema aus `src/data/matches.ts` abgeglichen (Achtel = `round16`/`r16`).
+- Verwendet `Stream` mit Footer = `AlarmRow` analog zu "Nacht".
 
-### 3c. Service Worker `public/sw.js`
-- Bleibt strukturell identisch — er nutzt bereits `payload.title` / `payload.body`.
-- Default-Fallback-Texte aktualisieren (Title „Anpfiff steht bevor! 🏆", Body „Gleich startet dein Spiel!") für den seltenen Fall eines leeren Payloads.
+## 4) WhatsNewModal v7.0.0
 
-## 4. WhatsNewModal v6.5.0
-`src/components/whats-new/WhatsNewModal.tsx` — Feature-Liste austauschen:
-- 🔔 **Smarter Push-Check** — "Die Erinnerungs-Glocken prüfen jetzt deinen Systemstatus. Fehlen die Rechte, erinnert dich die App direkt an deine Geräteeinstellungen."
-- 💬 **Personalisierte Benachrichtigungen** — "Push-Nachrichten zeigen dir ab jetzt direkt auf dem Sperrbildschirm an, welches Match in 15 Minuten startet!"
+**`src/components/whats-new/WhatsNewModal.tsx`:** Drei neue Features mit Icons (`Radio`, `ArrowUpToLine`, `Star` aus lucide-react):
+- "🔴 Live-Fokus" — Live-Sektion + roter Rahmen.
+- "⬆️ Smart-Scroll im Spielplan" — Auto-Scroll zum aktuellen Tag.
+- "⭐ Top-Spiele Filter" — vierte Pille.
 
-Version-Badge auf `v6.5.0`.
+**Version-Bumps:**
+- `src/lib/version.ts` → `"7.0.0"`
+- `package.json` → `7.0.0`
 
-## 5. Geänderte / neue Dateien
+## Technische Details / Stage-Werte
 
-**Neu:**
-- `src/components/match/PushPermissionModal.tsx`
+Vor Implementierung: `src/data/matches.ts` lesen, um exakten `MatchStage`-Typ zu kennen (z. B. `"group" | "round32" | "round16" | "quarter" | "semi" | "final"`). Filter in (3) entsprechend anpassen, sodass "ab Achtelfinale" korrekt heißt: alles außer `group` und ggf. `round32`.
 
-**Bearbeitet:**
-- `src/lib/version.ts`, `package.json`
-- `src/components/match/AlarmBell.tsx` (Permission-Gate + Modal + Teamnamen-Pass-Through)
-- `src/lib/push-subscriptions.ts` (`addMatchAlarm` Signatur)
-- `supabase/functions/send-push-reminders/index.ts` (Select + Payload)
-- `public/sw.js` (Fallback-Texte)
-- `src/components/whats-new/WhatsNewModal.tsx`
+## Was du manuell tun musst
 
-**Unverändert:** match-store, feedback, tv-overrides, etc.
-
-## 6. Manuelle Schritte am Ende
-
-Du bekommst nach dem Build einen Copy-Paste-Block:
-
-### A) Supabase SQL (Spalten ergänzen, idempotent)
-```sql
-alter table public.match_alarm_subscriptions
-  add column if not exists team_a_name text,
-  add column if not exists team_b_name text;
-```
-
-### B) Edge Function neu deployen
-Die Datei `supabase/functions/send-push-reminders/index.ts` wurde im Repo aktualisiert. Im Supabase-Dashboard:
-1. Edge Functions → `send-push-reminders` → "Deploy new version" mit dem aktuellen Code.
-2. Sicherstellen dass Secrets `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` weiterhin gesetzt sind.
-
-### C) Verifikation
-1. Auf Dashboard alte Glocke deaktivieren → neu aktivieren (damit Teamnamen in DB landen).
-2. Im SQL-Editor prüfen:
-   ```sql
-   select match_id, team_a_name, team_b_name, kickoff_utc
-   from public.match_alarm_subscriptions
-   order by kickoff_utc desc limit 5;
-   ```
-3. Für ein nahes Spiel (oder `kickoff_utc` testweise nach vorne ziehen) Edge-Function manuell triggern und Push am Gerät prüfen — Titel "Anpfiff steht bevor! 🏆", Body "Team A - Team B startet in X Minuten!".
-
-### D) Permission-Test
-- iOS PWA / Android Chrome: Benachrichtigungen in Systemeinstellungen deaktivieren → Glocke klicken → Modal muss erscheinen, kein Abo angelegt.
-- Wieder aktivieren → Glocke klicken → Abo wird angelegt + Bestätigungs-Toast.
+**Nichts.** Keine SQL-Migrationen, keine Edge-Function-Deploys, keine Secrets, keine Permission-Änderungen. Reines Frontend-Update — wird mit dem nächsten Reload aktiv und das Whats-New-Modal poppt automatisch dank Versions-Bump.

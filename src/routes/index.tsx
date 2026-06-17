@@ -10,6 +10,7 @@ import { categorizeMatches } from "@/lib/categorize";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { AlarmBell } from "@/components/match/AlarmBell";
+import { LiveNowBar } from "@/components/match/LiveNowBar";
 import { TournamentCountdown } from "@/components/dashboard/TournamentCountdown";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { incrementOpenCount, shouldShowFeedback, markFeedbackShown } from "@/lib/open-counter";
@@ -69,6 +70,18 @@ function Dashboard() {
     });
   }, [cats.perfect, state.favoriteTeams, state.interestingTeams]);
 
+  const specialSorted = useMemo(() => {
+    const list = phaseMatches.filter(
+      (m) =>
+        m.teamA === "GER" ||
+        m.teamB === "GER" ||
+        (m.stage !== "group" && m.stage !== "r32")
+    );
+    return [...list].sort(
+      (a, b) => new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime()
+    );
+  }, [phaseMatches]);
+
   const [selected, setSelected] = useState<Match | null>(null);
   const showCountdown = useAppStore((s) => s.showCountdown);
 
@@ -98,8 +111,10 @@ function Dashboard() {
         </span>
       </div>
 
+      <LiveNowBar onOpenMatch={(m) => setSelected(m)} />
+
       <Tabs defaultValue="perfect" className="w-full">
-        <TabsList className="grid grid-cols-3 w-full h-11 bg-card">
+        <TabsList className="grid grid-cols-4 w-full h-11 bg-card">
           <TabsTrigger value="perfect" className="text-[11px] px-1">
             🟢 Perfect <span className="ml-1 opacity-60">{cats.perfect.length}</span>
           </TabsTrigger>
@@ -108,6 +123,9 @@ function Dashboard() {
           </TabsTrigger>
           <TabsTrigger value="missed" className="text-[11px] px-1">
             🔴 Verpasst <span className="ml-1 opacity-60">{cats.missed.length}</span>
+          </TabsTrigger>
+          <TabsTrigger value="special" className="text-[11px] px-1">
+            ⭐ Top <span className="ml-1 opacity-60">{specialSorted.length}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -171,6 +189,21 @@ function Dashboard() {
             empty="Du hast nichts verpasst – sauber!"
           >
             <MissedStream matches={cats.missed} onSelect={setSelected} />
+          </Section>
+        </TabsContent>
+
+        <TabsContent value="special" className="mt-4">
+          <Section
+            title="Besondere Spiele"
+            subtitle="Deutschland-Partien & K.o.-Runde ab Achtelfinale."
+            empty="Aktuell keine Top-Spiele in dieser Phase."
+          >
+            <Stream
+              matches={specialSorted}
+              onSelect={setSelected}
+              indicator={null}
+              footer={(m) => <AlarmRow match={m} />}
+            />
           </Section>
         </TabsContent>
 
