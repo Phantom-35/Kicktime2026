@@ -10,6 +10,7 @@ import { categorizeMatches } from "@/lib/categorize";
 import { MatchCard } from "@/components/match/MatchCard";
 import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { AlarmBell } from "@/components/match/AlarmBell";
+import { LiveNowBar } from "@/components/match/LiveNowBar";
 import { TournamentCountdown } from "@/components/dashboard/TournamentCountdown";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { incrementOpenCount, shouldShowFeedback, markFeedbackShown } from "@/lib/open-counter";
