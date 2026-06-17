@@ -10,6 +10,12 @@ export type RuntimeMatch = Match & {
   status: MatchStatus;
   liveScore?: { a: number; b: number };
   matchMinute?: number;
+  /** Timestamp of the most recent manual override. While set, the API layer
+   *  ignores stale data that matches the pre-override signature. */
+  manualAt?: number;
+  /** Signature of the last accepted API payload (`status|a:b|min`). Used to
+   *  detect whether new API data is a real change vs. a re-broadcast. */
+  lastApiSignature?: string;
 };
 
 export type LiveUpdate = {
@@ -28,7 +34,10 @@ type State = {
 
 type Actions = {
   applyLiveUpdate: (id: string, u: LiveUpdate) => void;
+  applyManualUpdate: (id: string, u: LiveUpdate) => void;
+  applyApiUpdate: (id: string, u: LiveUpdate) => void;
   finishMatch: (id: string, finalScore: { a: number; b: number }) => void;
+  finishMatchFromApi: (id: string, finalScore: { a: number; b: number }) => void;
   clearLiveOverlay: (id: string) => void;
   tickClock: (deltaMs: number) => void;
   syncWithRealTime: () => void;
@@ -36,6 +45,7 @@ type Actions = {
   replaceAll: (payload: RuntimeMatch[]) => void;
   resetMatches: () => void;
 };
+
 
 const MATCH_DURATION_MS = 115 * 60 * 1000;
 
