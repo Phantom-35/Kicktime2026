@@ -188,6 +188,77 @@ export const useMatchStore = create<State & Actions>((set) => ({
   resetMatches: () => set({ matches: seed(), now: Date.now() }),
 }));
 
+type SetFn = (fn: (s: State & Actions) => Partial<State & Actions> | State & Actions) => void;
+
+function signatureOf(m: Pick<RuntimeMatch, "status" | "liveScore" | "matchMinute">): string {
+  const a = m.liveScore?.a ?? "";
+  const b = m.liveScore?.b ?? "";
+  const min = m.matchMinute ?? "";
+  return `${m.status}|${a}:${b}|${min}`;
+}
+
+function applyUpdateInternal(
+  set: SetFn,
+  id: string,
+  u: LiveUpdate,
+  source: "manual" | "api"
+): void {
+  set((s) => {
+    const cur = s.matches[id];
+    if (!cur) return s;
+
+    const merged: RuntimeMatch = {
+      ...cur,
+      ...(u.liveScore !== undefined ? { liveScore: u.liveScore } : {}),
+      ...(u.matchMinute !== undefined ? { matchMinute: u.matchMinute } : {}),
+      ...(u.status !== undefined ? { status: u.status } : {}),
+      ...(u.utcTimestamp !== undefined ? { utcTimestamp: u.utcTimestamp } : {}),
+      ...(u.stadium !== undefined ? { stadium: u.stadium } : {}),
+      ...(u.city !== undefined ? { city: u.city } : {}),
+    };
+
+    const curSig = signatureOf(cur);
+    const newSig = signatureOf(merged);
+
+    if (source === "api") {
+      const incomingApiSig = signatureOf({
+        status: u.status ?? cur.status,
+        liveScore: u.liveScore ?? cur.liveScore,
+        matchMinute: u.matchMinute ?? cur.matchMinute,
+      });
+
+      // Manual override in place AND API hasn't changed since last poll → ignore stale broadcast.
+      if (cur.manualAt && cur.lastApiSignature === incomingApiSig) {
+        return s;
+      }
+
+      // Record this API signature; if it's a real change, drop manual lock.
+      merged.lastApiSignature = incomingApiSig;
+      if (cur.manualAt && cur.lastApiSignature !== incomingApiSig) {
+        merged.manualAt = undefined;
+      }
+    } else {
+      // Manual write: mark precedence.
+      merged.manualAt = Date.now();
+    }
+
+    // Equality guard: no UI-visible change → skip set() entirely.
+    if (
+      curSig === newSig &&
+      cur.utcTimestamp === merged.utcTimestamp &&
+      cur.stadium === merged.stadium &&
+      cur.city === merged.city &&
+      cur.manualAt === merged.manualAt &&
+      cur.lastApiSignature === merged.lastApiSignature
+    ) {
+      return s;
+    }
+
+    return { matches: { ...s.matches, [id]: merged } };
+  });
+}
+
+
 function rollMatches(
   matches: Record<string, RuntimeMatch>,
   now: number
