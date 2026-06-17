@@ -190,6 +190,8 @@ function Dashboard() {
           >
             <MissedStream matches={cats.missed} onSelect={setSelected} />
           </Section>
+        </TabsContent>
+
         <TabsContent value="special" className="mt-4">
           <Section
             title="Besondere Spiele"
