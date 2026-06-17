@@ -111,8 +111,10 @@ function Dashboard() {
         </span>
       </div>
 
+      <LiveNowBar onOpenMatch={(m) => setSelected(m)} />
+
       <Tabs defaultValue="perfect" className="w-full">
-        <TabsList className="grid grid-cols-3 w-full h-11 bg-card">
+        <TabsList className="grid grid-cols-4 w-full h-11 bg-card">
           <TabsTrigger value="perfect" className="text-[11px] px-1">
             🟢 Perfect <span className="ml-1 opacity-60">{cats.perfect.length}</span>
           </TabsTrigger>
@@ -121,6 +123,9 @@ function Dashboard() {
           </TabsTrigger>
           <TabsTrigger value="missed" className="text-[11px] px-1">
             🔴 Verpasst <span className="ml-1 opacity-60">{cats.missed.length}</span>
+          </TabsTrigger>
+          <TabsTrigger value="special" className="text-[11px] px-1">
+            ⭐ Top <span className="ml-1 opacity-60">{specialSorted.length}</span>
           </TabsTrigger>
         </TabsList>
 
