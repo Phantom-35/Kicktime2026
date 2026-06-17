@@ -70,6 +70,18 @@ function Dashboard() {
     });
   }, [cats.perfect, state.favoriteTeams, state.interestingTeams]);
 
+  const specialSorted = useMemo(() => {
+    const list = phaseMatches.filter(
+      (m) =>
+        m.teamA === "GER" ||
+        m.teamB === "GER" ||
+        (m.stage !== "group" && m.stage !== "r32")
+    );
+    return [...list].sort(
+      (a, b) => new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime()
+    );
+  }, [phaseMatches]);
+
   const [selected, setSelected] = useState<Match | null>(null);
   const showCountdown = useAppStore((s) => s.showCountdown);
 
