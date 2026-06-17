@@ -190,6 +190,19 @@ function Dashboard() {
           >
             <MissedStream matches={cats.missed} onSelect={setSelected} />
           </Section>
+        <TabsContent value="special" className="mt-4">
+          <Section
+            title="Besondere Spiele"
+            subtitle="Deutschland-Partien & K.o.-Runde ab Achtelfinale."
+            empty="Aktuell keine Top-Spiele in dieser Phase."
+          >
+            <Stream
+              matches={specialSorted}
+              onSelect={setSelected}
+              indicator={null}
+              footer={(m) => <AlarmRow match={m} />}
+            />
+          </Section>
         </TabsContent>
 
       </Tabs>
