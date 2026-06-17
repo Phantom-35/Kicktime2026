@@ -116,7 +116,7 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
       f.liveScore && flipped
         ? { a: f.liveScore.b, b: f.liveScore.a }
         : f.liveScore;
-    state.applyLiveUpdate(match.id, {
+    state.applyApiUpdate(match.id, {
       status: f.status,
       liveScore,
       matchMinute: f.matchMinute,
@@ -125,8 +125,9 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
       city: f.city,
     });
     if (f.status === "finished" && liveScore) {
-      state.finishMatch(match.id, liveScore);
+      state.finishMatchFromApi(match.id, liveScore);
     }
+
   }
 }
 
