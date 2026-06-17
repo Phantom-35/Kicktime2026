@@ -47,7 +47,7 @@ export function applyOverridesToStore(overrides: MatchOverride[]): void {
     if (o.status === "finished") {
       state.finishMatch(o.match_id, { a: o.score_a, b: o.score_b });
     } else {
-      state.applyLiveUpdate(o.match_id, {
+      state.applyManualUpdate(o.match_id, {
         status: o.status,
         liveScore: { a: o.score_a, b: o.score_b },
         matchMinute: o.minute ?? undefined,
@@ -55,6 +55,7 @@ export function applyOverridesToStore(overrides: MatchOverride[]): void {
     }
   }
 }
+
 
 function clampInt(v: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, Math.floor(v)));

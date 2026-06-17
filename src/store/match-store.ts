@@ -10,6 +10,12 @@ export type RuntimeMatch = Match & {
   status: MatchStatus;
   liveScore?: { a: number; b: number };
   matchMinute?: number;
+  /** Timestamp of the most recent manual override. While set, the API layer
+   *  ignores stale data that matches the pre-override signature. */
+  manualAt?: number;
+  /** Signature of the last accepted API payload (`status|a:b|min`). Used to
+   *  detect whether new API data is a real change vs. a re-broadcast. */
+  lastApiSignature?: string;
 };
 
 export type LiveUpdate = {
@@ -28,7 +34,10 @@ type State = {
 
 type Actions = {
   applyLiveUpdate: (id: string, u: LiveUpdate) => void;
+  applyManualUpdate: (id: string, u: LiveUpdate) => void;
+  applyApiUpdate: (id: string, u: LiveUpdate) => void;
   finishMatch: (id: string, finalScore: { a: number; b: number }) => void;
+  finishMatchFromApi: (id: string, finalScore: { a: number; b: number }) => void;
   clearLiveOverlay: (id: string) => void;
   tickClock: (deltaMs: number) => void;
   syncWithRealTime: () => void;
@@ -36,6 +45,7 @@ type Actions = {
   replaceAll: (payload: RuntimeMatch[]) => void;
   resetMatches: () => void;
 };
+
 
 const MATCH_DURATION_MS = 115 * 60 * 1000;
 
@@ -65,34 +75,66 @@ export const useMatchStore = create<State & Actions>((set) => ({
   matches: seed(),
   now: Date.now(),
 
-  applyLiveUpdate: (id, u) =>
-    set((s) => {
-      const cur = s.matches[id];
-      if (!cur) return s;
-      return {
-        matches: {
-          ...s.matches,
-          [id]: {
-            ...cur,
-            ...(u.liveScore !== undefined ? { liveScore: u.liveScore } : {}),
-            ...(u.matchMinute !== undefined ? { matchMinute: u.matchMinute } : {}),
-            ...(u.status !== undefined ? { status: u.status } : {}),
-            ...(u.utcTimestamp !== undefined ? { utcTimestamp: u.utcTimestamp } : {}),
-            ...(u.stadium !== undefined ? { stadium: u.stadium } : {}),
-            ...(u.city !== undefined ? { city: u.city } : {}),
-          },
-        },
-      };
-    }),
+  applyLiveUpdate: (id, u) => applyUpdateInternal(set, id, u, "manual"),
+  applyManualUpdate: (id, u) => applyUpdateInternal(set, id, u, "manual"),
+  applyApiUpdate: (id, u) => applyUpdateInternal(set, id, u, "api"),
 
   finishMatch: (id, finalScore) =>
     set((s) => {
       const cur = s.matches[id];
       if (!cur) return s;
+      if (
+        cur.status === "finished" &&
+        cur.score?.a === finalScore.a &&
+        cur.score?.b === finalScore.b
+      ) {
+        return s;
+      }
       return {
         matches: {
           ...s.matches,
-          [id]: { ...cur, status: "finished", score: finalScore, liveScore: undefined, matchMinute: undefined },
+          [id]: {
+            ...cur,
+            status: "finished",
+            score: finalScore,
+            liveScore: undefined,
+            matchMinute: undefined,
+            manualAt: Date.now(),
+          },
+        },
+      };
+    }),
+
+  finishMatchFromApi: (id, finalScore) =>
+    set((s) => {
+      const cur = s.matches[id];
+      if (!cur) return s;
+      const apiSig = `finished|${finalScore.a}:${finalScore.b}|`;
+      // Manual override active and API hasn't changed → keep manual.
+      if (cur.manualAt && cur.lastApiSignature === apiSig) return s;
+      if (
+        cur.status === "finished" &&
+        cur.score?.a === finalScore.a &&
+        cur.score?.b === finalScore.b
+      ) {
+        // Refresh signature only, no re-render needed.
+        if (cur.lastApiSignature === apiSig) return s;
+        return {
+          matches: { ...s.matches, [id]: { ...cur, lastApiSignature: apiSig } },
+        };
+      }
+      return {
+        matches: {
+          ...s.matches,
+          [id]: {
+            ...cur,
+            status: "finished",
+            score: finalScore,
+            liveScore: undefined,
+            matchMinute: undefined,
+            manualAt: undefined,
+            lastApiSignature: apiSig,
+          },
         },
       };
     }),
@@ -102,13 +144,23 @@ export const useMatchStore = create<State & Actions>((set) => ({
       const cur = s.matches[id];
       if (!cur) return s;
       // Reset to a clean scheduled state — the next API poll re-fills it.
+      // Clear manualAt so the API layer is free to take over again.
       return {
         matches: {
           ...s.matches,
-          [id]: { ...cur, status: "scheduled", liveScore: undefined, matchMinute: undefined, score: cur.status === "finished" ? cur.score : undefined },
+          [id]: {
+            ...cur,
+            status: "scheduled",
+            liveScore: undefined,
+            matchMinute: undefined,
+            score: cur.status === "finished" ? cur.score : undefined,
+            manualAt: undefined,
+            lastApiSignature: undefined,
+          },
         },
       };
     }),
+
 
   tickClock: (deltaMs) =>
     set((s) => {
@@ -135,6 +187,77 @@ export const useMatchStore = create<State & Actions>((set) => ({
 
   resetMatches: () => set({ matches: seed(), now: Date.now() }),
 }));
+
+type SetFn = (fn: (s: State & Actions) => Partial<State & Actions> | State & Actions) => void;
+
+function signatureOf(m: Pick<RuntimeMatch, "status" | "liveScore" | "matchMinute">): string {
+  const a = m.liveScore?.a ?? "";
+  const b = m.liveScore?.b ?? "";
+  const min = m.matchMinute ?? "";
+  return `${m.status}|${a}:${b}|${min}`;
+}
+
+function applyUpdateInternal(
+  set: SetFn,
+  id: string,
+  u: LiveUpdate,
+  source: "manual" | "api"
+): void {
+  set((s) => {
+    const cur = s.matches[id];
+    if (!cur) return s;
+
+    const merged: RuntimeMatch = {
+      ...cur,
+      ...(u.liveScore !== undefined ? { liveScore: u.liveScore } : {}),
+      ...(u.matchMinute !== undefined ? { matchMinute: u.matchMinute } : {}),
+      ...(u.status !== undefined ? { status: u.status } : {}),
+      ...(u.utcTimestamp !== undefined ? { utcTimestamp: u.utcTimestamp } : {}),
+      ...(u.stadium !== undefined ? { stadium: u.stadium } : {}),
+      ...(u.city !== undefined ? { city: u.city } : {}),
+    };
+
+    const curSig = signatureOf(cur);
+    const newSig = signatureOf(merged);
+
+    if (source === "api") {
+      const incomingApiSig = signatureOf({
+        status: u.status ?? cur.status,
+        liveScore: u.liveScore ?? cur.liveScore,
+        matchMinute: u.matchMinute ?? cur.matchMinute,
+      });
+
+      // Manual override in place AND API hasn't changed since last poll → ignore stale broadcast.
+      if (cur.manualAt && cur.lastApiSignature === incomingApiSig) {
+        return s;
+      }
+
+      // Record this API signature; if it's a real change, drop manual lock.
+      merged.lastApiSignature = incomingApiSig;
+      if (cur.manualAt && cur.lastApiSignature !== incomingApiSig) {
+        merged.manualAt = undefined;
+      }
+    } else {
+      // Manual write: mark precedence.
+      merged.manualAt = Date.now();
+    }
+
+    // Equality guard: no UI-visible change → skip set() entirely.
+    if (
+      curSig === newSig &&
+      cur.utcTimestamp === merged.utcTimestamp &&
+      cur.stadium === merged.stadium &&
+      cur.city === merged.city &&
+      cur.manualAt === merged.manualAt &&
+      cur.lastApiSignature === merged.lastApiSignature
+    ) {
+      return s;
+    }
+
+    return { matches: { ...s.matches, [id]: merged } };
+  });
+}
+
 
 function rollMatches(
   matches: Record<string, RuntimeMatch>,

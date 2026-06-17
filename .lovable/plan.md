@@ -1,63 +1,60 @@
-# Update v7.0.0 — Live-Fokus, Smart-Scroll & Top-Spiele
+# Fix: Blink-Bug bei Live-Spielen (Race Condition Override ↔ API)
 
-Alle bestehenden Funktionen bleiben unverändert. Nur Ergänzungen.
+## Ursache
 
-## 1) Kompakte "Jetzt live"-Sektion
+Der Live-Polling-Zyklus in `useLiveApi.runLive` lädt erst die API, wendet sie auf den Store an, danach erst die Overrides. Wenn die OpenLigaDB-API einen veralteten Stand (z. B. 0:0) zurückgibt, überschreibt sie für wenige Millisekunden den manuellen Override (z. B. 2:1) — direkt danach zieht der Override-Re-Apply den korrekten Wert wieder rein → sichtbares Flimmern.
 
-**Neue Komponente:** `src/components/match/LiveNowBar.tsx`
-- Liest `useMatchStore(selectMatchList)` und filtert auf `status === "live"`.
-- Rendert nichts, wenn 0 Live-Spiele laufen (auto-hide).
-- Eine schmale Zeile mit pulsierendem roten Dot, Text "Jetzt live · N Spiel(e)" und kompakter Teamliste (Flaggen + Score).
-- Props: `onOpenMatch(match)` und `onOpenList(matches)`.
-- Klick-Logik:
-  - 1 Spiel → ruft `onOpenMatch(theMatch)` auf → öffnet `MatchDetailSheet`.
-  - ≥2 Spiele → öffnet kompakten internen Sheet/Dialog mit Liste; Klick auf Eintrag → `onOpenMatch(match)`.
+Zusätzlich triggert `applyLiveUpdate` ein `set()` auch dann, wenn sich nichts geändert hat (gleiche Score-Werte) → unnötige Re-Renders. Und `rollMatches` markiert beendete Spiele ohne Score in jedem Tick als "changed" → 10-Sek-Render-Storm.
 
-**Einbau:**
-- `src/routes/index.tsx`: direkt über dem `Tabs`-Block, unter dem Countdown.
-- `src/routes/spiele.tsx`: ganz oben über dem Suchfeld.
-- Beide Routes verwalten den bereits vorhandenen `selected`-State für das DetailSheet.
+## Lösung in 3 Bausteinen
 
-**Roter Rahmen für Live-Karten:**
-- `src/components/match/MatchCard.tsx`: Wenn `match.status === "live"`, ergänze die Outer-`className` um `border-destructive ring-2 ring-destructive/40` (statt nur `border-border`). Restliches Styling unberührt.
+### 1. Precedence-Marker pro Match (`src/store/match-store.ts`)
 
-## 2) Auto-Scroll im Spiele-Tab
+`RuntimeMatch` bekommt zwei optionale Felder:
 
-**`src/routes/spiele.tsx`:**
-- Neuer `useEffect` beim Mount: Findet die erste Tagesgruppe, deren `dayKey >= heutigem dayKey`, sucht das DOM-Element per `data-day-key={key}` und ruft `el.scrollIntoView({ behavior: "smooth", block: "start" })`.
-- Wrapper-`<div>` jeder Tagesgruppe bekommt das `data-day-key`-Attribut und `scroll-mt-20` (für sticky Header).
-- Läuft nur wenn `q === ""` (nicht in Suche reinscrollen).
+```ts
+manualAt?: number;        // Date.now() beim letzten manuellen Override
+lastSignature?: string;   // `${status}|${a}:${b}|${minute}` der zuletzt akzeptierten Werte
+```
 
-## 3) Vierte Filter-Pille "Besondere Spiele"
+Zwei getrennte Actions statt einer:
 
-**`src/routes/index.tsx`:**
-- `TabsList` von `grid-cols-3` auf `grid-cols-4`; neuer `TabsTrigger value="special"` mit Label "⭐ Top".
-- Neuer `TabsContent value="special"` mit Section "Besondere Spiele · K.o. & Deutschland".
-- Berechnung:
-  ```ts
-  const special = phaseMatches.filter(m =>
-    m.teamA === "DEU" || m.teamB === "DEU" ||
-    (m.stage !== "group" && m.stage !== "round32")  // Achtel & später
-  ).sort(byTime);
-  ```
-  Stage-Werte werden vorher mit dem tatsächlichen Schema aus `src/data/matches.ts` abgeglichen (Achtel = `round16`/`r16`).
-- Verwendet `Stream` mit Footer = `AlarmRow` analog zu "Nacht".
+- `applyManualUpdate(id, u)` — wird vom Override-Layer aufgerufen. Setzt `manualAt = Date.now()`, gewinnt immer.
+- `applyApiUpdate(id, u)` — wird vom API-Layer aufgerufen. Regel:
+  - Wenn `manualAt` gesetzt ist UND die API-Signatur **identisch** zur Pre-Override-Signatur (`lastApiSignature`) ist → **skip** (Stale-Daten ignorieren).
+  - Wenn die API-Signatur sich vom letzten API-Stand **unterscheidet** → übernehmen (echtes neues Event, z. B. neues Tor) und `manualAt` löschen, damit die API wieder die Führung hat.
+  - Equality-Guard: wenn neue Signatur == aktuelle Signatur → kein `set()`.
 
-## 4) WhatsNewModal v7.0.0
+`lastApiSignature?: string` als drittes Tracking-Feld; wird nur in `applyApiUpdate` aktualisiert.
 
-**`src/components/whats-new/WhatsNewModal.tsx`:** Drei neue Features mit Icons (`Radio`, `ArrowUpToLine`, `Star` aus lucide-react):
-- "🔴 Live-Fokus" — Live-Sektion + roter Rahmen.
-- "⬆️ Smart-Scroll im Spielplan" — Auto-Scroll zum aktuellen Tag.
-- "⭐ Top-Spiele Filter" — vierte Pille.
+`finishMatch` und `clearLiveOverlay` ebenfalls mit Equality-Guard, `clearLiveOverlay` setzt `manualAt = undefined`, damit die API wieder ungehindert füttert.
 
-**Version-Bumps:**
-- `src/lib/version.ts` → `"7.0.0"`
-- `package.json` → `7.0.0`
+### 2. API-Layer ruft die richtige Action (`src/services/footballApi.ts`)
 
-## Technische Details / Stage-Werte
+`applyLiveFixturesToStore` ruft `applyApiUpdate` (neu) statt `applyLiveUpdate`. `finishMatch` darf weiterhin direkt aufgerufen werden, aber ebenfalls mit der gleichen Manual-Precedence-Regel (eigene Variante `applyApiFinish` oder Check inline).
 
-Vor Implementierung: `src/data/matches.ts` lesen, um exakten `MatchStage`-Typ zu kennen (z. B. `"group" | "round32" | "round16" | "quarter" | "semi" | "final"`). Filter in (3) entsprechend anpassen, sodass "ab Achtelfinale" korrekt heißt: alles außer `group` und ggf. `round32`.
+`useLiveApi.runLive` Reihenfolge bleibt: API → dann Overrides. Da `applyApiUpdate` jetzt veraltete API-Daten verwirft, wenn manueller Override aktiv ist, entsteht kein Flimmern mehr.
 
-## Was du manuell tun musst
+### 3. Override-Layer markiert + sofortige Anwendung (`src/lib/match-overrides.ts`)
 
-**Nichts.** Keine SQL-Migrationen, keine Edge-Function-Deploys, keine Secrets, keine Permission-Änderungen. Reines Frontend-Update — wird mit dem nächsten Reload aktiv und das Whats-New-Modal poppt automatisch dank Versions-Bump.
+- `applyOverridesToStore` und `setMatchOverride` rufen `applyManualUpdate`/`finishMatch` (manual variant), niemals die API-Variante.
+- `clearMatchOverride` ruft das vorhandene `clearLiveOverlay` → `manualAt` wird gelöscht → API darf sofort wieder übernehmen.
+
+### 4. Sauberer Status-Wechsel "beendet" (`rollMatches`)
+
+Bei beendetem Match ohne Score: nur einmal `changed = true` setzen — Equality-Check ergänzen, damit nicht jeder 10-Sek-Tick einen identischen Status erneut schreibt. Verhindert Flackern des "Jetzt live"-Badges in der `LiveNowBar` rund um Spielende.
+
+## Was sich NICHT ändert
+
+- Polling-Intervalle, Edge-Functions, DB-Schema, Admin-PIN, UI-Komponenten (`MatchCard`, `LiveNowBar`, `MatchDetailSheet`).
+- API darf nach manuellem Override weiterhin neue Events einspielen (echte Tore, Endpfiff) — sobald sich die API-Signatur ändert, gewinnt sie wieder.
+
+## Geänderte Dateien
+
+- `src/store/match-store.ts` — neue Felder + `applyApiUpdate` Action + Equality-Guards.
+- `src/services/footballApi.ts` — `applyLiveFixturesToStore` ruft `applyApiUpdate`.
+- `src/lib/match-overrides.ts` — `applyOverridesToStore` ruft `applyManualUpdate`.
+
+## Manuelle Schritte
+
+Keine. Reines Frontend-Refactor, kein SQL, kein Edge-Function-Deploy nötig.
