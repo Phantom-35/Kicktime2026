@@ -57,9 +57,28 @@ function SpielePage() {
       .map(([key, v]) => [key, v.label, v.list] as const);
   }, [filtered]);
 
+  useEffect(() => {
+    if (didScrollRef.current) return;
+    if (q.trim() !== "") return;
+    if (grouped.length === 0) return;
+    const today = new Date();
+    const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const target = grouped.find(([key]) => key >= todayKey) ?? grouped[grouped.length - 1];
+    if (!target) return;
+    const id = window.setTimeout(() => {
+      const el = document.querySelector<HTMLElement>(`[data-day-key="${target[0]}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        didScrollRef.current = true;
+      }
+    }, 80);
+    return () => window.clearTimeout(id);
+  }, [grouped, q]);
+
   return (
     <div className="p-4 pb-6 relative">
       <h2 className="text-xl font-bold mb-3">Alle Spiele</h2>
+      <LiveNowBar onOpenMatch={(m) => setSelected(m)} />
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
@@ -72,7 +91,7 @@ function SpielePage() {
 
       <div className="space-y-5">
         {grouped.map(([key, label, list]) => (
-          <div key={key}>
+          <div key={key} data-day-key={key} className="scroll-mt-20">
             <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">{label}</div>
             <div className="space-y-2.5 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-3">
               {list.map((m) => {
