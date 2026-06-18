@@ -222,6 +222,29 @@ function applyUpdateInternal(
       ...(u.city !== undefined ? { city: u.city } : {}),
     };
 
+    // Guard: never demote a finished match back to live/scheduled via either
+    // path. Once a match has ended, the only legitimate score change is the
+    // final score itself — the status MUST stay "finished".
+    if (cur.status === "finished" && merged.status !== "finished") {
+      merged.status = "finished";
+      merged.liveScore = undefined;
+      merged.matchMinute = undefined;
+    }
+
+    // Guard: if the regulation+ET window has elapsed and the incoming update
+    // says "live", auto-promote to "finished". Prevents a stale manual
+    // override from pinning a match in the live state forever.
+    if (merged.status === "live") {
+      const endsAt = new Date(merged.utcTimestamp).getTime() + MATCH_DURATION_MS;
+      if (Date.now() >= endsAt) {
+        const finalScore = merged.liveScore ?? cur.liveScore ?? cur.score;
+        merged.status = "finished";
+        if (finalScore) merged.score = finalScore;
+        merged.liveScore = undefined;
+        merged.matchMinute = undefined;
+      }
+    }
+
     const curSig = signatureOf(cur);
     const newSig = signatureOf(merged);
 
