@@ -109,15 +109,19 @@ export const useMatchStore = create<State & Actions>((set) => ({
     set((s) => {
       const cur = s.matches[id];
       if (!cur) return s;
+      // The "finished" signal from the API MUST always flip the status — even
+      // if a manual override is in place. We only preserve the manual SCORE
+      // (so corrections don't get overwritten by stale API totals).
+      const preserveManualScore = !!cur.manualAt;
+      const score = preserveManualScore
+        ? (cur.liveScore ?? cur.score ?? finalScore)
+        : finalScore;
       const apiSig = `finished|${finalScore.a}:${finalScore.b}|`;
-      // Manual override active and API hasn't changed → keep manual.
-      if (cur.manualAt && cur.lastApiSignature === apiSig) return s;
       if (
         cur.status === "finished" &&
-        cur.score?.a === finalScore.a &&
-        cur.score?.b === finalScore.b
+        cur.score?.a === score.a &&
+        cur.score?.b === score.b
       ) {
-        // Refresh signature only, no re-render needed.
         if (cur.lastApiSignature === apiSig) return s;
         return {
           matches: { ...s.matches, [id]: { ...cur, lastApiSignature: apiSig } },
@@ -129,9 +133,10 @@ export const useMatchStore = create<State & Actions>((set) => ({
           [id]: {
             ...cur,
             status: "finished",
-            score: finalScore,
+            score,
             liveScore: undefined,
             matchMinute: undefined,
+            // Drop the manual lock once we've finalized — match is over.
             manualAt: undefined,
             lastApiSignature: apiSig,
           },
