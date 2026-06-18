@@ -1,10 +1,15 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Radio, ArrowUpToLine, Star } from "lucide-react";
+import { Radio, ArrowUpToLine, Star, CheckCircle2 } from "lucide-react";
 
 type Feature = { icon: typeof Radio; title: string; text: string };
 
 const FEATURES: Feature[] = [
+  {
+    icon: CheckCircle2,
+    title: "🏁 Sauberes Spielende auch mit Override",
+    text: "Manuelle Korrekturen blockieren das Spielende nicht mehr. Sobald die reguläre Spielzeit vorbei ist, springt der Status zuverlässig auf „Beendet“ – deine korrigierten Werte bleiben dabei erhalten.",
+  },
   {
     icon: Radio,
     title: "🔴 Live-Fokus",
