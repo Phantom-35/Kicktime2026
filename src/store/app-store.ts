@@ -122,7 +122,8 @@ export const useAppStore = create<State & Actions>()(
           alarms: {},
         }),
       setTheme: (t) => set({ theme: t }),
-      setPushEnabled: (v) => set({ pushEnabled: v }),
+      setPushEnabled: (v) =>
+        set((s) => (v ? { pushEnabled: true } : { pushEnabled: false, alarms: {}, autoAlarmFavorites: false })),
       setAutoAlarmFavorites: (v) => set({ autoAlarmFavorites: v }),
       setDevSimulateLive: (v) => set({ devSimulateLive: v }),
       setShowCountdown: (v) => set({ showCountdown: v }),
