@@ -264,8 +264,15 @@ export function MatchDetailSheet({
                     const t = getTeam(row.code);
                     const highlight = row.code === match.teamA || row.code === match.teamB;
                     return (
-                      <tr key={row.code} className={highlight ? "bg-primary/15" : ""}>
-                        <td className="pl-4 py-2 font-medium flex items-center gap-2">
+                      <tr
+                        key={row.code}
+                        className={
+                          highlight
+                            ? "bg-accent/15 border-l-2 border-l-accent"
+                            : ""
+                        }
+                      >
+                        <td className={`pl-4 py-2 flex items-center gap-2 ${highlight ? "font-semibold" : "font-medium"}`}>
                           <span>{t.flag}</span> {t.name}
                         </td>
                         <td className="text-center tabular-nums">{row.played}</td>
