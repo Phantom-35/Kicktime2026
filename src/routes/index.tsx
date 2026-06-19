@@ -71,15 +71,21 @@ function Dashboard() {
   }, [cats.perfect, state.favoriteTeams, state.interestingTeams]);
 
   const specialSorted = useMemo(() => {
-    const list = phaseMatches.filter(
-      (m) =>
-        m.teamA === "GER" ||
-        m.teamB === "GER" ||
-        (m.stage !== "group" && m.stage !== "r32")
-    );
-    return [...list].sort(
+    // Strikte "Top"-Pille: Eröffnungsspiel + alle DE-Spiele + Viertel-/Halbfinale + Finale.
+    const sortedByTime = [...phaseMatches].sort(
       (a, b) => new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime()
     );
+    const openerId = sortedByTime[0]?.id;
+    const list = sortedByTime.filter(
+      (m) =>
+        m.id === openerId ||
+        m.teamA === "GER" ||
+        m.teamB === "GER" ||
+        m.stage === "qf" ||
+        m.stage === "sf" ||
+        m.stage === "final"
+    );
+    return list;
   }, [phaseMatches]);
 
   const [selected, setSelected] = useState<Match | null>(null);
