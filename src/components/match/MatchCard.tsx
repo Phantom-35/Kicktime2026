@@ -25,10 +25,21 @@ export function MatchCard({
   children?: React.ReactNode;
 }) {
   const tz = useAppStore((s) => s.userTimezone);
+  const favorites = useAppStore((s) => s.favoriteTeams);
+  const interesting = useAppStore((s) => s.interestingTeams);
   const a = getTeam(match.teamA);
   const b = getTeam(match.teamB);
   const local = getLocalParts(match.utcTimestamp, tz);
   const isLive = match.status === "live";
+
+  // Dynamisches Ampelsystem:
+  //  - Grün, wenn mind. ein Team als Top-Team (favorite) markiert ist
+  //  - Gelb, wenn kein Top-Team, aber mind. ein Team als interessant markiert ist
+  //  - Sonst kein Punkt
+  const isTop = favorites.includes(match.teamA) || favorites.includes(match.teamB);
+  const isInteresting =
+    !isTop && (interesting.includes(match.teamA) || interesting.includes(match.teamB));
+
   return (
     <div
       onClick={onClick}
@@ -41,8 +52,11 @@ export function MatchCard({
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
             Gruppe {match.group}
           </span>
-          {indicator === "perfect" && (
-            <span className="h-2 w-2 rounded-full bg-primary" title="Perfect Match" />
+          {isTop && (
+            <span className="h-2 w-2 rounded-full bg-emerald-500" title="Top-Team" />
+          )}
+          {isInteresting && (
+            <span className="h-2 w-2 rounded-full bg-amber-400" title="Interessantes Team" />
           )}
           {indicator === "night" && (
             <span className="text-accent text-xs" title="Nachtschicht">🌙</span>
