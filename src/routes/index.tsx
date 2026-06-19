@@ -201,7 +201,7 @@ function Dashboard() {
         <TabsContent value="special" className="mt-4">
           <Section
             title="Besondere Spiele"
-            subtitle="Deutschland-Partien & K.o.-Runde ab Achtelfinale."
+            subtitle="Eröffnungsspiel, Deutschland-Partien & Viertel-/Halbfinale + Finale."
             empty="Aktuell keine Top-Spiele in dieser Phase."
           >
             <Stream
