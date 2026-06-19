@@ -20,11 +20,13 @@ export function AlarmBell({ match }: { match: Match }) {
   const alarms = useAppStore((s) => s.alarms);
   const autoFav = useAppStore((s) => s.autoAlarmFavorites);
   const favorites = useAppStore((s) => s.favoriteTeams);
+  const pushEnabled = useAppStore((s) => s.pushEnabled);
   const setAlarm = useAppStore((s) => s.setAlarm);
   const setPushEnabled = useAppStore((s) => s.setPushEnabled);
   const [showPermissionModal, setShowPermissionModal] = useState(false);
 
-  const active = isAlarmActive(match, alarms, autoFav, favorites);
+  // Wenn der globale Push-Schalter aus ist, sind ALLE Glocken visuell inaktiv.
+  const active = pushEnabled && isAlarmActive(match, alarms, autoFav, favorites);
   const isAuto =
     alarms[match.id] === undefined && isAutoFavoriteMatch(match, autoFav, favorites);
 
@@ -33,6 +35,13 @@ export function AlarmBell({ match }: { match: Match }) {
 
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!pushEnabled) {
+      haptics.tap();
+      toast("Push-Benachrichtigungen sind deaktiviert", {
+        description: "Aktiviere sie zuerst in den Einstellungen unter „Profil“.",
+      });
+      return;
+    }
     if (active) {
       setAlarm(match.id, isAuto ? false : null);
       haptics.tap();
