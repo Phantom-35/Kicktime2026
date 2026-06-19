@@ -1,29 +1,34 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Radio, ArrowUpToLine, Star, CheckCircle2 } from "lucide-react";
+import { BellOff, Trophy, Circle, Filter, Table2 } from "lucide-react";
 
-type Feature = { icon: typeof Radio; title: string; text: string };
+type Feature = { icon: typeof BellOff; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
-    icon: CheckCircle2,
-    title: "🏁 Sauberes Spielende auch mit Override",
-    text: "Manuelle Korrekturen blockieren das Spielende nicht mehr. Sobald die reguläre Spielzeit vorbei ist, springt der Status zuverlässig auf „Beendet“ – deine korrigierten Werte bleiben dabei erhalten.",
+    icon: BellOff,
+    title: "🔕 Globaler Push-Sync",
+    text: "Deaktivierst du Push in den Einstellungen, werden ALLE Spiel-Alarme automatisch ausgeschaltet. Die Glocken auf Dashboard & Spiele-Tab zeigen sofort den korrekten Status.",
   },
   {
-    icon: Radio,
-    title: "🔴 Live-Fokus",
-    text: "Laufende Spiele springen dir direkt ins Auge! Eine kompakte Live-Sektion bringt dich mit einem Klick zu den Details, alle laufenden Partien bekommen einen dynamischen roten Rahmen.",
+    icon: Trophy,
+    title: "🏆 Automatisch zur K.-o.-Runde",
+    text: "Sobald die Gruppenphase vorbei ist, wechselt das Banner auf „K.-o.-Runde“. Platzhalter wie „1. Gruppe A“ werden in den KO-Spielen automatisch durch die echten Teams ersetzt.",
   },
   {
-    icon: ArrowUpToLine,
-    title: "⬆️ Smart-Scroll im Spielplan",
-    text: "Kein endloses Scrollen mehr an alten Partien vorbei. Der Spiele-Tab springt ab jetzt automatisch zum aktuellen Tag.",
+    icon: Circle,
+    title: "🟢🟡 Dynamisches Ampelsystem",
+    text: "Match-Cards bekommen jetzt einen smarten Farbpunkt: Grün, wenn ein Top-Team dabei ist, Gelb für ein interessantes Team – sonst bleibt's clean.",
   },
   {
-    icon: Star,
-    title: "⭐ Top-Spiele Filter",
-    text: "Über die neue Filter-Pille auf dem Dashboard findest du absolute Highlight-Matches und K.o.-Spiele blitzschnell auf einen Blick.",
+    icon: Filter,
+    title: "⭐ Strikter Top-Filter",
+    text: "Die „Top“-Pille zeigt jetzt exakt: Eröffnungsspiel, alle Deutschland-Partien sowie Viertelfinale, Halbfinale und Finale.",
+  },
+  {
+    icon: Table2,
+    title: "🎯 Highlight in der Mini-Tabelle",
+    text: "In der Detailansicht eines Spiels werden die beiden beteiligten Teams in der Gruppentabelle jetzt dezent hervorgehoben – die Tabellenposition siehst du auf einen Blick.",
   },
 ];
 
@@ -51,7 +56,7 @@ export function WhatsNewModal({
           </p>
         </DialogHeader>
 
-        <ul className="space-y-2.5 mt-2">
+        <ul className="space-y-2.5 mt-2 max-h-[60vh] overflow-y-auto pr-1">
           {FEATURES.map((f) => (
             <li
               key={f.title}
