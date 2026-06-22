@@ -1,60 +1,38 @@
-# Fix: Blink-Bug bei Live-Spielen (Race Condition Override ↔ API)
+## Update v7.3.0 — Erwartungsmanagement & Admin-Phasen
 
-## Ursache
+### 1. Wording & Icons: „Jetzt im TV"
 
-Der Live-Polling-Zyklus in `useLiveApi.runLive` lädt erst die API, wendet sie auf den Store an, danach erst die Overrides. Wenn die OpenLigaDB-API einen veralteten Stand (z. B. 0:0) zurückgibt, überschreibt sie für wenige Millisekunden den manuellen Override (z. B. 2:1) — direkt danach zieht der Override-Re-Apply den korrekten Wert wieder rein → sichtbares Flimmern.
+**`src/components/match/LiveNowBar.tsx`**
+- Text „Jetzt live" → **„Jetzt im TV"** (Banner-Label und Dialog-Titel).
+- `Radio`-Icon (Funkwellen) entfernen, durch `Tv`-Icon (lucide-react) ersetzen — sowohl im Banner als auch im Dialog-Header.
+- Den pulsierenden roten Dot (`animate-ping`) entfernen, da er ebenfalls einen Echtzeit-Ticker suggeriert. Roter Rahmen + rote Akzentfarbe bleiben als visueller Live-Marker erhalten.
 
-Zusätzlich triggert `applyLiveUpdate` ein `set()` auch dann, wenn sich nichts geändert hat (gleiche Score-Werte) → unnötige Re-Renders. Und `rollMatches` markiert beendete Spiele ohne Score in jedem Tick als "changed" → 10-Sek-Render-Storm.
+**`src/components/match/MatchCard.tsx`**
+- In der roten Status-Pille: Text `Live · {phase}` → **`Läuft · {phase}`**.
+- Den pulsierenden Mini-Dot in der Pille entfernen (passend zum neuen, ruhigeren Erwartungsbild). Die Pille bleibt rot umrandet/eingefärbt; der rote Karten-Rahmen + Ring bleiben unverändert.
 
-## Lösung in 3 Bausteinen
+Der Phasen-Text kommt weiterhin aus `getMatchPhaseLabel()` und ergibt automatisch `1. Halbzeit` / `Halbzeitpause` / `2. Halbzeit`.
 
-### 1. Precedence-Marker pro Match (`src/store/match-store.ts`)
+### 2. Admin-Panel: Phasen-Auswahl statt Minuten-Input
 
-`RuntimeMatch` bekommt zwei optionale Felder:
+**`src/components/admin/LiveOverridePanel.tsx`**
+- Das `<input type="number">`-Feld „Min" entfernen.
+- Stattdessen drei Pillen-Buttons (segmented control) anzeigen, nur sichtbar wenn `status === "live"`:
+  - **1. Halbzeit** → speichert intern `minute = 1`
+  - **Halbzeitpause** → speichert intern `minute = 45`
+  - **2. Halbzeit** → speichert intern `minute = 46`
+- Initialwert aus bestehender `match.matchMinute` ableiten (≥46 → „2. HZ", ==45 → „Pause", sonst „1. HZ").
+- Bei `status === "scheduled"` oder `"finished"` werden die Pillen ausgeblendet; `minute` wird wie bisher als `null` bzw. nicht gesendet.
 
-```ts
-manualAt?: number;        // Date.now() beim letzten manuellen Override
-lastSignature?: string;   // `${status}|${a}:${b}|${minute}` der zuletzt akzeptierten Werte
-```
+**Keine DB-Änderung nötig** — die Spalte `match_overrides.minute` bleibt erhalten. Die drei Sentinel-Werte (1/45/46) passen exakt in die bestehende Logik von `getMatchPhaseLabel()`, sodass die Frontend-Pille automatisch den korrekten Phasentext anzeigt. Keine Migration, kein manueller Eingriff durch dich nötig.
 
-Zwei getrennte Actions statt einer:
+### 3. WhatsNewModal & Version
 
-- `applyManualUpdate(id, u)` — wird vom Override-Layer aufgerufen. Setzt `manualAt = Date.now()`, gewinnt immer.
-- `applyApiUpdate(id, u)` — wird vom API-Layer aufgerufen. Regel:
-  - Wenn `manualAt` gesetzt ist UND die API-Signatur **identisch** zur Pre-Override-Signatur (`lastApiSignature`) ist → **skip** (Stale-Daten ignorieren).
-  - Wenn die API-Signatur sich vom letzten API-Stand **unterscheidet** → übernehmen (echtes neues Event, z. B. neues Tor) und `manualAt` löschen, damit die API wieder die Führung hat.
-  - Equality-Guard: wenn neue Signatur == aktuelle Signatur → kein `set()`.
+**`src/lib/version.ts`** + **`package.json`**: Version → `7.3.0`.
 
-`lastApiSignature?: string` als drittes Tracking-Feld; wird nur in `applyApiUpdate` aktualisiert.
+**`src/components/whats-new/WhatsNewModal.tsx`**: Neuer Eintrag oben:
+- 📺 **„Jetzt im TV"** — Wir haben das Wording für laufende Spiele angepasst. Du siehst sofort auf einen Blick, was aktuell im Fernsehen läuft (statt einen Sekunden-Ticker zu erwarten).
+- ⚙️ **Admin: Phasen-Auswahl** — Saubere Auswahl zwischen 1. Halbzeit, Halbzeitpause und 2. Halbzeit statt händischer Minuten-Eingabe.
 
-`finishMatch` und `clearLiveOverlay` ebenfalls mit Equality-Guard, `clearLiveOverlay` setzt `manualAt = undefined`, damit die API wieder ungehindert füttert.
-
-### 2. API-Layer ruft die richtige Action (`src/services/footballApi.ts`)
-
-`applyLiveFixturesToStore` ruft `applyApiUpdate` (neu) statt `applyLiveUpdate`. `finishMatch` darf weiterhin direkt aufgerufen werden, aber ebenfalls mit der gleichen Manual-Precedence-Regel (eigene Variante `applyApiFinish` oder Check inline).
-
-`useLiveApi.runLive` Reihenfolge bleibt: API → dann Overrides. Da `applyApiUpdate` jetzt veraltete API-Daten verwirft, wenn manueller Override aktiv ist, entsteht kein Flimmern mehr.
-
-### 3. Override-Layer markiert + sofortige Anwendung (`src/lib/match-overrides.ts`)
-
-- `applyOverridesToStore` und `setMatchOverride` rufen `applyManualUpdate`/`finishMatch` (manual variant), niemals die API-Variante.
-- `clearMatchOverride` ruft das vorhandene `clearLiveOverlay` → `manualAt` wird gelöscht → API darf sofort wieder übernehmen.
-
-### 4. Sauberer Status-Wechsel "beendet" (`rollMatches`)
-
-Bei beendetem Match ohne Score: nur einmal `changed = true` setzen — Equality-Check ergänzen, damit nicht jeder 10-Sek-Tick einen identischen Status erneut schreibt. Verhindert Flackern des "Jetzt live"-Badges in der `LiveNowBar` rund um Spielende.
-
-## Was sich NICHT ändert
-
-- Polling-Intervalle, Edge-Functions, DB-Schema, Admin-PIN, UI-Komponenten (`MatchCard`, `LiveNowBar`, `MatchDetailSheet`).
-- API darf nach manuellem Override weiterhin neue Events einspielen (echte Tore, Endpfiff) — sobald sich die API-Signatur ändert, gewinnt sie wieder.
-
-## Geänderte Dateien
-
-- `src/store/match-store.ts` — neue Felder + `applyApiUpdate` Action + Equality-Guards.
-- `src/services/footballApi.ts` — `applyLiveFixturesToStore` ruft `applyApiUpdate`.
-- `src/lib/match-overrides.ts` — `applyOverridesToStore` ruft `applyManualUpdate`.
-
-## Manuelle Schritte
-
-Keine. Reines Frontend-Refactor, kein SQL, kein Edge-Function-Deploy nötig.
+### Manuelle Schritte
+**Keine.** Keine DB-Migration, keine Supabase-Konfiguration, keine neuen Secrets. Reiner Frontend-/UI-Patch.
