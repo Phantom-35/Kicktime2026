@@ -1,10 +1,20 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { BellOff, Trophy, Circle, Filter, Table2 } from "lucide-react";
+import { BellOff, Trophy, Circle, Filter, Table2, Tv, Settings2 } from "lucide-react";
 
 type Feature = { icon: typeof BellOff; title: string; text: string };
 
 const FEATURES: Feature[] = [
+  {
+    icon: Tv,
+    title: "📺 Jetzt im TV",
+    text: "Wir haben das Wording für laufende Spiele angepasst – kein irreführender Sekunden-Ticker mehr. Du siehst sofort auf einen Blick, was aktuell im Fernsehen läuft.",
+  },
+  {
+    icon: Settings2,
+    title: "⚙️ Admin: Phasen-Auswahl",
+    text: "Im Admin-Override gibt es jetzt eine saubere Auswahl zwischen 1. Halbzeit, Halbzeitpause und 2. Halbzeit statt händischer Minuten-Eingabe.",
+  },
   {
     icon: BellOff,
     title: "🔕 Globaler Push-Sync",

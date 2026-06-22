@@ -9,6 +9,7 @@ import { setMatchOverride, clearMatchOverride } from "@/lib/match-overrides";
 import { haptics } from "@/lib/haptics";
 
 type Status = "scheduled" | "live" | "finished";
+type Phase = "first" | "half" | "second";
 
 export function LiveOverridePanel({ pin }: { pin: string }) {
   const matches = useMatchStore(selectMatchList);
@@ -86,19 +87,23 @@ function OverrideRow({ matchId, pin }: { matchId: string; pin: string }) {
   const initialScoreB = match.liveScore?.b ?? match.score?.b ?? 0;
   const [scoreA, setScoreA] = useState<number>(initialScoreA);
   const [scoreB, setScoreB] = useState<number>(initialScoreB);
-  const [minute, setMinute] = useState<number>(match.matchMinute ?? 0);
+  const initialPhase: Phase =
+    (match.matchMinute ?? 0) >= 46 ? "second" : match.matchMinute === 45 ? "half" : "first";
+  const [phase, setPhase] = useState<Phase>(initialPhase);
   const [status, setStatus] = useState<Status>(match.status as Status);
   const [busy, setBusy] = useState(false);
 
   const submit = async () => {
     if (busy) return;
     setBusy(true);
+    const minuteForStatus =
+      status === "scheduled" ? null : phase === "first" ? 1 : phase === "half" ? 45 : 46;
     const res = await setMatchOverride({
       pin,
       matchId,
       scoreA,
       scoreB,
-      minute: status === "scheduled" ? null : minute,
+      minute: minuteForStatus,
       status,
     });
     setBusy(false);
@@ -143,27 +148,40 @@ function OverrideRow({ matchId, pin }: { matchId: string; pin: string }) {
         <NumStepper value={scoreB} onChange={setScoreB} max={20} />
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        <label className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-          Min
-          <input
-            type="number"
-            min={0}
-            max={120}
-            value={minute}
-            onChange={(e) => setMinute(Math.max(0, Math.min(120, Number(e.target.value) || 0)))}
-            className="flex-1 h-8 rounded-md border border-border bg-background px-2 text-xs tabular-nums"
-          />
-        </label>
+      <div className="space-y-2">
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as Status)}
-          className="h-8 rounded-md border border-border bg-background px-2 text-xs"
+          className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
         >
           <option value="scheduled">scheduled</option>
           <option value="live">live</option>
           <option value="finished">finished</option>
         </select>
+        {status === "live" && (
+          <div className="flex items-center gap-1.5">
+            {(
+              [
+                ["first", "1. Halbzeit"],
+                ["half", "Halbzeitpause"],
+                ["second", "2. Halbzeit"],
+              ] as const
+            ).map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setPhase(key)}
+                className={`flex-1 h-8 rounded-md border text-[11px] font-semibold transition-colors ${
+                  phase === key
+                    ? "border-primary bg-primary/15 text-primary"
+                    : "border-border bg-background text-muted-foreground hover:bg-muted/50"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-2">
