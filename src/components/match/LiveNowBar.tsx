@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMatchStore, selectMatchList, type RuntimeMatch } from "@/store/match-store";
 import { getTeam } from "@/data/teams";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Radio } from "lucide-react";
+import { Tv } from "lucide-react";
 
 export function LiveNowBar({ onOpenMatch }: { onOpenMatch: (m: RuntimeMatch) => void }) {
   const matches = useMatchStore(selectMatchList);
@@ -22,26 +22,22 @@ export function LiveNowBar({ onOpenMatch }: { onOpenMatch: (m: RuntimeMatch) => 
         onClick={handleClick}
         className="w-full mb-4 flex items-center gap-2 rounded-xl border-2 border-destructive/60 bg-destructive/10 px-3 py-2 text-left active:scale-[0.99] transition-transform"
       >
-        <span className="relative flex h-2 w-2 shrink-0">
-          <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75 animate-ping" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-destructive" />
-        </span>
+        <Tv className="h-4 w-4 text-destructive shrink-0" />
         <span className="text-[11px] font-bold uppercase tracking-wider text-destructive shrink-0">
-          Jetzt live
+          Jetzt im TV
         </span>
         <span className="text-xs text-foreground truncate flex-1">
           {live.length === 1
             ? `${getTeam(live[0].teamA).flag} ${getTeam(live[0].teamA).name} ${live[0].liveScore?.a ?? 0}:${live[0].liveScore?.b ?? 0} ${getTeam(live[0].teamB).name} ${getTeam(live[0].teamB).flag}`
             : `${live.length} Spiele gleichzeitig`}
         </span>
-        <Radio className="h-4 w-4 text-destructive shrink-0" />
       </button>
 
       <Dialog open={listOpen} onOpenChange={setListOpen}>
         <DialogContent className="max-w-md rounded-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-destructive">
-              <Radio className="h-4 w-4" /> Jetzt live · {live.length} Spiele
+              <Tv className="h-4 w-4" /> Jetzt im TV · {live.length} Spiele
             </DialogTitle>
           </DialogHeader>
           <ul className="space-y-2 mt-2">

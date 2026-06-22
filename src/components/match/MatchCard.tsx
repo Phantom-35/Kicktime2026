@@ -62,12 +62,8 @@ export function MatchCard({
             <span className="text-accent text-xs" title="Nachtschicht">🌙</span>
           )}
           {match.status === "live" && (
-            <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/15 border border-destructive/40 rounded-full px-2 py-0.5">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75 animate-ping" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-destructive" />
-              </span>
-              Live · {getMatchPhaseLabel(match)}
+            <span className="text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/15 border border-destructive/40 rounded-full px-2 py-0.5">
+              Läuft · {getMatchPhaseLabel(match)}
             </span>
           )}
         </div>
