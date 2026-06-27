@@ -1,44 +1,24 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { BellOff, Trophy, Circle, Filter, Table2, Tv, Settings2 } from "lucide-react";
+import { Trophy, Sparkles, LayoutGrid } from "lucide-react";
 
-type Feature = { icon: typeof BellOff; title: string; text: string };
+type Feature = { icon: typeof Trophy; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
-    icon: Tv,
-    title: "📺 Jetzt im TV",
-    text: "Wir haben das Wording für laufende Spiele angepasst – kein irreführender Sekunden-Ticker mehr. Du siehst sofort auf einen Blick, was aktuell im Fernsehen läuft.",
-  },
-  {
-    icon: Settings2,
-    title: "⚙️ Admin: Phasen-Auswahl",
-    text: "Im Admin-Override gibt es jetzt eine saubere Auswahl zwischen 1. Halbzeit, Halbzeitpause und 2. Halbzeit statt händischer Minuten-Eingabe.",
-  },
-  {
-    icon: BellOff,
-    title: "🔕 Globaler Push-Sync",
-    text: "Deaktivierst du Push in den Einstellungen, werden ALLE Spiel-Alarme automatisch ausgeschaltet. Die Glocken auf Dashboard & Spiele-Tab zeigen sofort den korrekten Status.",
-  },
-  {
     icon: Trophy,
-    title: "🏆 Automatisch zur K.-o.-Runde",
-    text: "Sobald die Gruppenphase vorbei ist, wechselt das Banner auf „K.-o.-Runde“. Platzhalter wie „1. Gruppe A“ werden in den KO-Spielen automatisch durch die echten Teams ersetzt.",
+    title: "🏆 Willkommen in der KO-Runde!",
+    text: "Die heiße Phase beginnt – K.-o.-Spiele sind ab jetzt visuell sofort an ihrem neuen, hervorgehobenen Design zu erkennen.",
   },
   {
-    icon: Circle,
-    title: "🟢🟡 Dynamisches Ampelsystem",
-    text: "Match-Cards bekommen jetzt einen smarten Farbpunkt: Grün, wenn ein Top-Team dabei ist, Gelb für ein interessantes Team – sonst bleibt's clean.",
+    icon: Sparkles,
+    title: "⭐ Perfect Matches Update",
+    text: "Deine perfekten Spiele weichen nicht mehr von deiner Seite und zeigen dir nun zuverlässig alle Highlights der K.-o.-Phase an.",
   },
   {
-    icon: Filter,
-    title: "⭐ Strikter Top-Filter",
-    text: "Die „Top“-Pille zeigt jetzt exakt: Eröffnungsspiel, alle Deutschland-Partien sowie Viertelfinale, Halbfinale und Finale.",
-  },
-  {
-    icon: Table2,
-    title: "🎯 Highlight in der Mini-Tabelle",
-    text: "In der Detailansicht eines Spiels werden die beiden beteiligten Teams in der Gruppentabelle jetzt dezent hervorgehoben – die Tabellenposition siehst du auf einen Blick.",
+    icon: LayoutGrid,
+    title: "✨ Aufgeräumtes Interface",
+    text: "Wir haben die Navigation schlanker gestaltet und im Hintergrund kräftig an der Performance-Schraube gedreht.",
   },
 ];
 

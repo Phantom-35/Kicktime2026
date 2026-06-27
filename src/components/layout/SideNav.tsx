@@ -2,13 +2,14 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Home,
   CalendarDays,
-  MapPin,
   Settings as SettingsIcon,
   ListOrdered,
   Eye,
   EyeOff,
   Trophy,
 } from "lucide-react";
+// Gastro-Tab vorübergehend deaktiviert — Code bleibt für schnelle Reaktivierung.
+// import { MapPin } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useAppStore } from "@/store/app-store";
 
@@ -17,9 +18,10 @@ const tabs = [
   { to: "/spiele", label: "Spiele", icon: CalendarDays },
   { to: "/tabellen", label: "Tabellen", icon: ListOrdered },
   { to: "/tipps", label: "Tipps", icon: Trophy },
-  { to: "/bars", label: "Gastro", icon: MapPin },
+  // { to: "/bars", label: "Gastro", icon: MapPin }, // ← später wieder einblenden
   { to: "/profil", label: "Profil", icon: SettingsIcon },
 ] as const;
+
 
 export function SideNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });

@@ -88,9 +88,11 @@ function TelemetryView() {
   }, [load]);
 
   const now = Date.now();
-  const activeNow = (rows ?? []).filter(
-    (r) => now - new Date(r.last_ping).getTime() <= 5 * 60 * 1000
-  ).length;
+  const within = (ms: number) =>
+    (rows ?? []).filter((r) => now - new Date(r.last_ping).getTime() <= ms).length;
+  const activeNow = within(5 * 60 * 1000);
+  const active24h = within(24 * 60 * 60 * 1000);
+  const active7d = within(7 * 24 * 60 * 60 * 1000);
   const total = rows?.length ?? 0;
 
   const versionDist = countBy(rows ?? [], (r) => r.app_version);
@@ -118,8 +120,11 @@ function TelemetryView() {
 
       <div className="grid grid-cols-2 gap-2">
         <Metric icon={<Users className="h-4 w-4" />} label="Aktiv (5 min)" value={activeNow} />
+        <Metric icon={<Users className="h-4 w-4" />} label="Aktiv (24 h)" value={active24h} />
+        <Metric icon={<Users className="h-4 w-4" />} label="Aktiv (7 Tage)" value={active7d} />
         <Metric icon={<Smartphone className="h-4 w-4" />} label="Geräte gesamt" value={total} />
       </div>
+
 
       <Section title="App-Versionen">
         <BarList rows={versionDist} total={total} />
