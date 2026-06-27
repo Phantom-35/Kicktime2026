@@ -93,11 +93,7 @@ export function MatchDetailSheet({
           {match.status === "live" && (
             <div className="mb-1.5">
               <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-destructive bg-destructive/15 border border-destructive/40 rounded-full px-2.5 py-0.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75 animate-ping" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-destructive" />
-                </span>
-                Live · {getMatchPhaseLabel(match as never)}
+                Läuft · {getMatchPhaseLabel(match as never)}
               </span>
             </div>
           )}
@@ -109,7 +105,18 @@ export function MatchDetailSheet({
             <span className="text-2xl">{b.flag}</span>
             <span>{b.name}</span>
           </DrawerTitle>
-          <p className="text-xs text-muted-foreground">{local.fullStr} · Gruppe {match.group}</p>
+          <p className="text-xs text-muted-foreground flex items-center gap-1.5 flex-wrap">
+            <span>{local.fullStr}</span>
+            <span>·</span>
+            {match.stage === "group" ? (
+              <span>Gruppe {match.group}</span>
+            ) : (
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent text-accent-foreground border border-accent ring-1 ring-accent/40 shadow-sm">
+                KO-Runde
+              </span>
+            )}
+          </p>
+
         </DrawerHeader>
 
         <div className="px-4 pb-6 overflow-y-auto space-y-5">

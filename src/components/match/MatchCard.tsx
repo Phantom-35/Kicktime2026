@@ -49,9 +49,16 @@ export function MatchCard({
     >
       <div className="flex items-center justify-between mb-3 gap-2">
         <div className="flex items-center gap-1.5 min-w-0">
-          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-            Gruppe {match.group}
-          </span>
+          {match.stage === "group" ? (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+              Gruppe {match.group}
+            </span>
+          ) : (
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent text-accent-foreground border border-accent ring-1 ring-accent/40 shadow-sm">
+              KO-Runde
+            </span>
+          )}
+
           {isTop && (
             <span className="h-2 w-2 rounded-full bg-emerald-500" title="Top-Team" />
           )}

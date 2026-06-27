@@ -29,7 +29,10 @@ export function categorizeMatches(p: Params): Categorized {
       p.favoriteTeams.includes(m.teamA) || p.favoriteTeams.includes(m.teamB);
     const involvesInt =
       p.interestingTeams.includes(m.teamA) || p.interestingTeams.includes(m.teamB);
-    const involvesAny = involvesFav || involvesInt;
+    // In der KO-Phase ist JEDES Spiel automatisch relevant — die Platzhalter-Codes
+    // (z. B. W49, RU-A) matchen sonst keine Favoriten und die Liste bliebe leer.
+    const isKo = m.stage !== "group";
+    const involvesAny = isKo ? true : involvesFav || involvesInt;
     const isMarquee =
       getTeam(m.teamA).tier === 1 && getTeam(m.teamB).tier === 1;
     const inWindow = matchInAvailability(m.utcTimestamp, p.userTimezone, p.availability);
@@ -42,10 +45,11 @@ export function categorizeMatches(p: Params): Categorized {
     }
     if (involvesAny && inWindow) {
       perfect.push(m);
-    } else if ((involvesFav || isMarquee) && !inWindow) {
+    } else if ((involvesFav || isMarquee || isKo) && !inWindow) {
       nightShift.push(m);
     }
   }
+
   const byTime = (a: Match, b: Match) =>
     new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime();
   return {
