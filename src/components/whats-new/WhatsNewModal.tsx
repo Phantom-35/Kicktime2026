@@ -7,18 +7,18 @@ type Feature = { icon: typeof Trophy; title: string; text: string };
 const FEATURES: Feature[] = [
   {
     icon: Trophy,
-    title: "🏆 Willkommen in der KO-Runde!",
-    text: "Die heiße Phase beginnt – K.-o.-Spiele sind ab jetzt visuell sofort an ihrem neuen, hervorgehobenen Design zu erkennen.",
-  },
-  {
-    icon: Sparkles,
-    title: "⭐ Perfect Matches Update",
-    text: "Deine perfekten Spiele weichen nicht mehr von deiner Seite und zeigen dir nun zuverlässig alle Highlights der K.-o.-Phase an.",
+    title: "🎯 Fokus auf die aktuelle Runde",
+    text: "Dein Dashboard zeigt dir ab jetzt immer genau die Phase an, die gerade heiß ist – aktuell das Sechzehntelfinale.",
   },
   {
     icon: LayoutGrid,
-    title: "✨ Aufgeräumtes Interface",
-    text: "Wir haben die Navigation schlanker gestaltet und im Hintergrund kräftig an der Performance-Schraube gedreht.",
+    title: "🧱 Layout-Fix im Turnierbaum",
+    text: "Keine fehlerhaften Flaggen-Stapel mehr bei noch offenen Paarungen. Der restliche Spielplan bleibt absolut sauber und übersichtlich.",
+  },
+  {
+    icon: Sparkles,
+    title: "✨ Stabiler im Hintergrund",
+    text: "Feinschliff an Performance und Spielplan-Sync – alles fühlt sich noch flüssiger an.",
   },
 ];
 

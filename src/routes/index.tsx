@@ -28,21 +28,34 @@ function Dashboard() {
   const matches = useMatchStore(selectMatchList);
   const now = useMatchStore((s) => s.now);
 
-  // Determine current tournament phase: while any group match is still
-  // scheduled or live, we're in "group" phase. Once the group stage is done,
-  // automatically switch to KO and only consider knockout matches.
-  const phase: "group" | "ko" = useMemo(() => {
-    const groupPending = matches.some(
-      (m) => m.stage === "group" && m.status !== "finished"
-    );
-    return groupPending ? "group" : "ko";
+  // v7.6.0 — Phasen­gesteuertes Dashboard: zeige IMMER nur die aktuell
+  // laufende Turnier-Sub-Phase. Sobald alle Spiele dieser Phase beendet
+  // sind, springt das Dashboard automatisch auf die nächste Phase.
+  const PHASE_ORDER = ["group", "r32", "r16", "qf", "sf", "final"] as const;
+  type PhaseKey = (typeof PHASE_ORDER)[number];
+  const PHASE_LABEL: Record<PhaseKey, string> = {
+    group: "Gruppenphase",
+    r32: "Sechzehntelfinale",
+    r16: "Achtelfinale",
+    qf: "Viertelfinale",
+    sf: "Halbfinale",
+    final: "Finale",
+  };
+
+  const phase: PhaseKey = useMemo(() => {
+    for (const p of PHASE_ORDER) {
+      const hasMatches = matches.some((m) => m.stage === p);
+      if (!hasMatches) continue;
+      const pending = matches.some(
+        (m) => m.stage === p && m.status !== "finished"
+      );
+      if (pending) return p;
+    }
+    return "final";
   }, [matches]);
 
   const phaseMatches = useMemo(
-    () =>
-      phase === "group"
-        ? matches.filter((m) => m.stage === "group")
-        : matches.filter((m) => m.stage !== "group"),
+    () => matches.filter((m) => m.stage === phase),
     [matches, phase]
   );
 
@@ -113,7 +126,7 @@ function Dashboard() {
           Dein WM-Tag
         </h2>
         <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-full bg-primary/15 text-primary border border-primary/30">
-          {phase === "group" ? "Gruppenphase" : "K.-o.-Runde"}
+          {PHASE_LABEL[phase]}
         </span>
       </div>
 

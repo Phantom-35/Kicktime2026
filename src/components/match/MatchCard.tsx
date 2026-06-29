@@ -115,9 +115,14 @@ export function MatchCard({
 
 function TeamSide({ flag, name, align = "left" }: { flag: string; name: string; align?: "left" | "right" }) {
   return (
-    <div className={`flex-1 flex items-center gap-2 ${align === "right" ? "flex-row-reverse text-right" : ""}`}>
-      <span className="text-2xl">{flag}</span>
-      <span className="text-sm font-semibold leading-tight">{name}</span>
+    <div className={`flex-1 min-w-0 flex items-center gap-2 ${align === "right" ? "flex-row-reverse text-right" : ""}`}>
+      <span className="text-2xl shrink-0">{flag}</span>
+      <span
+        className="text-sm font-semibold leading-tight line-clamp-2 break-words min-w-0"
+        title={name}
+      >
+        {name}
+      </span>
     </div>
   );
 }
