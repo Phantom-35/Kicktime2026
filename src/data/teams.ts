@@ -115,6 +115,23 @@ export const REAL_TEAMS: Team[] = TEAMS.filter((t) => !t.isPlaceholder);
 export const getTeam = (code: string): Team => {
   const t = TEAMS.find((x) => x.code === code);
   if (t) return t;
+  // v7.5.0: Sieger-Paar Platzhalter "W:NED|MAR" → "Sieger Niederlande/Marokko".
+  const pair = code.match(/^W:([A-Z]{2,4})\|([A-Z]{2,4})$/);
+  if (pair) {
+    const a = TEAMS.find((x) => x.code === pair[1]);
+    const b = TEAMS.find((x) => x.code === pair[2]);
+    const nameA = a?.name ?? pair[1];
+    const nameB = b?.name ?? pair[2];
+    const flag = `${a?.flag ?? "🏳️"}${b?.flag ?? "🏳️"}`;
+    return {
+      code,
+      name: `Sieger ${nameA}/${nameB}`,
+      flag,
+      group: "KO",
+      tier: 3,
+      isPlaceholder: true,
+    };
+  }
   // KO-Phase Platzhalter-Codes: "W74" = Sieger Spiel 74, "L101" = Verlierer Spiel 101.
   const ko = code.match(/^([WL])(\d{1,3})$/);
   if (ko) {

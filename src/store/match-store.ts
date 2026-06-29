@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import scheduleJson from "@/data/world_cup_2026_schedule.json";
 import type { Match, MatchStage, Broadcaster } from "@/data/matches";
+import { KO_STATIC_OVERRIDES } from "@/data/ko-static";
 import { calculateTableStandings } from "@/lib/standings";
 import { applyTvOverride } from "@/lib/tv-overrides";
 
@@ -57,12 +58,16 @@ const MATCH_DURATION_MS = 115 * 60 * 1000;
 function seed(): Record<string, RuntimeMatch> {
   const out: Record<string, RuntimeMatch> = {};
   for (const raw of scheduleJson as Array<Omit<Match, "status"> & { broadcasters?: Broadcaster[] }>) {
+    // v7.5.0: feste Achtel-/Sechzehntelfinal-Paarungen aus ko-static.ts
+    // überschreiben die generischen Platzhalter aus dem Schedule-JSON.
+    const ov = KO_STATIC_OVERRIDES[raw.id];
+    const merged = ov ? { ...raw, ...ov } : raw;
     const base: RuntimeMatch = {
-      ...raw,
-      stage: raw.stage as MatchStage,
-      broadcaster: raw.broadcaster as Broadcaster,
-      broadcasters: raw.broadcasters as Broadcaster[] | undefined,
-      hostCountry: raw.hostCountry as Match["hostCountry"],
+      ...merged,
+      stage: merged.stage as MatchStage,
+      broadcaster: merged.broadcaster as Broadcaster,
+      broadcasters: merged.broadcasters as Broadcaster[] | undefined,
+      hostCountry: merged.hostCountry as Match["hostCountry"],
       status: "scheduled",
     };
     const m = applyTvOverride(base);
