@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import scheduleJson from "@/data/world_cup_2026_schedule.json";
 import type { Match, MatchStage, Broadcaster } from "@/data/matches";
+import { KO_STATIC_OVERRIDES } from "@/data/ko-static";
 import { calculateTableStandings } from "@/lib/standings";
 import { applyTvOverride } from "@/lib/tv-overrides";
 
