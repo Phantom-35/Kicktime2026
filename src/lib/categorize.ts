@@ -29,10 +29,11 @@ export function categorizeMatches(p: Params): Categorized {
       p.favoriteTeams.includes(m.teamA) || p.favoriteTeams.includes(m.teamB);
     const involvesInt =
       p.interestingTeams.includes(m.teamA) || p.interestingTeams.includes(m.teamB);
-    // In der KO-Phase ist JEDES Spiel automatisch relevant — die Platzhalter-Codes
-    // (z. B. W49, RU-A) matchen sonst keine Favoriten und die Liste bliebe leer.
+    // Hotfix v7.6.1: Strikter Filter — ein Spiel ist nur "relevant", wenn
+    // der Nutzer mindestens eines der beiden Teams aktiv markiert hat.
+    // KO-Platzhalter werden NICHT automatisch eingeschlossen.
     const isKo = m.stage !== "group";
-    const involvesAny = isKo ? true : involvesFav || involvesInt;
+    const involvesAny = involvesFav || involvesInt;
     const isMarquee =
       getTeam(m.teamA).tier === 1 && getTeam(m.teamB).tier === 1;
     const inWindow = matchInAvailability(m.utcTimestamp, p.userTimezone, p.availability);
