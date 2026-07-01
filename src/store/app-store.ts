@@ -88,6 +88,12 @@ export const useAppStore = create<State & Actions>()(
       predictions: {},
       lastSeenVersion: "",
       revealedMatches: {},
+      adminKoPhaseOverride: null,
+      activeKoPhase: null,
+      activeApiUrl: null,
+      lastApiFetchAt: null,
+      apiErrorLog: [],
+
 
 
 
