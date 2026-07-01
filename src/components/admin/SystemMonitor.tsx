@@ -22,7 +22,7 @@ export function SystemMonitor() {
   }, []);
 
   const autoPhase = useMemo(() => determineActiveKoPhase(matches), [matches]);
-  const activeInfo = activeKoPhase ? KO_PHASES[activeKoPhase as 5 | 6 | 7 | 8 | 9] : null;
+  const activeInfo = activeKoPhase ? KO_PHASES[activeKoPhase as 4 | 5 | 6 | 7 | 8 | 9] : null;
 
   return (
     <div className="space-y-3">

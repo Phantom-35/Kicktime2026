@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TurnierRouteImport } from './routes/turnier'
 import { Route as TippsRouteImport } from './routes/tipps'
 import { Route as TabellenRouteImport } from './routes/tabellen'
 import { Route as SpieleRouteImport } from './routes/spiele'
@@ -16,6 +17,11 @@ import { Route as ProfilRouteImport } from './routes/profil'
 import { Route as BarsRouteImport } from './routes/bars'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TurnierRoute = TurnierRouteImport.update({
+  id: '/turnier',
+  path: '/turnier',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TippsRoute = TippsRouteImport.update({
   id: '/tipps',
   path: '/tipps',
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
   '/tipps': typeof TippsRoute
+  '/turnier': typeof TurnierRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
   '/tipps': typeof TippsRoute
+  '/turnier': typeof TurnierRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,12 +79,27 @@ export interface FileRoutesById {
   '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
   '/tipps': typeof TippsRoute
+  '/turnier': typeof TurnierRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/bars' | '/profil' | '/spiele' | '/tabellen' | '/tipps'
+  fullPaths:
+    | '/'
+    | '/bars'
+    | '/profil'
+    | '/spiele'
+    | '/tabellen'
+    | '/tipps'
+    | '/turnier'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bars' | '/profil' | '/spiele' | '/tabellen' | '/tipps'
+  to:
+    | '/'
+    | '/bars'
+    | '/profil'
+    | '/spiele'
+    | '/tabellen'
+    | '/tipps'
+    | '/turnier'
   id:
     | '__root__'
     | '/'
@@ -85,6 +108,7 @@ export interface FileRouteTypes {
     | '/spiele'
     | '/tabellen'
     | '/tipps'
+    | '/turnier'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,10 +118,18 @@ export interface RootRouteChildren {
   SpieleRoute: typeof SpieleRoute
   TabellenRoute: typeof TabellenRoute
   TippsRoute: typeof TippsRoute
+  TurnierRoute: typeof TurnierRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/turnier': {
+      id: '/turnier'
+      path: '/turnier'
+      fullPath: '/turnier'
+      preLoaderRoute: typeof TurnierRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tipps': {
       id: '/tipps'
       path: '/tipps'
@@ -150,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   SpieleRoute: SpieleRoute,
   TabellenRoute: TabellenRoute,
   TippsRoute: TippsRoute,
+  TurnierRoute: TurnierRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
