@@ -37,7 +37,7 @@ export function useLiveApi(): void {
   });
 
   const koPhase: KoPhaseNum | null = useMemo(() => {
-    if (adminOverride && [5, 6, 7, 8, 9].includes(adminOverride)) {
+    if (adminOverride && [4, 5, 6, 7, 8, 9].includes(adminOverride)) {
       return adminOverride as KoPhaseNum;
     }
     return determineActiveKoPhase(matches);
@@ -69,7 +69,7 @@ export function useLiveApi(): void {
       // Anpfiff dieser Phase mind. 12h zurückliegt — sonst normale Ruhezeit.
       if (!res.error && res.fixtures.length === 0 && res.koPhase != null) {
         const twelveH = 12 * 60 * 60 * 1000;
-        const stageMap: Record<number, string> = { 5: "r16", 6: "qf", 7: "sf", 8: "third", 9: "final" };
+        const stageMap: Record<number, string> = { 4: "r32", 5: "r16", 6: "qf", 7: "sf", 8: "third", 9: "final" };
         const stage = stageMap[res.koPhase];
         const phaseMatches = matches.filter((m) => m.stage === stage);
         if (phaseMatches.length > 0) {
