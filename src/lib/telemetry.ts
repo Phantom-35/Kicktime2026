@@ -1,20 +1,27 @@
 /**
- * Anonymous telemetry — sends a periodic ping with a randomly generated
- * client id (persisted in localStorage). No PII, no IP logging.
+ * Anonymous telemetry — sends a periodic ping tied to a persistent device id.
+ *
+ * v7.7: Bot/refresh-Filter. Ein Ping wird NUR gesendet, wenn wenigstens EIN
+ * "echter Nutzer"-Indikator vorliegt:
+ *   - der Nutzer hat Notification-Permission erteilt (echtes Gerät hinter der App)
+ *   - der Nutzer hat einen Favoriten (Onboarding wirklich durchlaufen)
+ * Zusätzlich wird der User-Agent gegen eine Bot-Whitelist geprüft.
  */
 import { supabase } from "@/integrations/supabase/client";
 import { APP_VERSION } from "@/lib/version";
 import { useAppStore } from "@/store/app-store";
+import { logError } from "@/lib/error-log";
 
 const CLIENT_ID_KEY = "kicktime-client-id";
 const LAST_PING_KEY = "kicktime-last-ping";
-const PING_INTERVAL_MS = 5 * 60 * 1000; // 5 min throttle
+const PING_INTERVAL_MS = 5 * 60 * 1000;
+
+const BOT_UA = /(bot|crawl|spider|slurp|facebookexternalhit|preview|headless|lighthouse|monitor|pingdom|uptime)/i;
 
 function uuid(): string {
   try {
     return crypto.randomUUID();
   } catch {
-    // Fallback for older browsers
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
       const r = (Math.random() * 16) | 0;
       const v = c === "x" ? r : (r & 0x3) | 0x8;
@@ -36,8 +43,26 @@ export function getClientId(): string {
   }
 }
 
+function isRealUser(): boolean {
+  try {
+    if (typeof navigator !== "undefined" && BOT_UA.test(navigator.userAgent)) return false;
+  } catch {
+    return false;
+  }
+  const state = useAppStore.getState();
+  const onboarded = state.isOnboarded && state.favoriteTeams.length + state.interestingTeams.length > 0;
+  let notif = false;
+  try {
+    notif = typeof Notification !== "undefined" && Notification.permission === "granted";
+  } catch {
+    notif = false;
+  }
+  return onboarded || notif;
+}
+
 export async function sendPing(force = false): Promise<void> {
   try {
+    if (!isRealUser()) return;
     const last = Number(localStorage.getItem(LAST_PING_KEY) ?? "0");
     if (!force && Date.now() - last < PING_INTERVAL_MS) return;
 
@@ -52,12 +77,11 @@ export async function sendPing(force = false): Promise<void> {
       .from("app_pings")
       .upsert(payload, { onConflict: "client_id" });
     if (error) {
-      // Silent — telemetry must never break the app
-      console.debug("[telemetry] ping failed", error.message);
+      logError("supabase", `telemetry ping failed: ${error.message}`);
       return;
     }
     localStorage.setItem(LAST_PING_KEY, String(Date.now()));
   } catch (e) {
-    console.debug("[telemetry] error", e);
+    logError("system", `telemetry error: ${e instanceof Error ? e.message : String(e)}`);
   }
 }

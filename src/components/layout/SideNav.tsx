@@ -7,6 +7,7 @@ import {
   Eye,
   EyeOff,
   Trophy,
+  Flag,
 } from "lucide-react";
 // Gastro-Tab vorübergehend deaktiviert — Code bleibt für schnelle Reaktivierung.
 // import { MapPin } from "lucide-react";
@@ -17,6 +18,7 @@ const tabs = [
   { to: "/", label: "Dashboard", icon: Home },
   { to: "/spiele", label: "Spiele", icon: CalendarDays },
   { to: "/tabellen", label: "Tabellen", icon: ListOrdered },
+  { to: "/turnier", label: "Turnier-Status", icon: Flag },
   { to: "/tipps", label: "Tipps", icon: Trophy },
   // { to: "/bars", label: "Gastro", icon: MapPin }, // ← später wieder einblenden
   { to: "/profil", label: "Profil", icon: SettingsIcon },
