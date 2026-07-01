@@ -3,7 +3,10 @@ import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { KO_PHASE_LIST, KO_PHASES, determineActiveKoPhase } from "@/lib/ko-phase";
-import { Trash2, AlertCircle, Radio, RefreshCw } from "lucide-react";
+import { Trash2, AlertCircle, Radio, RefreshCw, Database, Loader2 } from "lucide-react";
+import { fetchAllStoredFixtures, syncGroupPhase } from "@/services/footballApi";
+import { applyLiveFixturesToStore } from "@/services/footballApi";
+import { toast } from "sonner";
 
 export function SystemMonitor() {
   const adminOverride = useAppStore((s) => s.adminKoPhaseOverride);
