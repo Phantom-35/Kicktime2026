@@ -38,30 +38,53 @@ export function isLiveDataEnabled(): boolean {
   return isSupabaseConfigured();
 }
 
-export async function fetchLiveWorldCupData(mode: FetchMode = "live"): Promise<LiveFixture[]> {
-  if (!isLiveDataEnabled()) return [];
+export type LiveFetchResult = {
+  fixtures: LiveFixture[];
+  url: string | null;
+  koPhase: number | null;
+  error?: string;
+};
+
+export async function fetchLiveWorldCupData(
+  mode: FetchMode = "live",
+  koPhase: number | null = null,
+): Promise<LiveFetchResult> {
+  if (!isLiveDataEnabled()) return { fixtures: [], url: null, koPhase };
 
   try {
     const { data, error } = await supabase.functions.invoke<{
       fixtures?: RawFixture[];
       error?: string;
-      cache?: "hit" | "miss";
-    }>("fetch-live-scores", { body: { mode } });
+      cache?: "hit" | "miss" | "stale" | "overrides";
+      url?: string;
+      koPhase?: number | null;
+    }>("fetch-live-scores", { body: { mode, koPhase } });
 
     if (error) {
       console.warn("[footballApi] edge function error", error.message);
-      return [];
+      return { fixtures: [], url: null, koPhase, error: error.message };
     }
     if (data?.error) {
       console.warn("[footballApi] edge function returned error", data.error);
-      return [];
+      return {
+        fixtures: normalize(data?.fixtures ?? []),
+        url: data?.url ?? null,
+        koPhase: data?.koPhase ?? koPhase,
+        error: data.error,
+      };
     }
-    return normalize(data?.fixtures ?? []);
+    return {
+      fixtures: normalize(data?.fixtures ?? []),
+      url: data?.url ?? null,
+      koPhase: data?.koPhase ?? koPhase,
+    };
   } catch (err) {
     console.warn("[footballApi] invoke failed", err);
-    return [];
+    const msg = err instanceof Error ? err.message : String(err);
+    return { fixtures: [], url: null, koPhase, error: msg };
   }
 }
+
 
 function normalize(raw: RawFixture[]): LiveFixture[] {
   const out: LiveFixture[] = [];
