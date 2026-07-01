@@ -1,99 +1,94 @@
-# Update v7.7 — Admin-Tools, Fehler-Log, echte Nutzer, Turnier-Status
+## Ziel
+Kritischen Datenverlust beheben: Beim Wechsel der API-Phase (z. B. /4, /5) verschwinden bislang die Ergebnisse aller anderen Phasen, weil jede URL nur ihre Teilmenge liefert und der Match-Store direkt daraus befüllt wird. Lösung: eine dauerhafte Supabase-Tabelle als Single Source of Truth, die niemals Ergebnisse verliert und additiv gemergt wird.
 
-Kein Eintrag im WhatsNew. `APP_VERSION` in `src/lib/version.ts` wird auf `7.7.0` erhöht, das WhatsNew-Modal bleibt inhaltlich unverändert (nur Versionsbump, damit der Dialog nicht erneut aufpoppt — kein neuer Punkt sichtbar).
+## 1. Neue Supabase-Tabelle `match_results`
+Persistenter Speicher für alle je gesehenen Spielstände aus der OpenLigaDB-API.
 
----
+Spalten:
+- `match_id` (text, PK) — aus OpenLigaDB `matchID`
+- `phase` (int, nullable) — 4–9 für KO-URLs, null für wm2026-Gruppenphase
+- `team_home_name`, `team_away_name` (text)
+- `score_home`, `score_away` (int, nullable)
+- `status` (text: `scheduled` | `live` | `finished`)
+- `minute` (int, nullable)
+- `kickoff_utc` (timestamptz, nullable)
+- `stadium`, `city` (text, nullable)
+- `raw` (jsonb) — zuletzt gesehenes API-Rohobjekt für Debugging
+- `updated_at` (timestamptz, default now())
+- `finished_at` (timestamptz, nullable) — gesetzt beim ersten `FT`
 
-## 1) Sechzehntelfinale (/4) als Admin-Override
+RLS: `SELECT` für `anon` und `authenticated` erlauben (Lesen ist öffentlich, Schreiben nur Service-Role via Edge Function).
 
-**Ziel:** Admin kann im System-Tab manuell auf `/4` zwingen, obwohl R32 im Auto-Modus hardgecodet läuft.
+## 2. Edge Function `fetch-live-scores` erweitern
+Zusätzlich zum bestehenden Cache/Merge-Verhalten:
+1. Nach jedem erfolgreichen Upstream-Fetch: alle gemappten Matches per Upsert in `match_results` schreiben — **niemals überschreibend für abgeschlossene Ergebnisse**:
+   - Wenn Zeile existiert mit `status = 'finished'` und `score_home/score_away IS NOT NULL`: nur `raw`/`updated_at` aktualisieren, Score & Status bleiben.
+   - Sonst: alle Felder updaten; sobald erstmals `finished` mit Score kommt, `finished_at = now()`.
+2. Neuer Body-Parameter `mode: "sync-groups"` → zwingend `wm2026/2026` abfragen und in DB schreiben, unabhängig vom Cache. Antwort: `{ synced: <count> }`.
+3. Neuer Body-Parameter `mode: "full-store"` → gibt den **kompletten Inhalt** von `match_results` als Fixtures im bekannten Format zurück (statt nur der aktuellen Phase). Das nutzt das Frontend beim Poll.
 
-**Code-Änderungen:**
-- `src/lib/ko-phase.ts`: Typ `KoPhaseNum` um `4` erweitern, `KO_PHASES[4]` mit `stage: "r32"`, Label „Sechzehntelfinale", URL `https://api.openligadb.de/getmatchdata/wm26/2026/4`. `KO_PHASE_LIST` erhält `4` an erster Stelle. `determineActiveKoPhase()` bleibt unverändert (Auto liefert weiter `null` für R32 → hardgecodete Daten gewinnen).
-- `src/components/admin/SystemMonitor.tsx`: Button-Reihe rendert automatisch alle Einträge aus `KO_PHASE_LIST`, dadurch erscheint `/4 Sechzehntelfinale` als erster Button vor `/5`.
-- `src/hooks/useLiveApi.ts`: `adminOverride`-Check erweitert um `4`. Wenn Admin `/4` setzt, wird die Edge-Function mit `koPhase=4` gepollt; die zurückgelieferten Fixtures überschreiben die hardgecodeten R32-Daten via existierender Merge-Logik in `applyLiveFixturesToStore`.
-- `src/store/app-store.ts`: `adminKoPhaseOverride` bleibt `number | null` (4–9 erlaubt) — keine Typänderung nötig, nur Kommentar aktualisieren.
-- `supabase/functions/fetch-live-scores/index.ts`: Whitelist der akzeptierten `koPhase`-Parameter um `4` ergänzen, Cache-Key `wm26-ko-4`.
+Bestehende `live`/`idle`-Modi bleiben funktional (Rückwärtskompatibilität), das Frontend nutzt sie aber nicht mehr als Datenquelle für die Anzeige — nur noch als Trigger zum Upstream-Refresh.
 
-**Supabase-Schritte für den Nutzer:** Keine. Der Override wird ausschließlich im lokalen `zustand/persist`-Store (localStorage) gespeichert; es gibt keine Phasen-Tabelle/Enum in der DB. Nach dem Deploy der Edge-Function ist alles einsatzbereit.
+## 3. Frontend-Umstellung
+- `src/services/footballApi.ts`: neue Funktion `fetchAllStoredFixtures()` → ruft Edge Function mit `mode: "full-store"` auf und liefert alle DB-Fixtures.
+- `src/hooks/useLiveApi.ts`:
+  - Poll-Zyklus (5 Min): erst `fetchLiveWorldCupData(mode, koPhase)` (füllt DB in der Edge Function), dann `fetchAllStoredFixtures()` und dessen Ergebnis in den Match-Store übernehmen. So kommen immer alle Phasen zusammen an.
+  - Initial-Sync: Beim Mount ein `mode: "full-store"` Call. Wenn Antwort leer ist → einmalig `mode: "sync-groups"` auslösen, danach nochmal `full-store` laden. Flag im `localStorage` (`kicktime-initial-sync-done`), damit das nicht in Endlosschleife läuft, falls die API dauerhaft leer ist.
+- `applyLiveFixturesToStore` bleibt unverändert (arbeitet weiterhin mit dem Fixture-Array).
 
----
+## 4. Admin-Panel: Manueller Sync-Button
+In `src/components/admin/SystemMonitor.tsx` unter "MANUELLER OVERRIDE (BACKUP)" neuer Button **„Gruppenphase manuell synchronisieren (wm2026)“**:
+- Ruft Edge Function mit `mode: "sync-groups"` auf.
+- Toast mit Anzahl synchronisierter Spiele oder Fehlermeldung.
+- Danach automatisch `fetchAllStoredFixtures()` → Store aktualisiert.
 
-## 2) All-Inclusive Fehler-Log
+## 5. Nicht anfassen
+- Keine Änderung an v7.7-Features (Telemetrie, Turnier-Status-Tab, Error-Log, /4-Override-Button).
+- Kein Eintrag im `WhatsNewModal.tsx`.
+- Keine Versions-Bump-Anforderung vom User → Version bleibt `7.7.0`.
 
-**Ziel:** Nicht nur API-Fehler der Finalrunden, sondern alle System-, DB-, Auth-, Tipp- und Frontend-Fehler landen im gleichen Log.
+## Manuelle Supabase-Schritte (nach dem Code-Deploy)
+Zwei Schritte im Supabase-Dashboard:
 
-**Code-Änderungen:**
-- Neue Datei `src/lib/error-log.ts`: Exportiert `logError(category, message, meta?)` — schreibt in denselben `apiErrorLog`-Slice des `useAppStore`. Kategorien: `api | supabase | auth | prediction | render | network | system`.
-- `src/store/app-store.ts`: `apiErrorLog`-Eintrag um `category`-Feld erweitern (backwards-kompatibel, default `api`). Ringpuffer auf 60 Einträge erhöht.
-- Globale Hooks in `src/routes/__root.tsx`: `window.addEventListener("error", …)` und `"unhandledrejection"` verdrahten → `logError("render"/"system", …)`.
-- Instrumentierung an den kritischen Stellen (jeweils try/catch bzw. `.catch()` mit `logError`):
-  - `src/lib/match-overrides.ts` (Supabase upsert/select/delete)
-  - `src/lib/push-subscriptions.ts`, `src/lib/push-client.ts` (Push-Registrierung)
-  - `src/lib/feedback.ts` (Feedback-Insert)
-  - `src/lib/telemetry.ts` (Client-Ping)
-  - `src/lib/predictions.ts` (Score-Berechnung, wenn NaN oder Ausnahmen)
-  - `src/integrations/supabase/client.ts` Aufrufer, die bereits `try/catch` haben
-- `src/components/admin/SystemMonitor.tsx`: Fehlerkarten zeigen zusätzlich `category`-Badge und behalten Zeitstempel/URL/Message.
+**Schritt 1 — SQL-Editor:** folgendes Script ausführen (legt Tabelle + RLS + Grants an):
+```sql
+create table if not exists public.match_results (
+  match_id        text primary key,
+  phase           int,
+  team_home_name  text,
+  team_away_name  text,
+  score_home      int,
+  score_away      int,
+  status          text not null default 'scheduled',
+  minute          int,
+  kickoff_utc     timestamptz,
+  stadium         text,
+  city            text,
+  raw             jsonb,
+  finished_at     timestamptz,
+  updated_at      timestamptz not null default now()
+);
 
----
+grant select on public.match_results to anon, authenticated;
+grant all    on public.match_results to service_role;
 
-## 3) Echte Nutzerstatistik statt Bot-/Session-Zählung
+alter table public.match_results enable row level security;
 
-**Ziel:** Zählung strikt an Supabase-User-IDs (bzw. echten authentifizierten Nutzern) — keine anonymen Pageviews mehr.
+create policy "public read match_results"
+  on public.match_results for select
+  to anon, authenticated
+  using (true);
+```
 
-**Aktueller Stand:** `src/lib/telemetry.ts` pingt bei jedem App-Open mit `clientId` aus dem localStorage → produziert bei Refresh/Bots Zombie-Zeilen.
+**Schritt 2 — Edge Function neu deployen:**
+```bash
+supabase functions deploy fetch-live-scores
+```
 
-**Code-Änderungen:**
-- `src/lib/telemetry.ts`: Ping nur senden, wenn (a) `supabase.auth.getUser()` einen echten User zurückgibt **oder** (b) der Nutzer eine `push_subscriptions`-Zeile hat (echte Geräte-Registrierung). Bots und Refresh-Only-Besucher fallen raus.
-- Neue Zähl-Quelle im Admin-Panel: `AdminPanel.tsx` liest die Nutzerzahlen jetzt aus:
-  - `push_subscriptions` (distinct `device_id`) als Basis für „echte Tipper"
-  - Optional: `predictions`-Tabelle (falls vorhanden) — distinct `user_id`
-- 24h/7d-Fenster wird per `created_at >= now() - interval` gefiltert (clientseitig auf den Query-Ergebnissen, keine RPC nötig).
-- Alte anonyme Telemetrie-Tabelle bleibt zwar bestehen, wird im UI aber nicht mehr angezeigt.
+Danach im Admin-Panel einmal auf **„Gruppenphase manuell synchronisieren (wm2026)“** klicken, um die DB initial zu füllen (das passiert sonst auch beim ersten App-Öffnen automatisch).
 
-**Supabase-Schritte für den Nutzer:** Keine Schema-Änderung. Optional (nur wenn Nutzer aufräumen will): alte `client_pings`-Zeilen löschen — SQL wird im Abschluss mitgeliefert.
-
----
-
-## 4) Neuer Tab „Turnier-Status"
-
-**Ziel:** Öffentlicher Tab, zeigt „Noch im Rennen" vs. „Ausgeschieden" mit Runde des Ausscheidens.
-
-**Code-Änderungen:**
-- Neue Route `src/routes/turnier.tsx` (Label „Status", Icon Trophy).
-- `src/components/layout/BottomNav.tsx` + `SideNav.tsx`: Neuen Tab einreihen (an sinnvoller Stelle, z. B. zwischen „Tabellen" und „Tipps").
-- Neue Lib `src/lib/tournament-status.ts`:
-  - Liest `useMatchStore` + hardcodierte R32 aus `src/data/ko-static.ts`.
-  - Für jedes Team ermittelt sie: `alive | eliminated` und im Fall `eliminated` die Runde (`group | r32 | r16 | qf | sf | final`).
-  - Regel: Team ist „ausgeschieden", wenn es in einem beendeten KO-Spiel den niedrigeren Score hat; „im Rennen" sonst.
-- UI: Zwei Sektionen mit Flag + Teamname; ausgeschiedene Teams zeigen „Ausgeschieden im Achtelfinale" o. ä. Sortierung: alive nach Gruppe/Alphabet, eliminated nach Runde (spätester Ausschluss oben).
-
----
-
-## 5) WhatsNew
-
-Kein neuer Eintrag. `WhatsNewModal.tsx` bleibt textlich unverändert; nur `APP_VERSION` steigt auf `7.7.0`, damit `lastSeenVersion`-Vergleiche konsistent bleiben (das Modal poppt einmalig, zeigt aber den alten 7.6-Inhalt — falls der Nutzer das komplett unterdrücken möchte: bitte kurz melden, dann setzen wir stattdessen `lastSeenVersion` intern nach oder überspringen den Bump).
-
----
-
-## 6) End-to-End Bug-Sweep
-
-Vor Abschluss laufe ich systematisch durch:
-- Dashboard (`/`): Phase-Filter, LiveNowBar, Ampeln, Spoiler-Reveal-Persistenz
-- Spiele (`/spiele`): Auto-Scroll, „Top"-Pille (Hotfix 7.6.1), KO-Badges, Truncation
-- Tabellen, Tipps, Profil, neuer Turnier-Status
-- Admin: PinGate → LiveOverride → SystemMonitor (neue /4-Taste, Fehler-Log-Kategorien, echte Nutzerzahlen)
-- Push-Flow (Permission-Modal, dynamischer Body)
-- Feedback-Modal (8 Öffnungen)
-- Edge-Function `fetch-live-scores` mit `?koPhase=4|5|…|9`
-
-Gefundene Bugs werden im gleichen Turn gefixt und explizit gelistet.
-
----
-
-## Zusammenfassung der manuellen Schritte für dich
-
-1. **Edge-Function neu deployen:** `supabase/functions/fetch-live-scores/index.ts` (akzeptiert jetzt `koPhase=4`).
-2. **Datenbank:** Keine neuen Tabellen, Enums oder RLS-Policies nötig. Der /4-Override lebt clientseitig.
-3. **Optional Cleanup (nur wenn gewünscht):** `DELETE FROM public.client_pings WHERE created_at < now() - interval '7 days';` — wird im Abschluss als Copy-Paste-Snippet geliefert.
+## Betroffene Dateien
+- `supabase/functions/fetch-live-scores/index.ts` (erweitern)
+- `src/services/footballApi.ts` (neue `fetchAllStoredFixtures`)
+- `src/hooks/useLiveApi.ts` (Poll- und Init-Logik)
+- `src/components/admin/SystemMonitor.tsx` (Sync-Button)
