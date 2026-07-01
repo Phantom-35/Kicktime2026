@@ -19,10 +19,29 @@ export function SystemMonitor() {
   const matches = useMatchStore(selectMatchList);
 
   const [, tick] = useState(0);
+  const [syncing, setSyncing] = useState(false);
   useEffect(() => {
     const id = window.setInterval(() => tick((n) => n + 1), 30_000);
     return () => window.clearInterval(id);
   }, []);
+
+  const runGroupSync = async () => {
+    setSyncing(true);
+    try {
+      const res = await syncGroupPhase();
+      if (res.error) {
+        toast.error(`Sync fehlgeschlagen: ${res.error}`);
+      } else {
+        toast.success(`Gruppenphase synchronisiert: ${res.synced} Spiele`);
+        const stored = await fetchAllStoredFixtures();
+        if (stored.length > 0) applyLiveFixturesToStore(stored);
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const autoPhase = useMemo(() => determineActiveKoPhase(matches), [matches]);
   const activeInfo = activeKoPhase ? KO_PHASES[activeKoPhase as 4 | 5 | 6 | 7 | 8 | 9] : null;
