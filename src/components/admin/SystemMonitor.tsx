@@ -105,7 +105,28 @@ export function SystemMonitor() {
         <p className="text-[10px] text-muted-foreground">
           Standard: Automatisches Weiterschalten sobald alle Spiele einer Phase beendet sind.
         </p>
+        <div className="pt-2 border-t border-border/60">
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full text-[11px] h-9 gap-2"
+            onClick={runGroupSync}
+            disabled={syncing}
+          >
+            {syncing ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Database className="h-3.5 w-3.5" />
+            )}
+            Gruppenphase manuell synchronisieren (wm2026)
+          </Button>
+          <p className="text-[10px] text-muted-foreground mt-1.5">
+            Zieht die komplette Gruppenphase aus der OpenLigaDB in die persistente Datenbank —
+            überschreibt keine bereits abgeschlossenen Ergebnisse.
+          </p>
+        </div>
       </div>
+
 
       {/* Fehler-Log */}
       <div className="rounded-xl border border-border bg-background/60 p-3 space-y-2">
