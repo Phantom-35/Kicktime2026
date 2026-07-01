@@ -21,7 +21,14 @@ type State = {
   predictions: Record<string, { a: number; b: number; createdAt: number }>;
   lastSeenVersion: string;
   revealedMatches: Record<string, true>;
+  // --- Admin / System Monitoring (nicht im WhatsNew erwähnt) ---
+  adminKoPhaseOverride: number | null; // 5..9 oder null (=Auto)
+  activeKoPhase: number | null;        // zuletzt genutzte KO-Phase (nur Anzeige)
+  activeApiUrl: string | null;         // zuletzt abgefragte URL (nur Anzeige)
+  lastApiFetchAt: number | null;
+  apiErrorLog: Array<{ ts: number; url: string; message: string; phase: number | null }>;
 };
+
 
 type Actions = {
   setTimezone: (tz: string) => void;
