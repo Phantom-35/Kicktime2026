@@ -1,10 +1,20 @@
 /**
  * Supabase Edge Function: fetch-live-scores
  *
- * - OpenLigaDB Upstream (frei, ohne Key): /getmatchdata/wm/2026
+ * - OpenLigaDB Upstream (frei, ohne Key)
  * - 5-Minuten-Cache in `live_fixtures_cache`
- * - Manuelle Admin-Overrides aus `match_overrides` gewinnen IMMER gegen Upstream
- * - Vollständige CORS-Header auf ALLEN Responses (Preflight, Success, Error)
+ * - PERSISTENTER Speicher in `match_results` (Single Source of Truth)
+ *   → beim Phasen-Wechsel gehen keine alten Ergebnisse verloren
+ * - Manuelle Admin-Overrides aus `match_overrides` gewinnen (dynamisch)
+ * - CORS auf ALLEN Responses
+ *
+ * Modi (POST-Body):
+ *   { mode: "live" | "idle", koPhase?: 4..9 }  → normaler Poll (aktive Phase),
+ *                                                 füllt Cache + match_results
+ *   { mode: "sync-groups" }                    → zwingt wm2026/2026 Fetch und
+ *                                                 schreibt alles in match_results
+ *   { mode: "full-store" }                     → liefert ALLE Zeilen aus
+ *                                                 match_results im Fixture-Format
  */
 
 // deno-lint-ignore-file no-explicit-any
@@ -22,7 +32,8 @@ const CORS_HEADERS = {
 const CACHE_ID = "world-cup-2026";
 const LIVE_TTL_MS = 5 * 60_000;
 const IDLE_TTL_MS = 5 * 60_000;
-const DEFAULT_UPSTREAM_URL = "https://api.openligadb.de/getmatchdata/wm2026/2026";
+const GROUPS_UPSTREAM_URL = "https://api.openligadb.de/getmatchdata/wm2026/2026";
+const DEFAULT_UPSTREAM_URL = GROUPS_UPSTREAM_URL;
 const KO_PHASE_URLS: Record<number, string> = {
   4: "https://api.openligadb.de/getmatchdata/wm26/2026/4",
   5: "https://api.openligadb.de/getmatchdata/wm26/2026/5",
@@ -33,7 +44,6 @@ const KO_PHASE_URLS: Record<number, string> = {
 };
 const MATCH_WINDOW_MS = 130 * 60 * 1000;
 
-
 type Override = {
   match_id: string;
   score_a: number;
@@ -43,33 +53,89 @@ type Override = {
   is_manual: boolean;
 };
 
+type StoredRow = {
+  match_id: string;
+  phase: number | null;
+  team_home_name: string | null;
+  team_away_name: string | null;
+  score_home: number | null;
+  score_away: number | null;
+  status: string;
+  minute: number | null;
+  kickoff_utc: string | null;
+  stadium: string | null;
+  city: string | null;
+  raw: any;
+  finished_at: string | null;
+  updated_at?: string;
+};
+
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
 
   try {
-    let mode: "live" | "idle" = "live";
+    let mode: "live" | "idle" | "sync-groups" | "full-store" = "live";
     let koPhase: number | null = null;
     if (req.method === "POST") {
       const body = await req.json().catch(() => ({}));
-      if (body?.mode === "idle") mode = "idle";
+      const m = body?.mode;
+      if (m === "idle" || m === "sync-groups" || m === "full-store") mode = m;
       const kp = Number(body?.koPhase);
       if ([4, 5, 6, 7, 8, 9].includes(kp)) koPhase = kp;
     }
 
-    const upstreamUrl = koPhase ? KO_PHASE_URLS[koPhase] : DEFAULT_UPSTREAM_URL;
-    const cacheId = koPhase ? `wm26-ko-${koPhase}` : CACHE_ID;
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!supabaseUrl) {
-      return json({ error: "Service not configured", fixtures: [], url: upstreamUrl }, 500);
+      return json({ error: "Service not configured", fixtures: [] }, 500);
     }
-
     const admin = supabaseServiceKey
       ? createClient(supabaseUrl, supabaseServiceKey)
       : null;
+
+    // ---------- MODE: full-store ----------
+    if (mode === "full-store") {
+      const overrides = await loadOverrides(admin);
+      const stored = await loadAllStored(admin);
+      const fixtures = stored.map(rowToFixture);
+      const merged = mergeOverrides(fixtures, overrides);
+      return json(
+        { fixtures: merged, cache: "store", url: null, koPhase: null, count: merged.length },
+        200,
+      );
+    }
+
+    // ---------- MODE: sync-groups ----------
+    if (mode === "sync-groups") {
+      try {
+        const upstream = await fetch(GROUPS_UPSTREAM_URL, {
+          headers: { accept: "application/json" },
+        });
+        if (!upstream.ok) {
+          return json(
+            { error: `Upstream ${upstream.status}`, synced: 0, url: GROUPS_UPSTREAM_URL },
+            200,
+          );
+        }
+        const raw = await upstream.json();
+        const list = Array.isArray(raw) ? raw : [];
+        const fixtures = list.map(mapOpenLigaMatch).filter(Boolean) as any[];
+        const written = await persistFixtures(admin, fixtures, null);
+        return json(
+          { synced: written, url: GROUPS_UPSTREAM_URL, fixtures, cache: "sync" },
+          200,
+        );
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        return json({ error: msg, synced: 0, url: GROUPS_UPSTREAM_URL }, 200);
+      }
+    }
+
+    // ---------- MODE: live/idle (klassisch, aktive Phase) ----------
+    const upstreamUrl = koPhase ? KO_PHASE_URLS[koPhase] : DEFAULT_UPSTREAM_URL;
+    const cacheId = koPhase ? `wm26-ko-${koPhase}` : CACHE_ID;
 
     const overrides = await loadOverrides(admin);
 
@@ -106,7 +172,7 @@ serve(async (req: Request) => {
 
       const raw = await upstream.json();
       const response = Array.isArray(raw)
-        ? raw.map(mapOpenLigaMatch).filter(Boolean)
+        ? (raw.map(mapOpenLigaMatch).filter(Boolean) as any[])
         : [];
       const payload = { response };
 
@@ -116,6 +182,8 @@ serve(async (req: Request) => {
           payload,
           fetched_at: new Date().toISOString(),
         });
+        // Persistiere additiv in match_results — verlustfrei
+        await persistFixtures(admin, response, koPhase);
       }
 
       const merged = mergeOverrides(response, overrides);
@@ -129,12 +197,126 @@ serve(async (req: Request) => {
       }
       return json({ fixtures: overridesOnly(overrides), cache: "overrides", url: upstreamUrl, koPhase, error: msg }, 200);
     }
-
   } catch (err) {
     console.error("[fetch-live-scores] fatal:", err);
     return json({ error: "Internal error", fixtures: [] }, 500);
   }
 });
+
+// ============ Persistenz (match_results) ============
+
+async function persistFixtures(
+  admin: any,
+  fixtures: any[],
+  phase: number | null,
+): Promise<number> {
+  if (!admin || fixtures.length === 0) return 0;
+
+  const ids = fixtures.map((f) => String(f?.fixture?.id ?? "")).filter(Boolean);
+  if (ids.length === 0) return 0;
+
+  const { data: existing } = await admin
+    .from("match_results")
+    .select("match_id, status, score_home, score_away, finished_at")
+    .in("match_id", ids);
+  const existingMap = new Map<string, StoredRow>();
+  for (const row of (existing ?? []) as StoredRow[]) existingMap.set(row.match_id, row);
+
+  const now = new Date().toISOString();
+  const rows: StoredRow[] = [];
+  for (const f of fixtures) {
+    const id = String(f?.fixture?.id ?? "");
+    if (!id) continue;
+    const short: string = f?.fixture?.status?.short ?? "NS";
+    const apiStatus: "scheduled" | "live" | "finished" =
+      ["FT", "AET", "PEN", "AWD", "WO"].includes(short) ? "finished"
+      : ["NS", "TBD", "PST"].includes(short) ? "scheduled"
+      : "live";
+    const apiScoreHome: number | null = f?.goals?.home ?? null;
+    const apiScoreAway: number | null = f?.goals?.away ?? null;
+
+    const prev = existingMap.get(id);
+    const prevFinishedWithScore =
+      prev?.status === "finished" && prev.score_home != null && prev.score_away != null;
+
+    // NIEMALS ein abgeschlossenes Ergebnis überschreiben.
+    const finalStatus = prevFinishedWithScore ? "finished" : apiStatus;
+    const finalHome = prevFinishedWithScore ? prev!.score_home : apiScoreHome;
+    const finalAway = prevFinishedWithScore ? prev!.score_away : apiScoreAway;
+    const finishedAt =
+      prev?.finished_at ??
+      (apiStatus === "finished" && apiScoreHome != null ? now : null);
+
+    rows.push({
+      match_id: id,
+      phase,
+      team_home_name: f?.teams?.home?.name ?? null,
+      team_away_name: f?.teams?.away?.name ?? null,
+      score_home: finalHome,
+      score_away: finalAway,
+      status: finalStatus,
+      minute: f?.fixture?.status?.elapsed ?? null,
+      kickoff_utc: f?.fixture?.date ?? null,
+      stadium: f?.fixture?.venue?.name ?? null,
+      city: f?.fixture?.venue?.city ?? null,
+      raw: f,
+      finished_at: finishedAt,
+      updated_at: now,
+    });
+  }
+
+  try {
+    const { error } = await admin
+      .from("match_results")
+      .upsert(rows, { onConflict: "match_id" });
+    if (error) {
+      console.warn("[persistFixtures] upsert failed:", error.message);
+      return 0;
+    }
+    return rows.length;
+  } catch (err) {
+    console.warn("[persistFixtures] threw:", err);
+    return 0;
+  }
+}
+
+async function loadAllStored(admin: any): Promise<StoredRow[]> {
+  if (!admin) return [];
+  try {
+    const { data, error } = await admin
+      .from("match_results")
+      .select("*")
+      .order("kickoff_utc", { ascending: true });
+    if (error) {
+      console.warn("[loadAllStored] failed:", error.message);
+      return [];
+    }
+    return (data ?? []) as StoredRow[];
+  } catch (err) {
+    console.warn("[loadAllStored] threw:", err);
+    return [];
+  }
+}
+
+function rowToFixture(r: StoredRow): any {
+  const short =
+    r.status === "finished" ? "FT" : r.status === "live" ? "1H" : "NS";
+  return {
+    fixture: {
+      id: r.match_id,
+      date: r.kickoff_utc,
+      status: { short, elapsed: r.minute },
+      venue: { name: r.stadium, city: r.city },
+    },
+    teams: {
+      home: { name: r.team_home_name },
+      away: { name: r.team_away_name },
+    },
+    goals: { home: r.score_home, away: r.score_away },
+  };
+}
+
+// ============ Overrides ============
 
 async function loadOverrides(admin: any): Promise<Override[]> {
   if (!admin) return [];
@@ -165,9 +347,6 @@ function mergeOverrides(fixtures: any[], overrides: Override[]): any[] {
     const id = String(o.match_id);
     const existing = byId.get(id);
 
-    // Dynamische Invalidierung: Sobald die API "frischer" ist als der
-    // manuelle Eintrag, ignorieren wir das Override komplett — so friert
-    // ein veralteter Admin-Eintrag das Spiel nicht für immer ein.
     if (existing) {
       const apiStatus: string = existing.fixture?.status?.short ?? "NS";
       const apiHome: number | null = existing.goals?.home ?? null;
@@ -211,6 +390,8 @@ function mergeOverrides(fixtures: any[], overrides: Override[]): any[] {
 function overridesOnly(overrides: Override[]): any[] {
   return mergeOverrides([], overrides);
 }
+
+// ============ Mapping OpenLigaDB → Fixture ============
 
 function mapOpenLigaMatch(m: any): any | null {
   if (!m || !m.team1 || !m.team2) return null;

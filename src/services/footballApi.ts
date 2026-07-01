@@ -85,6 +85,46 @@ export async function fetchLiveWorldCupData(
   }
 }
 
+/**
+ * Liest den kompletten persistenten Store (`match_results`) über die Edge
+ * Function. Verlustfrei — enthält Gruppenphase + alle KO-Phasen zusammen.
+ */
+export async function fetchAllStoredFixtures(): Promise<LiveFixture[]> {
+  if (!isLiveDataEnabled()) return [];
+  try {
+    const { data, error } = await supabase.functions.invoke<{
+      fixtures?: RawFixture[];
+    }>("fetch-live-scores", { body: { mode: "full-store" } });
+    if (error) {
+      console.warn("[footballApi] full-store error", error.message);
+      return [];
+    }
+    return normalize(data?.fixtures ?? []);
+  } catch (err) {
+    console.warn("[footballApi] full-store invoke failed", err);
+    return [];
+  }
+}
+
+/**
+ * Triggert einen manuellen Sync der Gruppenphase (wm2026/2026) in die
+ * persistente `match_results`-Tabelle. Nutzt keinen Cache.
+ */
+export async function syncGroupPhase(): Promise<{ synced: number; error?: string }> {
+  if (!isLiveDataEnabled()) return { synced: 0, error: "Backend nicht konfiguriert" };
+  try {
+    const { data, error } = await supabase.functions.invoke<{
+      synced?: number;
+      error?: string;
+    }>("fetch-live-scores", { body: { mode: "sync-groups" } });
+    if (error) return { synced: 0, error: error.message };
+    if (data?.error) return { synced: data.synced ?? 0, error: data.error };
+    return { synced: data?.synced ?? 0 };
+  } catch (err) {
+    return { synced: 0, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 
 function normalize(raw: RawFixture[]): LiveFixture[] {
   const out: LiveFixture[] = [];
