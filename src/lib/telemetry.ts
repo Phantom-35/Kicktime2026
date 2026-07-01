@@ -49,15 +49,8 @@ function isRealUser(): boolean {
   } catch {
     return false;
   }
-  const state = useAppStore.getState();
-  const onboarded = state.isOnboarded && state.favoriteTeams.length + state.interestingTeams.length > 0;
-  let notif = false;
-  try {
-    notif = typeof Notification !== "undefined" && Notification.permission === "granted";
-  } catch {
-    notif = false;
-  }
-  return onboarded || notif;
+  // v7.7.1: jeder echte Browser zählt — nur Bots werden gefiltert.
+  return true;
 }
 
 export async function sendPing(force = false): Promise<void> {
