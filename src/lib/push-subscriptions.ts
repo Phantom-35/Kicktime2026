@@ -8,6 +8,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { getDeviceId } from "./device-id";
+import { logError } from "./error-log";
 import type { SerializedSubscription } from "./push-client";
 
 export async function upsertPushSubscription(
@@ -25,7 +26,10 @@ export async function upsertPushSubscription(
   const { error } = await supabase
     .from("push_subscriptions")
     .upsert(row, { onConflict: "device_id" });
-  if (error) console.warn("[push-subscriptions] upsert failed:", error.message);
+  if (error) {
+    console.warn("[push-subscriptions] upsert failed:", error.message);
+    logError("push", `subscription upsert failed: ${error.message}`);
+  }
 }
 
 export async function addMatchAlarm(
@@ -49,7 +53,10 @@ export async function addMatchAlarm(
       },
       { onConflict: "device_id,match_id" }
     );
-  if (error) console.warn("[push-subscriptions] alarm upsert failed:", error.message);
+  if (error) {
+    console.warn("[push-subscriptions] alarm upsert failed:", error.message);
+    logError("push", `alarm upsert failed: ${error.message}`);
+  }
 }
 
 export async function removeMatchAlarm(matchId: string): Promise<void> {
@@ -59,5 +66,8 @@ export async function removeMatchAlarm(matchId: string): Promise<void> {
     .delete()
     .eq("device_id", device_id)
     .eq("match_id", matchId);
-  if (error) console.warn("[push-subscriptions] alarm delete failed:", error.message);
+  if (error) {
+    console.warn("[push-subscriptions] alarm delete failed:", error.message);
+    logError("push", `alarm delete failed: ${error.message}`);
+  }
 }
