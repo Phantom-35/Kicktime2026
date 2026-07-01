@@ -3,11 +3,15 @@ import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import {
   applyLiveFixturesToStore,
+  fetchAllStoredFixtures,
   fetchLiveWorldCupData,
   isLiveDataEnabled,
+  syncGroupPhase,
 } from "@/services/footballApi";
 import { fetchMatchOverrides, applyOverridesToStore } from "@/lib/match-overrides";
 import { determineActiveKoPhase, type KoPhaseNum } from "@/lib/ko-phase";
+
+const INITIAL_SYNC_KEY = "kicktime-initial-sync-done";
 
 const IDLE_TTL_MS = 5 * 60 * 1000; // 5 min
 const LIVE_POLL_MS = 5 * 60 * 1000; // 5 min — OpenLigaDB cadence
