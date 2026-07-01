@@ -10,12 +10,7 @@ import { LiveOverridePanel } from "./LiveOverridePanel";
 import { SystemMonitor } from "./SystemMonitor";
 
 
-type PingRow = {
-  client_id: string;
-  last_ping: string;
-  app_version: string;
-  fav_team: string | null;
-};
+// (Alte PingRow-Struktur wurde in v7.7 durch push_subscriptions-basierte Zählung ersetzt.)
 
 const PIN = "031011";
 
@@ -70,23 +65,36 @@ export function AdminPanel({ open, onClose }: { open: boolean; onClose: () => vo
   );
 }
 
+type SubRow = { device_id: string; last_seen_at: string | null };
+type PingRowFav = { client_id: string; fav_team: string | null; last_ping: string };
+
 function TelemetryView() {
-  const [rows, setRows] = useState<PingRow[] | null>(null);
+  const [subs, setSubs] = useState<SubRow[] | null>(null);
+  const [favs, setFavs] = useState<PingRowFav[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setErr(null);
-    const { data, error } = await supabase
+    // "Echte Nutzer" = eindeutige Geräte mit gültigem Push-Abo.
+    const subQuery = supabase
+      .from("push_subscriptions")
+      .select("device_id, last_seen_at");
+    // Fanteam-Verteilung darf weiter aus app_pings kommen, wird aber nur
+    // gegen die echte User-Basis (subs) gefiltert.
+    const favQuery = supabase
       .from("app_pings")
-      .select("client_id, last_ping, app_version, fav_team");
-    if (error) {
-      setErr(error.message);
-      setRows([]);
+      .select("client_id, fav_team, last_ping");
+
+    const [subRes, favRes] = await Promise.all([subQuery, favQuery]);
+    if (subRes.error) {
+      setErr(subRes.error.message);
+      setSubs([]);
     } else {
-      setRows((data as PingRow[]) ?? []);
+      setSubs((subRes.data as SubRow[]) ?? []);
     }
+    if (!favRes.error) setFavs((favRes.data as PingRowFav[]) ?? []);
     setLoading(false);
   }, []);
 
@@ -96,23 +104,21 @@ function TelemetryView() {
 
   const now = Date.now();
   const within = (ms: number) =>
-    (rows ?? []).filter((r) => now - new Date(r.last_ping).getTime() <= ms).length;
-  const activeNow = within(5 * 60 * 1000);
+    (subs ?? []).filter((r) => r.last_seen_at && now - new Date(r.last_seen_at).getTime() <= ms).length;
+  const total = subs?.length ?? 0;
   const active24h = within(24 * 60 * 60 * 1000);
   const active7d = within(7 * 24 * 60 * 60 * 1000);
-  const total = rows?.length ?? 0;
 
-  const versionDist = countBy(rows ?? [], (r) => r.app_version);
-  const teamDist = countBy(
-    (rows ?? []).filter((r) => r.fav_team),
-    (r) => r.fav_team as string
-  );
+  // Nur Fanteams von echten Push-Geräten zählen.
+  const realIds = new Set((subs ?? []).map((s) => s.device_id));
+  const realFavs = (favs ?? []).filter((f) => f.fav_team && realIds.has(f.client_id));
+  const teamDist = countBy(realFavs, (r) => r.fav_team as string);
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-          Live-Telemetrie
+          Echte Nutzer (Push-Geräte)
         </div>
         <Button size="icon" variant="ghost" onClick={load} disabled={loading} aria-label="Aktualisieren">
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
@@ -125,17 +131,15 @@ function TelemetryView() {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-2">
-        <Metric icon={<Users className="h-4 w-4" />} label="Aktiv (5 min)" value={activeNow} />
+      <div className="grid grid-cols-3 gap-2">
         <Metric icon={<Users className="h-4 w-4" />} label="Aktiv (24 h)" value={active24h} />
         <Metric icon={<Users className="h-4 w-4" />} label="Aktiv (7 Tage)" value={active7d} />
-        <Metric icon={<Smartphone className="h-4 w-4" />} label="Geräte gesamt" value={total} />
+        <Metric icon={<Smartphone className="h-4 w-4" />} label="Tipper gesamt" value={total} />
       </div>
 
-
-      <Section title="App-Versionen">
-        <BarList rows={versionDist} total={total} />
-      </Section>
+      <p className="text-[10px] text-muted-foreground italic">
+        Nur eindeutige Geräte mit Push-Abo — anonyme Pageviews und Bots werden ignoriert.
+      </p>
 
       <Section title="Top Fanteams" icon={<Trophy className="h-4 w-4" />}>
         <BarList
