@@ -40,10 +40,11 @@ export function AdminPanel({ open, onClose }: { open: boolean; onClose: () => vo
           <PinGate onUnlock={() => setUnlocked(true)} />
         ) : (
           <Tabs defaultValue="telemetry" className="w-full">
-            <TabsList className="grid grid-cols-3 w-full h-10 bg-background/60">
-              <TabsTrigger value="telemetry" className="text-xs">📊 Telemetrie</TabsTrigger>
-              <TabsTrigger value="override" className="text-xs">🎮 Override</TabsTrigger>
-              <TabsTrigger value="feedback" className="text-xs">💬 Feedback</TabsTrigger>
+            <TabsList className="grid grid-cols-4 w-full h-10 bg-background/60">
+              <TabsTrigger value="telemetry" className="text-[10px]">📊 Telemetrie</TabsTrigger>
+              <TabsTrigger value="override" className="text-[10px]">🎮 Override</TabsTrigger>
+              <TabsTrigger value="system" className="text-[10px]">🛰️ System</TabsTrigger>
+              <TabsTrigger value="feedback" className="text-[10px]">💬 Feedback</TabsTrigger>
             </TabsList>
             <TabsContent value="telemetry" className="mt-3">
               <TelemetryView />
@@ -51,10 +52,14 @@ export function AdminPanel({ open, onClose }: { open: boolean; onClose: () => vo
             <TabsContent value="override" className="mt-3">
               <LiveOverridePanel pin={PIN} />
             </TabsContent>
+            <TabsContent value="system" className="mt-3">
+              <SystemMonitor />
+            </TabsContent>
             <TabsContent value="feedback" className="mt-3">
               <FeedbackView />
             </TabsContent>
           </Tabs>
+
         )}
 
         <p className="text-[10px] text-muted-foreground text-center pt-1">
