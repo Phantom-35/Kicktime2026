@@ -7,6 +7,8 @@ import { getTeam } from "@/data/teams";
 import { Users, Smartphone, RefreshCw, Activity, Trophy, MessageCircle } from "lucide-react";
 import { PinGate } from "./PinGate";
 import { LiveOverridePanel } from "./LiveOverridePanel";
+import { SystemMonitor } from "./SystemMonitor";
+
 
 type PingRow = {
   client_id: string;
