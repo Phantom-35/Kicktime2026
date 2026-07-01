@@ -163,6 +163,18 @@ export const useAppStore = create<State & Actions>()(
       setLastSeenVersion: (v) => set({ lastSeenVersion: v }),
       revealMatch: (id) =>
         set((s) => (s.revealedMatches[id] ? s : { revealedMatches: { ...s.revealedMatches, [id]: true } })),
+      setAdminKoPhaseOverride: (n) => set({ adminKoPhaseOverride: n }),
+      setActiveApiState: (phase, url) =>
+        set({ activeKoPhase: phase, activeApiUrl: url, lastApiFetchAt: Date.now() }),
+      logApiError: (url, message, phase) =>
+        set((s) => ({
+          apiErrorLog: [
+            { ts: Date.now(), url, message: message.slice(0, 300), phase },
+            ...s.apiErrorLog,
+          ].slice(0, 30),
+        })),
+      clearApiErrorLog: () => set({ apiErrorLog: [] }),
+
     }),
     { name: "kicktime-2026" }
   )
