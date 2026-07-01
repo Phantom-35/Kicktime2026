@@ -50,7 +50,13 @@ type Actions = {
   clearPrediction: (matchId: string) => void;
   setLastSeenVersion: (v: string) => void;
   revealMatch: (id: string) => void;
+  // Admin / System
+  setAdminKoPhaseOverride: (n: number | null) => void;
+  setActiveApiState: (phase: number | null, url: string | null) => void;
+  logApiError: (url: string, message: string, phase: number | null) => void;
+  clearApiErrorLog: () => void;
 };
+
 
 const detectTz = () => {
   try {
