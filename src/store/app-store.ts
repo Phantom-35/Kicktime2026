@@ -21,7 +21,14 @@ type State = {
   predictions: Record<string, { a: number; b: number; createdAt: number }>;
   lastSeenVersion: string;
   revealedMatches: Record<string, true>;
+  // --- Admin / System Monitoring (nicht im WhatsNew erwähnt) ---
+  adminKoPhaseOverride: number | null; // 5..9 oder null (=Auto)
+  activeKoPhase: number | null;        // zuletzt genutzte KO-Phase (nur Anzeige)
+  activeApiUrl: string | null;         // zuletzt abgefragte URL (nur Anzeige)
+  lastApiFetchAt: number | null;
+  apiErrorLog: Array<{ ts: number; url: string; message: string; phase: number | null }>;
 };
+
 
 type Actions = {
   setTimezone: (tz: string) => void;
@@ -43,7 +50,13 @@ type Actions = {
   clearPrediction: (matchId: string) => void;
   setLastSeenVersion: (v: string) => void;
   revealMatch: (id: string) => void;
+  // Admin / System
+  setAdminKoPhaseOverride: (n: number | null) => void;
+  setActiveApiState: (phase: number | null, url: string | null) => void;
+  logApiError: (url: string, message: string, phase: number | null) => void;
+  clearApiErrorLog: () => void;
 };
+
 
 const detectTz = () => {
   try {
@@ -75,6 +88,12 @@ export const useAppStore = create<State & Actions>()(
       predictions: {},
       lastSeenVersion: "",
       revealedMatches: {},
+      adminKoPhaseOverride: null,
+      activeKoPhase: null,
+      activeApiUrl: null,
+      lastApiFetchAt: null,
+      apiErrorLog: [],
+
 
 
 
@@ -144,6 +163,18 @@ export const useAppStore = create<State & Actions>()(
       setLastSeenVersion: (v) => set({ lastSeenVersion: v }),
       revealMatch: (id) =>
         set((s) => (s.revealedMatches[id] ? s : { revealedMatches: { ...s.revealedMatches, [id]: true } })),
+      setAdminKoPhaseOverride: (n) => set({ adminKoPhaseOverride: n }),
+      setActiveApiState: (phase, url) =>
+        set({ activeKoPhase: phase, activeApiUrl: url, lastApiFetchAt: Date.now() }),
+      logApiError: (url, message, phase) =>
+        set((s) => ({
+          apiErrorLog: [
+            { ts: Date.now(), url, message: message.slice(0, 300), phase },
+            ...s.apiErrorLog,
+          ].slice(0, 30),
+        })),
+      clearApiErrorLog: () => set({ apiErrorLog: [] }),
+
     }),
     { name: "kicktime-2026" }
   )

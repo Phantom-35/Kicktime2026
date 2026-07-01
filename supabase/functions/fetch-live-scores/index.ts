@@ -22,8 +22,16 @@ const CORS_HEADERS = {
 const CACHE_ID = "world-cup-2026";
 const LIVE_TTL_MS = 5 * 60_000;
 const IDLE_TTL_MS = 5 * 60_000;
-const UPSTREAM_URL = "https://api.openligadb.de/getmatchdata/wm2026/2026";
+const DEFAULT_UPSTREAM_URL = "https://api.openligadb.de/getmatchdata/wm2026/2026";
+const KO_PHASE_URLS: Record<number, string> = {
+  5: "https://api.openligadb.de/getmatchdata/wm26/2026/5",
+  6: "https://api.openligadb.de/getmatchdata/wm26/2026/6",
+  7: "https://api.openligadb.de/getmatchdata/wm26/2026/7",
+  8: "https://api.openligadb.de/getmatchdata/wm26/2026/8",
+  9: "https://api.openligadb.de/getmatchdata/wm26/2026/9",
+};
 const MATCH_WINDOW_MS = 130 * 60 * 1000;
+
 
 type Override = {
   match_id: string;
@@ -41,15 +49,21 @@ serve(async (req: Request) => {
 
   try {
     let mode: "live" | "idle" = "live";
+    let koPhase: number | null = null;
     if (req.method === "POST") {
       const body = await req.json().catch(() => ({}));
       if (body?.mode === "idle") mode = "idle";
+      const kp = Number(body?.koPhase);
+      if ([5, 6, 7, 8, 9].includes(kp)) koPhase = kp;
     }
+
+    const upstreamUrl = koPhase ? KO_PHASE_URLS[koPhase] : DEFAULT_UPSTREAM_URL;
+    const cacheId = koPhase ? `wm26-ko-${koPhase}` : CACHE_ID;
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!supabaseUrl) {
-      return json({ error: "Service not configured", fixtures: [] }, 500);
+      return json({ error: "Service not configured", fixtures: [], url: upstreamUrl }, 500);
     }
 
     const admin = supabaseServiceKey
@@ -64,7 +78,7 @@ serve(async (req: Request) => {
       const { data } = await admin
         .from("live_fixtures_cache")
         .select("payload, fetched_at")
-        .eq("id", CACHE_ID)
+        .eq("id", cacheId)
         .maybeSingle();
       cached = (data as any) ?? null;
     }
@@ -73,20 +87,20 @@ serve(async (req: Request) => {
       const age = Date.now() - new Date(cached.fetched_at).getTime();
       if (age < ttl) {
         const merged = mergeOverrides(cached.payload?.response ?? [], overrides);
-        return json({ fixtures: merged, cache: "hit" }, 200);
+        return json({ fixtures: merged, cache: "hit", url: upstreamUrl, koPhase }, 200);
       }
     }
 
     try {
-      const upstream = await fetch(UPSTREAM_URL, {
+      const upstream = await fetch(upstreamUrl, {
         headers: { accept: "application/json" },
       });
       if (!upstream.ok) {
         if (cached) {
           const merged = mergeOverrides(cached.payload?.response ?? [], overrides);
-          return json({ fixtures: merged, cache: "stale" }, 200);
+          return json({ fixtures: merged, cache: "stale", url: upstreamUrl, koPhase, error: `Upstream ${upstream.status}` }, 200);
         }
-        return json({ fixtures: overridesOnly(overrides), cache: "overrides" }, 200);
+        return json({ fixtures: overridesOnly(overrides), cache: "overrides", url: upstreamUrl, koPhase, error: `Upstream ${upstream.status}` }, 200);
       }
 
       const raw = await upstream.json();
@@ -97,22 +111,24 @@ serve(async (req: Request) => {
 
       if (admin) {
         await admin.from("live_fixtures_cache").upsert({
-          id: CACHE_ID,
+          id: cacheId,
           payload,
           fetched_at: new Date().toISOString(),
         });
       }
 
       const merged = mergeOverrides(response, overrides);
-      return json({ fixtures: merged, cache: "miss" }, 200);
+      return json({ fixtures: merged, cache: "miss", url: upstreamUrl, koPhase, upstreamCount: response.length }, 200);
     } catch (err) {
       console.error("[fetch-live-scores] upstream error:", err);
+      const msg = err instanceof Error ? err.message : String(err);
       if (cached) {
         const merged = mergeOverrides(cached.payload?.response ?? [], overrides);
-        return json({ fixtures: merged, cache: "stale" }, 200);
+        return json({ fixtures: merged, cache: "stale", url: upstreamUrl, koPhase, error: msg }, 200);
       }
-      return json({ fixtures: overridesOnly(overrides), cache: "overrides" }, 200);
+      return json({ fixtures: overridesOnly(overrides), cache: "overrides", url: upstreamUrl, koPhase, error: msg }, 200);
     }
+
   } catch (err) {
     console.error("[fetch-live-scores] fatal:", err);
     return json({ error: "Internal error", fixtures: [] }, 500);
