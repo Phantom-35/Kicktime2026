@@ -91,17 +91,27 @@ export function useLiveApi(): void {
       }
     };
 
+    // Nach jedem Upstream-Refresh laden wir den kompletten Store aus der
+    // DB — so bleiben Ergebnisse anderer Phasen erhalten.
+    const loadFullStore = async () => {
+      const stored = await fetchAllStoredFixtures();
+      if (cancelled) return;
+      if (stored.length > 0) applyLiveFixturesToStore(stored);
+      return stored.length;
+    };
+
     const runIdle = async () => {
       try {
         const last = Number(localStorage.getItem(LAST_IDLE_KEY) ?? "0");
         if (Date.now() - last < IDLE_TTL_MS) {
+          await loadFullStore();
           await applyOverrides();
           return;
         }
         const res = await fetchLiveWorldCupData("idle", koPhase);
         if (cancelled) return;
         trackResult(res);
-        applyLiveFixturesToStore(res.fixtures);
+        await loadFullStore();
         await applyOverrides();
         localStorage.setItem(LAST_IDLE_KEY, String(Date.now()));
       } catch (err) {
@@ -114,19 +124,36 @@ export function useLiveApi(): void {
         const res = await fetchLiveWorldCupData("live", koPhase);
         if (cancelled) return;
         trackResult(res);
-        applyLiveFixturesToStore(res.fixtures);
+        await loadFullStore();
         await applyOverrides();
       } catch (err) {
         logApiError("network", err instanceof Error ? err.message : String(err), koPhase);
       }
     };
 
-    if (inLiveWindow) {
-      runLive();
-      intervalRef.current = window.setInterval(runLive, LIVE_POLL_MS);
-    } else {
-      runIdle();
-    }
+    // Initial-Sync: wenn die DB leer ist, einmalig die Gruppenphase abziehen.
+    const bootstrap = async () => {
+      const count = await loadFullStore();
+      if (cancelled) return;
+      if ((count ?? 0) === 0 && !localStorage.getItem(INITIAL_SYNC_KEY)) {
+        try {
+          await syncGroupPhase();
+          localStorage.setItem(INITIAL_SYNC_KEY, String(Date.now()));
+          await loadFullStore();
+        } catch (err) {
+          logApiError("network", err instanceof Error ? err.message : String(err), null);
+        }
+      }
+      if (inLiveWindow) {
+        runLive();
+        intervalRef.current = window.setInterval(runLive, LIVE_POLL_MS);
+      } else {
+        runIdle();
+      }
+    };
+
+    bootstrap();
+
 
     return () => {
       cancelled = true;
