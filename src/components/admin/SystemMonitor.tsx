@@ -3,7 +3,10 @@ import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { KO_PHASE_LIST, KO_PHASES, determineActiveKoPhase } from "@/lib/ko-phase";
-import { Trash2, AlertCircle, Radio, RefreshCw } from "lucide-react";
+import { Trash2, AlertCircle, Radio, RefreshCw, Database, Loader2 } from "lucide-react";
+import { fetchAllStoredFixtures, syncGroupPhase } from "@/services/footballApi";
+import { applyLiveFixturesToStore } from "@/services/footballApi";
+import { toast } from "sonner";
 
 export function SystemMonitor() {
   const adminOverride = useAppStore((s) => s.adminKoPhaseOverride);
@@ -16,10 +19,29 @@ export function SystemMonitor() {
   const matches = useMatchStore(selectMatchList);
 
   const [, tick] = useState(0);
+  const [syncing, setSyncing] = useState(false);
   useEffect(() => {
     const id = window.setInterval(() => tick((n) => n + 1), 30_000);
     return () => window.clearInterval(id);
   }, []);
+
+  const runGroupSync = async () => {
+    setSyncing(true);
+    try {
+      const res = await syncGroupPhase();
+      if (res.error) {
+        toast.error(`Sync fehlgeschlagen: ${res.error}`);
+      } else {
+        toast.success(`Gruppenphase synchronisiert: ${res.synced} Spiele`);
+        const stored = await fetchAllStoredFixtures();
+        if (stored.length > 0) applyLiveFixturesToStore(stored);
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const autoPhase = useMemo(() => determineActiveKoPhase(matches), [matches]);
   const activeInfo = activeKoPhase ? KO_PHASES[activeKoPhase as 4 | 5 | 6 | 7 | 8 | 9] : null;
@@ -83,7 +105,28 @@ export function SystemMonitor() {
         <p className="text-[10px] text-muted-foreground">
           Standard: Automatisches Weiterschalten sobald alle Spiele einer Phase beendet sind.
         </p>
+        <div className="pt-2 border-t border-border/60">
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full text-[11px] h-9 gap-2"
+            onClick={runGroupSync}
+            disabled={syncing}
+          >
+            {syncing ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Database className="h-3.5 w-3.5" />
+            )}
+            Gruppenphase manuell synchronisieren (wm2026)
+          </Button>
+          <p className="text-[10px] text-muted-foreground mt-1.5">
+            Zieht die komplette Gruppenphase aus der OpenLigaDB in die persistente Datenbank —
+            überschreibt keine bereits abgeschlossenen Ergebnisse.
+          </p>
+        </div>
       </div>
+
 
       {/* Fehler-Log */}
       <div className="rounded-xl border border-border bg-background/60 p-3 space-y-2">
