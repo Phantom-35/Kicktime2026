@@ -22,7 +22,7 @@ export function SystemMonitor() {
   }, []);
 
   const autoPhase = useMemo(() => determineActiveKoPhase(matches), [matches]);
-  const activeInfo = activeKoPhase ? KO_PHASES[activeKoPhase as 5 | 6 | 7 | 8 | 9] : null;
+  const activeInfo = activeKoPhase ? KO_PHASES[activeKoPhase as 4 | 5 | 6 | 7 | 8 | 9] : null;
 
   return (
     <div className="space-y-3">
@@ -123,7 +123,10 @@ export function SystemMonitor() {
                 className="text-[11px] rounded-lg border border-destructive/30 bg-destructive/10 p-2 space-y-0.5"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-semibold text-destructive">
+                  <span className="font-semibold text-destructive flex items-center gap-1.5">
+                    <span className="uppercase text-[9px] tracking-wider px-1.5 py-0.5 rounded bg-destructive/20 border border-destructive/40">
+                      {e.category ?? "api"}
+                    </span>
                     {e.phase ? `Phase ${e.phase}` : "System"}
                   </span>
                   <span className="text-muted-foreground tabular-nums">

@@ -27,6 +27,7 @@ import { useAlarmScheduler } from "@/hooks/useAlarmScheduler";
 import { runScheduleAudit } from "@/lib/scheduleAudit";
 import { applyAccentTheme, type AccentThemeId } from "@/lib/accent-themes";
 import { sendPing } from "@/lib/telemetry";
+import { logError } from "@/lib/error-log";
 
 import appCss from "../styles.css?url";
 
@@ -168,6 +169,23 @@ function RootComponent() {
     const id = window.setInterval(() => sendPing(), 5 * 60 * 1000);
     return () => window.clearInterval(id);
   }, [appReady]);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onErr = (ev: ErrorEvent) => {
+      logError("render", ev.message || "unknown window error", { url: ev.filename });
+    };
+    const onRej = (ev: PromiseRejectionEvent) => {
+      const r = ev.reason;
+      const msg = r instanceof Error ? r.message : typeof r === "string" ? r : "unhandled rejection";
+      logError("system", msg);
+    };
+    window.addEventListener("error", onErr);
+    window.addEventListener("unhandledrejection", onRej);
+    return () => {
+      window.removeEventListener("error", onErr);
+      window.removeEventListener("unhandledrejection", onRej);
+    };
+  }, []);
   useEffect(() => {
     if (location.pathname !== "/spiele") {
       setShowSpieleTop(false);

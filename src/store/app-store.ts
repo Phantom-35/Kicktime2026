@@ -4,6 +4,14 @@ import type { AccentThemeId } from "@/lib/accent-themes";
 
 export type Window = { start: number; end: number }; // hours 0-24, end may be < start (cross-midnight)
 
+export type AppErrorEntry = {
+  ts: number;
+  url: string;
+  message: string;
+  phase: number | null;
+  category?: string; // v7.7 — freie Kategorie (api/supabase/auth/render/…)
+};
+
 type State = {
   userTimezone: string;
   favoriteTeams: string[];
@@ -22,11 +30,11 @@ type State = {
   lastSeenVersion: string;
   revealedMatches: Record<string, true>;
   // --- Admin / System Monitoring (nicht im WhatsNew erwähnt) ---
-  adminKoPhaseOverride: number | null; // 5..9 oder null (=Auto)
+  adminKoPhaseOverride: number | null; // 4..9 oder null (=Auto). 4 = manueller R32-Override.
   activeKoPhase: number | null;        // zuletzt genutzte KO-Phase (nur Anzeige)
   activeApiUrl: string | null;         // zuletzt abgefragte URL (nur Anzeige)
   lastApiFetchAt: number | null;
-  apiErrorLog: Array<{ ts: number; url: string; message: string; phase: number | null }>;
+  apiErrorLog: AppErrorEntry[];
 };
 
 
@@ -53,7 +61,7 @@ type Actions = {
   // Admin / System
   setAdminKoPhaseOverride: (n: number | null) => void;
   setActiveApiState: (phase: number | null, url: string | null) => void;
-  logApiError: (url: string, message: string, phase: number | null) => void;
+  logApiError: (url: string, message: string, phase: number | null, category?: string) => void;
   clearApiErrorLog: () => void;
 };
 
@@ -166,12 +174,12 @@ export const useAppStore = create<State & Actions>()(
       setAdminKoPhaseOverride: (n) => set({ adminKoPhaseOverride: n }),
       setActiveApiState: (phase, url) =>
         set({ activeKoPhase: phase, activeApiUrl: url, lastApiFetchAt: Date.now() }),
-      logApiError: (url, message, phase) =>
+      logApiError: (url, message, phase, category) =>
         set((s) => ({
           apiErrorLog: [
-            { ts: Date.now(), url, message: message.slice(0, 300), phase },
+            { ts: Date.now(), url, message: message.slice(0, 300), phase, category: category ?? "api" },
             ...s.apiErrorLog,
-          ].slice(0, 30),
+          ].slice(0, 60),
         })),
       clearApiErrorLog: () => set({ apiErrorLog: [] }),
 

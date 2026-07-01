@@ -9,6 +9,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { useMatchStore } from "@/store/match-store";
+import { logError } from "@/lib/error-log";
 
 export type MatchOverride = {
   match_id: string;
@@ -29,11 +30,13 @@ export async function fetchMatchOverrides(): Promise<MatchOverride[]> {
       .select("match_id, score_a, score_b, minute, status, is_manual, updated_at");
     if (error) {
       console.warn("[match-overrides] select failed:", error.message);
+      logError("supabase", `overrides select failed: ${error.message}`);
       return [];
     }
     return (data ?? []) as MatchOverride[];
   } catch (err) {
     console.warn("[match-overrides] fetch threw:", err);
+    logError("supabase", `overrides fetch threw: ${err instanceof Error ? err.message : String(err)}`);
     return [];
   }
 }
@@ -93,6 +96,7 @@ export async function setMatchOverride(payload: {
     .upsert(row, { onConflict: "match_id" });
   if (error) {
     console.error("[match-overrides] upsert failed:", error);
+    logError("supabase", `override upsert failed: ${error.message}`);
     return { ok: false, error: error.message };
   }
 
@@ -114,6 +118,7 @@ export async function clearMatchOverride(payload: {
     .eq("match_id", payload.matchId);
   if (error) {
     console.error("[match-overrides] delete failed:", error);
+    logError("supabase", `override delete failed: ${error.message}`);
     return { ok: false, error: error.message };
   }
   // Sofort lokal entfernen — kein Wackeln, syncWithRealTime füllt Live-Status

@@ -24,6 +24,7 @@ const LIVE_TTL_MS = 5 * 60_000;
 const IDLE_TTL_MS = 5 * 60_000;
 const DEFAULT_UPSTREAM_URL = "https://api.openligadb.de/getmatchdata/wm2026/2026";
 const KO_PHASE_URLS: Record<number, string> = {
+  4: "https://api.openligadb.de/getmatchdata/wm26/2026/4",
   5: "https://api.openligadb.de/getmatchdata/wm26/2026/5",
   6: "https://api.openligadb.de/getmatchdata/wm26/2026/6",
   7: "https://api.openligadb.de/getmatchdata/wm26/2026/7",
@@ -54,7 +55,7 @@ serve(async (req: Request) => {
       const body = await req.json().catch(() => ({}));
       if (body?.mode === "idle") mode = "idle";
       const kp = Number(body?.koPhase);
-      if ([5, 6, 7, 8, 9].includes(kp)) koPhase = kp;
+      if ([4, 5, 6, 7, 8, 9].includes(kp)) koPhase = kp;
     }
 
     const upstreamUrl = koPhase ? KO_PHASE_URLS[koPhase] : DEFAULT_UPSTREAM_URL;
