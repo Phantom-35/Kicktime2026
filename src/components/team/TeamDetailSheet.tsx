@@ -53,7 +53,7 @@ export default function TeamDetailSheet({ open, onOpenChange, team, alive, elimi
             </div>
             <div className="flex-1 min-w-0">
               <SheetTitle className="text-2xl font-black tracking-tight truncate">
-                {team.land ?? team.name}
+                {team.name}
               </SheetTitle>
               <div className="mt-1.5">
                 {alive ? (
