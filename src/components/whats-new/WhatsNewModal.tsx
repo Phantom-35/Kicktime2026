@@ -1,24 +1,24 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Users, Trophy, Sparkles } from "lucide-react";
+import { CheckCircle2, Clock, RefreshCw } from "lucide-react";
 
-type Feature = { icon: typeof Trophy; title: string; text: string };
+type Feature = { icon: typeof CheckCircle2; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
-    icon: Users,
-    title: "👥 Team-Deep-Dive im Turnier-Status",
-    text: "Tippe im Turnier-Status-Tab auf eine Nation und entdecke Trainer, FIFA-Rang, WM-Titel und den kompletten Kader – sauber nach Positionen sortiert.",
+    icon: CheckCircle2,
+    title: "✅ Ergebnisse zuverlässig sichtbar",
+    text: "Spielresultate aus dem Sechzehntelfinale erscheinen jetzt sofort im Frontend – auch bei hardgecodeten Paarungen.",
   },
   {
-    icon: Trophy,
-    title: "🏆 Alle 48 Kader dabei",
-    text: "Von Torwart bis Sturm: Der offizielle 26er-Kader aller WM-Teilnehmer ist jetzt direkt in der App abrufbar.",
+    icon: Clock,
+    title: "🕒 Kein falscher „Laden…“-Hinweis mehr",
+    text: "Zukünftige Spiele bleiben strikt als „noch nicht gestartet“ markiert, egal was die API vorab meldet.",
   },
   {
-    icon: Sparkles,
-    title: "✨ Flüssig trotz Datenflut",
-    text: "Die Kader-Daten werden erst geladen, wenn du sie brauchst – die App bleibt so schnell wie gewohnt.",
+    icon: RefreshCw,
+    title: "🔄 Force-Fetch im Admin-Panel",
+    text: "Neuer Button in der System-Übersicht: umgeht den 5-Minuten-Cache und zieht die aktive Route sofort frisch.",
   },
 ];
 

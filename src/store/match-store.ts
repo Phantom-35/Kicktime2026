@@ -228,9 +228,12 @@ function applyUpdateInternal(
     };
 
     // Guard: never demote a finished match back to live/scheduled via either
-    // path. Once a match has ended, the only legitimate score change is the
-    // final score itself — the status MUST stay "finished".
-    if (cur.status === "finished" && merged.status !== "finished") {
+    // path. Once a match has ended (with a real score), the only legitimate
+    // change is the final score itself — the status MUST stay "finished".
+    // Ausnahme: Wenn cur ein "Zombie"-finished ohne Score ist (z.B. Fehler-
+    // Payload), darf ein neues API-Update den Zustand wieder korrigieren.
+    const curFinishedWithScore = cur.status === "finished" && !!cur.score;
+    if (curFinishedWithScore && merged.status !== "finished") {
       merged.status = "finished";
       merged.liveScore = undefined;
       merged.matchMinute = undefined;

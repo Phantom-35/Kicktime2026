@@ -20,12 +20,15 @@ export type LiveFixture = {
   utcTimestamp?: string;
   stadium?: string;
   city?: string;
+  /** OpenLigaDB matchID – Fallback-Matcher, wenn Team-Namen leer sind. */
+  matchId?: string;
 };
 
 export type FetchMode = "idle" | "live";
 
 type RawFixture = {
   fixture?: {
+    id?: string | number;
     date?: string;
     status?: { short?: string; elapsed?: number | null };
     venue?: { name?: string | null; city?: string | null };
@@ -48,6 +51,7 @@ export type LiveFetchResult = {
 export async function fetchLiveWorldCupData(
   mode: FetchMode = "live",
   koPhase: number | null = null,
+  force = false,
 ): Promise<LiveFetchResult> {
   if (!isLiveDataEnabled()) return { fixtures: [], url: null, koPhase };
 
@@ -58,7 +62,7 @@ export async function fetchLiveWorldCupData(
       cache?: "hit" | "miss" | "stale" | "overrides";
       url?: string;
       koPhase?: number | null;
-    }>("fetch-live-scores", { body: { mode, koPhase } });
+    }>("fetch-live-scores", { body: { mode, koPhase, force } });
 
     if (error) {
       console.warn("[footballApi] edge function error", error.message);
@@ -83,6 +87,18 @@ export async function fetchLiveWorldCupData(
     const msg = err instanceof Error ? err.message : String(err);
     return { fixtures: [], url: null, koPhase, error: msg };
   }
+}
+
+/**
+ * Force-Fetch der aktiven Phase — umgeht den 5-Min-Cache in der Edge Function
+ * und zieht die Route sofort frisch. Anschließend sollte
+ * `fetchAllStoredFixtures()` aufgerufen werden, um den kompletten Store zu
+ * rehydraten.
+ */
+export async function forceFetchActivePhase(
+  koPhase: number | null,
+): Promise<LiveFetchResult> {
+  return fetchLiveWorldCupData("live", koPhase, true);
 }
 
 /**
@@ -128,25 +144,49 @@ export async function syncGroupPhase(): Promise<{ synced: number; error?: string
 
 function normalize(raw: RawFixture[]): LiveFixture[] {
   const out: LiveFixture[] = [];
+  const now = Date.now();
   for (const r of raw) {
     const homeName = r.teams?.home?.name;
     const awayName = r.teams?.away?.name;
     const teamA = apiNameToCode(homeName);
     const teamB = apiNameToCode(awayName);
-    if (!teamA || !teamB) continue;
+    const matchId =
+      r.fixture?.id != null ? String(r.fixture.id) : undefined;
+
+    // Zeilen ohne Team-Zuordnung DÜRFEN NICHT verworfen werden — wir versuchen
+    // sie später über die matchId zu paaren (KO-Slots mit Placeholder-Namen).
+    if (!teamA || !teamB) {
+      if (!matchId) continue;
+    }
+
     const isoDate = r.fixture?.date;
+    const kickoff = isoDate ? new Date(isoDate).getTime() : NaN;
+    const rawStatus = mapStatus(r.fixture?.status?.short ?? "NS");
+
+    // ZEIT-HARTE Status-Korrektur: Wenn der Anpfiff noch in der Zukunft liegt,
+    // ist das Spiel definitiv nicht "live" oder "finished" — egal was die API
+    // sagt. Verhindert den Zombie-State "finished ohne Score" für zukünftige
+    // Spiele, der zu "Ergebnis wird geladen…" führt.
+    let status = rawStatus;
+    let liveScore: LiveFixture["liveScore"] =
+      r.goals?.home != null && r.goals?.away != null
+        ? { a: r.goals.home, b: r.goals.away }
+        : undefined;
+    if (!Number.isNaN(kickoff) && kickoff > now) {
+      status = "scheduled";
+      liveScore = undefined;
+    }
+
     out.push({
-      teamA,
-      teamB,
-      status: mapStatus(r.fixture?.status?.short ?? "NS"),
-      liveScore:
-        r.goals?.home != null && r.goals?.away != null
-          ? { a: r.goals.home, b: r.goals.away }
-          : undefined,
+      teamA: teamA ?? "",
+      teamB: teamB ?? "",
+      status,
+      liveScore,
       matchMinute: r.fixture?.status?.elapsed ?? undefined,
       utcTimestamp: isoDate ? new Date(isoDate).toISOString() : undefined,
       stadium: r.fixture?.venue?.name ?? undefined,
       city: r.fixture?.venue?.city ?? undefined,
+      matchId,
     });
   }
   return out;
@@ -160,21 +200,29 @@ function mapStatus(s: string): LiveFixture["status"] {
 
 /**
  * Merge live fixtures into the match store by pairing on team codes
- * (order-independent). Live updates flip status, update minute/score, and
- * finalize the result when the match ends — feeding live standings.
+ * (order-independent). Falls kein Team-Match möglich ist (z.B. weil das
+ * persistierte Fixture keine Team-Namen kennt), wird sekundär auf die
+ * OpenLigaDB-matchId gepaart — sofern der lokale Match sie kennt.
  */
 export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
   if (fixtures.length === 0) return;
   const state = useMatchStore.getState();
   const all = Object.values(state.matches);
   for (const f of fixtures) {
-    const match = all.find(
-      (m) =>
-        (m.teamA === f.teamA && m.teamB === f.teamB) ||
-        (m.teamA === f.teamB && m.teamB === f.teamA)
-    );
+    let match = f.teamA && f.teamB
+      ? all.find(
+          (m) =>
+            (m.teamA === f.teamA && m.teamB === f.teamB) ||
+            (m.teamA === f.teamB && m.teamB === f.teamA),
+        )
+      : undefined;
+    if (!match && f.matchId) {
+      match = all.find(
+        (m) => (m as { apiMatchId?: string }).apiMatchId === f.matchId,
+      );
+    }
     if (!match) continue;
-    const flipped = match.teamA !== f.teamA;
+    const flipped = !!f.teamA && match.teamA !== f.teamA;
     const liveScore =
       f.liveScore && flipped
         ? { a: f.liveScore.b, b: f.liveScore.a }
@@ -190,7 +238,6 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
     if (f.status === "finished" && liveScore) {
       state.finishMatchFromApi(match.id, liveScore);
     }
-
   }
 }
 

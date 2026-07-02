@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import { KO_PHASE_LIST, KO_PHASES, determineActiveKoPhase } from "@/lib/ko-phase";
-import { Trash2, AlertCircle, Radio, RefreshCw, Database, Loader2 } from "lucide-react";
-import { fetchAllStoredFixtures, syncGroupPhase } from "@/services/footballApi";
+import { Trash2, AlertCircle, Radio, RefreshCw, Database, Loader2, Zap } from "lucide-react";
+import { fetchAllStoredFixtures, syncGroupPhase, forceFetchActivePhase } from "@/services/footballApi";
 import { applyLiveFixturesToStore } from "@/services/footballApi";
 import { toast } from "sonner";
 
@@ -20,6 +20,7 @@ export function SystemMonitor() {
 
   const [, tick] = useState(0);
   const [syncing, setSyncing] = useState(false);
+  const [forcing, setForcing] = useState(false);
   useEffect(() => {
     const id = window.setInterval(() => tick((n) => n + 1), 30_000);
     return () => window.clearInterval(id);
@@ -40,6 +41,27 @@ export function SystemMonitor() {
       toast.error(err instanceof Error ? err.message : String(err));
     } finally {
       setSyncing(false);
+    }
+  };
+
+  const runForceFetch = async () => {
+    setForcing(true);
+    try {
+      const res = await forceFetchActivePhase(activeKoPhase);
+      if (res.error) {
+        toast.error(`Force-Fetch fehlgeschlagen: ${res.error}`);
+      } else {
+        toast.success(
+          `Frisch geladen: ${res.fixtures.length} Fixtures` +
+            (res.koPhase ? ` (Phase /${res.koPhase})` : " (Gruppen/R32)"),
+        );
+        const stored = await fetchAllStoredFixtures();
+        if (stored.length > 0) applyLiveFixturesToStore(stored);
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : String(err));
+    } finally {
+      setForcing(false);
     }
   };
 
@@ -73,7 +95,22 @@ export function SystemMonitor() {
           {" · "}
           Auto-Vorschlag: {autoPhase ? `Phase ${autoPhase} (${KO_PHASES[autoPhase].label})` : "R32 hardgecodet"}
         </div>
+        <Button
+          size="sm"
+          variant="default"
+          className="w-full text-[11px] h-9 gap-2 mt-2"
+          onClick={runForceFetch}
+          disabled={forcing}
+        >
+          {forcing ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Zap className="h-3.5 w-3.5" />
+          )}
+          Force Fetch (aktive Route — Cache umgehen)
+        </Button>
       </div>
+
 
       {/* Manueller Override */}
       <div className="rounded-xl border border-border bg-background/60 p-3 space-y-2">
