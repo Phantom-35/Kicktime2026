@@ -51,6 +51,7 @@ export type LiveFetchResult = {
 export async function fetchLiveWorldCupData(
   mode: FetchMode = "live",
   koPhase: number | null = null,
+  force = false,
 ): Promise<LiveFetchResult> {
   if (!isLiveDataEnabled()) return { fixtures: [], url: null, koPhase };
 
@@ -61,7 +62,7 @@ export async function fetchLiveWorldCupData(
       cache?: "hit" | "miss" | "stale" | "overrides";
       url?: string;
       koPhase?: number | null;
-    }>("fetch-live-scores", { body: { mode, koPhase } });
+    }>("fetch-live-scores", { body: { mode, koPhase, force } });
 
     if (error) {
       console.warn("[footballApi] edge function error", error.message);
@@ -86,6 +87,18 @@ export async function fetchLiveWorldCupData(
     const msg = err instanceof Error ? err.message : String(err);
     return { fixtures: [], url: null, koPhase, error: msg };
   }
+}
+
+/**
+ * Force-Fetch der aktiven Phase — umgeht den 5-Min-Cache in der Edge Function
+ * und zieht die Route sofort frisch. Anschließend sollte
+ * `fetchAllStoredFixtures()` aufgerufen werden, um den kompletten Store zu
+ * rehydraten.
+ */
+export async function forceFetchActivePhase(
+  koPhase: number | null,
+): Promise<LiveFetchResult> {
+  return fetchLiveWorldCupData("live", koPhase, true);
 }
 
 /**
