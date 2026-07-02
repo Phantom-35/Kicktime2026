@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
-import { computeTeamStatuses, labelForRound, type EliminatedRound } from "@/lib/tournament-status";
+import { computeTeamStatuses, labelForRound, type EliminatedRound, type TeamStatus } from "@/lib/tournament-status";
 import { Trophy, X } from "lucide-react";
+
+const TeamDetailSheet = lazy(() => import("@/components/team/TeamDetailSheet"));
 
 export const Route = createFileRoute("/turnier")({
   head: () => ({
@@ -37,6 +39,7 @@ function TurnierPage() {
         }),
     [statuses]
   );
+  const [selected, setSelected] = useState<TeamStatus | null>(null);
 
   return (
     <div className="px-4 py-4 space-y-6">
@@ -57,13 +60,16 @@ function TurnierPage() {
           <span className="text-xs font-bold tabular-nums text-emerald-500">{alive.length}</span>
         </div>
         <ul className="grid grid-cols-2 gap-2">
-          {alive.map(({ team }) => (
-            <li
-              key={team.code}
-              className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-3 py-2"
-            >
-              <span className="text-lg leading-none">{team.flag}</span>
-              <span className="text-sm font-medium truncate">{team.name}</span>
+          {alive.map((s) => (
+            <li key={s.team.code}>
+              <button
+                type="button"
+                onClick={() => setSelected(s)}
+                className="w-full flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-left hover:border-emerald-400/60 hover:bg-emerald-500/10 active:scale-[0.98] transition"
+              >
+                <span className="text-lg leading-none">{s.team.flag}</span>
+                <span className="text-sm font-medium truncate">{s.team.name}</span>
+              </button>
             </li>
           ))}
           {alive.length === 0 && (
@@ -80,18 +86,21 @@ function TurnierPage() {
           <span className="text-xs font-bold tabular-nums text-destructive">{eliminated.length}</span>
         </div>
         <ul className="space-y-1.5">
-          {eliminated.map(({ team, eliminatedIn }) => (
-            <li
-              key={team.code}
-              className="flex items-center justify-between gap-2 rounded-xl border border-border bg-background/60 px-3 py-2 opacity-80"
-            >
-              <span className="flex items-center gap-2 min-w-0">
-                <span className="text-lg leading-none grayscale">{team.flag}</span>
-                <span className="text-sm font-medium truncate">{team.name}</span>
-              </span>
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground shrink-0">
-                {labelForRound(eliminatedIn!)}
-              </span>
+          {eliminated.map((s) => (
+            <li key={s.team.code}>
+              <button
+                type="button"
+                onClick={() => setSelected(s)}
+                className="w-full flex items-center justify-between gap-2 rounded-xl border border-border bg-background/60 px-3 py-2 opacity-80 hover:opacity-100 hover:border-primary/40 active:scale-[0.98] transition text-left"
+              >
+                <span className="flex items-center gap-2 min-w-0">
+                  <span className="text-lg leading-none grayscale">{s.team.flag}</span>
+                  <span className="text-sm font-medium truncate">{s.team.name}</span>
+                </span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground shrink-0">
+                  {labelForRound(s.eliminatedIn!)}
+                </span>
+              </button>
             </li>
           ))}
           {eliminated.length === 0 && (
@@ -99,6 +108,16 @@ function TurnierPage() {
           )}
         </ul>
       </section>
+
+      <Suspense fallback={null}>
+        <TeamDetailSheet
+          open={!!selected}
+          onOpenChange={(v) => !v && setSelected(null)}
+          team={selected?.team ?? null}
+          alive={selected?.alive ?? true}
+          eliminatedIn={selected?.eliminatedIn}
+        />
+      </Suspense>
     </div>
   );
 }

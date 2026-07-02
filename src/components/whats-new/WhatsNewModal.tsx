@@ -1,24 +1,24 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Trophy, Sparkles, LayoutGrid } from "lucide-react";
+import { Users, Trophy, Sparkles } from "lucide-react";
 
 type Feature = { icon: typeof Trophy; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
-    icon: Trophy,
-    title: "🎯 Fokus auf die aktuelle Runde",
-    text: "Dein Dashboard zeigt dir ab jetzt immer genau die Phase an, die gerade heiß ist – aktuell das Sechzehntelfinale.",
+    icon: Users,
+    title: "👥 Team-Deep-Dive im Turnier-Status",
+    text: "Tippe im Turnier-Status-Tab auf eine Nation und entdecke Trainer, FIFA-Rang, WM-Titel und den kompletten Kader – sauber nach Positionen sortiert.",
   },
   {
-    icon: LayoutGrid,
-    title: "🧱 Layout-Fix im Turnierbaum",
-    text: "Keine fehlerhaften Flaggen-Stapel mehr bei noch offenen Paarungen. Der restliche Spielplan bleibt absolut sauber und übersichtlich.",
+    icon: Trophy,
+    title: "🏆 Alle 48 Kader dabei",
+    text: "Von Torwart bis Sturm: Der offizielle 26er-Kader aller WM-Teilnehmer ist jetzt direkt in der App abrufbar.",
   },
   {
     icon: Sparkles,
-    title: "✨ Stabiler im Hintergrund",
-    text: "Feinschliff an Performance und Spielplan-Sync – alles fühlt sich noch flüssiger an.",
+    title: "✨ Flüssig trotz Datenflut",
+    text: "Die Kader-Daten werden erst geladen, wenn du sie brauchst – die App bleibt so schnell wie gewohnt.",
   },
 ];
 

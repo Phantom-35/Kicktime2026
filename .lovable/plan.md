@@ -1,94 +1,59 @@
 ## Ziel
-Kritischen Datenverlust beheben: Beim Wechsel der API-Phase (z. B. /4, /5) verschwinden bislang die Ergebnisse aller anderen Phasen, weil jede URL nur ihre Teilmenge liefert und der Match-Store direkt daraus befüllt wird. Lösung: eine dauerhafte Supabase-Tabelle als Single Source of Truth, die niemals Ergebnisse verliert und additiv gemergt wird.
+Im Turnier-Status-Tab (`/turnier`) werden die Länderkarten anklickbar. Ein Klick öffnet ein Bottom-Sheet mit Team-Header, Basis-Fakten und nach Positionen gruppiertem Kader. Optik passt zum Dark/Neon-Design. Bestehende Logik im Turnier-Status-Tab bleibt unangetastet.
 
-## 1. Neue Supabase-Tabelle `match_results`
-Persistenter Speicher für alle je gesehenen Spielstände aus der OpenLigaDB-API.
+## 1. Kader-Daten integrieren
+- Upload `wm2026_kader.json` als App-Daten unter `src/data/wm2026_kader.json` ablegen (statisches JSON, ~5.4k Zeilen — nur bei Bedarf importiert).
+- Neues Modul `src/data/squads.ts`:
+  - Baut beim ersten Zugriff eine `Map<Code, TeamSquad>` per `apiNameToCode()` aus `src/utils/teamMapping.ts`, damit deutsche Ländernamen aus dem JSON auf unsere 3-Letter-Codes gemappt werden.
+  - Export: `getTeamSquad(code: string): TeamSquad | null`.
+  - `TeamSquad`-Typ: `{ trainer, verbandGegruendet, wmTitel, fifaWeltranglistenplatz, kontinentalverband, kader: { Torwart: Player[]; Abwehr: Player[]; Mittelfeld: Player[]; Sturm: Player[] } }`.
+  - Import des JSON per **dynamischem Import** in `getTeamSquad`, damit das JSON erst beim ersten Öffnen eines Sheets in den Bundle-Chunk geladen wird (Lazy Loading, kein Overhead beim Rendern der Länder-Liste).
 
-Spalten:
-- `match_id` (text, PK) — aus OpenLigaDB `matchID`
-- `phase` (int, nullable) — 4–9 für KO-URLs, null für wm2026-Gruppenphase
-- `team_home_name`, `team_away_name` (text)
-- `score_home`, `score_away` (int, nullable)
-- `status` (text: `scheduled` | `live` | `finished`)
-- `minute` (int, nullable)
-- `kickoff_utc` (timestamptz, nullable)
-- `stadium`, `city` (text, nullable)
-- `raw` (jsonb) — zuletzt gesehenes API-Rohobjekt für Debugging
-- `updated_at` (timestamptz, default now())
-- `finished_at` (timestamptz, nullable) — gesetzt beim ersten `FT`
+## 2. Neue Komponente `TeamDetailSheet`
+Datei: `src/components/team/TeamDetailSheet.tsx`.
+- Nutzt shadcn `Sheet` von unten (`side="bottom"`) mit abgerundeten oberen Kanten, `bg-card/95 backdrop-blur`, Neon-Akzent-Border (`border-primary/30`), max. Höhe `85vh`, scrollbar.
+- Props: `open`, `onOpenChange`, `team: Team`, `alive`, `eliminatedIn?`.
+- Header:
+  - Große Flagge (Emoji, `text-6xl`), Team-Name als `h2`, Statusbadge (grün „Noch im Rennen" oder rot „Ausgeschieden – <Runde>").
+  - Zwei prominente Badges/Chips: 🏆 „X WM-Titel" und 📊 „FIFA #<Platz>" mit Neon-Border/Glow.
+- Basis-Info-Grid (2 Spalten, kompakte Kacheln):
+  - Trainer, Kontinentalverband, Verband gegründet, Kadergröße.
+  - Kachel-Stil: `rounded-xl border border-border bg-background/60 p-3`, kleiner Label + größerer Wert.
+- Kader-Sektion:
+  - `Tabs` (shadcn) mit den 4 Positionen: `Torwart · Abwehr · Mittelfeld · Sturm`. Tab-Label enthält Zähler in Klammern.
+  - Pro Tab: `ul` mit einer Zeile pro Spieler (nummeriert), kompakte Karten `rounded-lg bg-background/40 border border-border/50 px-3 py-2`.
+  - Falls Positionsgruppe leer → dezenter Hinweis.
+- Fallback: Falls `getTeamSquad(code)` `null` liefert (unwahrscheinlich, aber defensiv), zeige nur Header + Basis-Info-Grid ohne Kader und Text „Kader-Infos nicht verfügbar".
 
-RLS: `SELECT` für `anon` und `authenticated` erlauben (Lesen ist öffentlich, Schreiben nur Service-Role via Edge Function).
+## 3. Turnier-Seite anpassen
+Datei: `src/routes/turnier.tsx`.
+- Lokaler State `const [selected, setSelected] = useState<TeamStatus | null>(null)`.
+- Beide `<li>`-Blöcke (alive + eliminated) werden zu `<button>`-Wrappern (semantisch `<li><button …>`), rufen `setSelected({team, alive, eliminatedIn})`.
+- Visuell: unverändertes Styling + `hover:border-primary/50 active:scale-[0.98] transition` und `cursor-pointer`.
+- Am Seitenende `<TeamDetailSheet open={!!selected} onOpenChange={(v)=>!v && setSelected(null)} …>`.
+- Import der Sheet-Komponente per **lazy** (`React.lazy` + `<Suspense fallback={null}>`), damit die JSON-Kader-Daten wirklich erst on-click geladen werden.
 
-## 2. Edge Function `fetch-live-scores` erweitern
-Zusätzlich zum bestehenden Cache/Merge-Verhalten:
-1. Nach jedem erfolgreichen Upstream-Fetch: alle gemappten Matches per Upsert in `match_results` schreiben — **niemals überschreibend für abgeschlossene Ergebnisse**:
-   - Wenn Zeile existiert mit `status = 'finished'` und `score_home/score_away IS NOT NULL`: nur `raw`/`updated_at` aktualisieren, Score & Status bleiben.
-   - Sonst: alle Felder updaten; sobald erstmals `finished` mit Score kommt, `finished_at = now()`.
-2. Neuer Body-Parameter `mode: "sync-groups"` → zwingend `wm2026/2026` abfragen und in DB schreiben, unabhängig vom Cache. Antwort: `{ synced: <count> }`.
-3. Neuer Body-Parameter `mode: "full-store"` → gibt den **kompletten Inhalt** von `match_results` als Fixtures im bekannten Format zurück (statt nur der aktuellen Phase). Das nutzt das Frontend beim Poll.
+## 4. WhatsNew-Modal aktualisieren
+Datei: `src/components/whats-new/WhatsNewModal.tsx`
+- Neuer `FEATURES`-Array-Inhalt für v7.8 mit einem Eintrag zum klickbaren Turnier-Status inkl. Kader-Ansicht (Icon `Users` aus `lucide-react`).
+- Rest des Modals unverändert.
 
-Bestehende `live`/`idle`-Modi bleiben funktional (Rückwärtskompatibilität), das Frontend nutzt sie aber nicht mehr als Datenquelle für die Anzeige — nur noch als Trigger zum Upstream-Refresh.
-
-## 3. Frontend-Umstellung
-- `src/services/footballApi.ts`: neue Funktion `fetchAllStoredFixtures()` → ruft Edge Function mit `mode: "full-store"` auf und liefert alle DB-Fixtures.
-- `src/hooks/useLiveApi.ts`:
-  - Poll-Zyklus (5 Min): erst `fetchLiveWorldCupData(mode, koPhase)` (füllt DB in der Edge Function), dann `fetchAllStoredFixtures()` und dessen Ergebnis in den Match-Store übernehmen. So kommen immer alle Phasen zusammen an.
-  - Initial-Sync: Beim Mount ein `mode: "full-store"` Call. Wenn Antwort leer ist → einmalig `mode: "sync-groups"` auslösen, danach nochmal `full-store` laden. Flag im `localStorage` (`kicktime-initial-sync-done`), damit das nicht in Endlosschleife läuft, falls die API dauerhaft leer ist.
-- `applyLiveFixturesToStore` bleibt unverändert (arbeitet weiterhin mit dem Fixture-Array).
-
-## 4. Admin-Panel: Manueller Sync-Button
-In `src/components/admin/SystemMonitor.tsx` unter "MANUELLER OVERRIDE (BACKUP)" neuer Button **„Gruppenphase manuell synchronisieren (wm2026)“**:
-- Ruft Edge Function mit `mode: "sync-groups"` auf.
-- Toast mit Anzahl synchronisierter Spiele oder Fehlermeldung.
-- Danach automatisch `fetchAllStoredFixtures()` → Store aktualisiert.
+Datei: `src/lib/version.ts`
+- `APP_VERSION = "7.8.0"`.
 
 ## 5. Nicht anfassen
-- Keine Änderung an v7.7-Features (Telemetrie, Turnier-Status-Tab, Error-Log, /4-Override-Button).
-- Kein Eintrag im `WhatsNewModal.tsx`.
-- Keine Versions-Bump-Anforderung vom User → Version bleibt `7.7.0`.
+- Bestehende Turnier-Status-Berechnung (`src/lib/tournament-status.ts`) und Live-Daten-/DB-Logik aus v7.7.
+- Match-Store, Edge Functions, Telemetrie.
 
-## Manuelle Supabase-Schritte (nach dem Code-Deploy)
-Zwei Schritte im Supabase-Dashboard:
-
-**Schritt 1 — SQL-Editor:** folgendes Script ausführen (legt Tabelle + RLS + Grants an):
-```sql
-create table if not exists public.match_results (
-  match_id        text primary key,
-  phase           int,
-  team_home_name  text,
-  team_away_name  text,
-  score_home      int,
-  score_away      int,
-  status          text not null default 'scheduled',
-  minute          int,
-  kickoff_utc     timestamptz,
-  stadium         text,
-  city            text,
-  raw             jsonb,
-  finished_at     timestamptz,
-  updated_at      timestamptz not null default now()
-);
-
-grant select on public.match_results to anon, authenticated;
-grant all    on public.match_results to service_role;
-
-alter table public.match_results enable row level security;
-
-create policy "public read match_results"
-  on public.match_results for select
-  to anon, authenticated
-  using (true);
-```
-
-**Schritt 2 — Edge Function neu deployen:**
-```bash
-supabase functions deploy fetch-live-scores
-```
-
-Danach im Admin-Panel einmal auf **„Gruppenphase manuell synchronisieren (wm2026)“** klicken, um die DB initial zu füllen (das passiert sonst auch beim ersten App-Öffnen automatisch).
+## Technische Details
+- **Lazy Load**: `wm2026_kader.json` wird nur via `await import("@/data/wm2026_kader.json")` innerhalb `getTeamSquad` geladen. Die Map wird nach erstem Load gecached (`let indexCache: Map | null`).
+- **Mapping-Sicherheit**: Wenn ein Ländername im JSON von `apiNameToCode` nicht erkannt wird → Console-Warning, Team überspringen. Alle 48 WM-Teams sind in `TEAM_MAPPINGS` bereits enthalten inkl. deutscher Namen.
+- **Keine neuen Abhängigkeiten**; `Sheet`, `Tabs`, `Badge` sind über shadcn bereits verfügbar (bei Bedarf via bestehendes Muster in `src/components/ui/`).
 
 ## Betroffene Dateien
-- `supabase/functions/fetch-live-scores/index.ts` (erweitern)
-- `src/services/footballApi.ts` (neue `fetchAllStoredFixtures`)
-- `src/hooks/useLiveApi.ts` (Poll- und Init-Logik)
-- `src/components/admin/SystemMonitor.tsx` (Sync-Button)
+- neu: `src/data/wm2026_kader.json` (Upload)
+- neu: `src/data/squads.ts`
+- neu: `src/components/team/TeamDetailSheet.tsx`
+- edit: `src/routes/turnier.tsx`
+- edit: `src/components/whats-new/WhatsNewModal.tsx`
+- edit: `src/lib/version.ts`
