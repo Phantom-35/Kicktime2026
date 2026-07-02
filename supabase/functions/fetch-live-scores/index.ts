@@ -77,12 +77,14 @@ Deno.serve(async (req: Request) => {
   try {
     let mode: "live" | "idle" | "sync-groups" | "full-store" = "live";
     let koPhase: number | null = null;
+    let force = false;
     if (req.method === "POST") {
       const body = await req.json().catch(() => ({}));
       const m = body?.mode;
       if (m === "idle" || m === "sync-groups" || m === "full-store") mode = m;
       const kp = Number(body?.koPhase);
       if ([4, 5, 6, 7, 8, 9].includes(kp)) koPhase = kp;
+      if (body?.force === true) force = true;
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
