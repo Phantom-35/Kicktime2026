@@ -1,0 +1,5539 @@
+{
+  "turnier": "FIFA Fussball-Weltmeisterschaft 2026",
+  "stand": "2026-07-02",
+  "hinweis": "Kader gemaess offiziellen finalen FIFA-Squad-Listen (26 Spieler), sortiert nach weltweiter Beruehmtheit. FIFA-Weltranglistenplatz: letztes Update vor Turnierbeginn.",
+  "gruppen": [
+    {
+      "gruppe": "A",
+      "teams": [
+        {
+          "land": "Mexiko",
+          "trainer": "Javier Aguirre",
+          "verbandGegruendet": 1927,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 14,
+          "kontinentalverband": "CONCACAF",
+          "kader": [
+            {
+              "name": "Guillermo Ochoa",
+              "position": "Torwart"
+            },
+            {
+              "name": "Raúl Jiménez",
+              "position": "Sturm"
+            },
+            {
+              "name": "Santiago Giménez",
+              "position": "Sturm"
+            },
+            {
+              "name": "Edson Álvarez",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Gilberto Mora",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alexis Vega",
+              "position": "Sturm"
+            },
+            {
+              "name": "Luis Chávez",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Orbelín Pineda",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Johan Vásquez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "César Montes",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Julián Quiñones",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jesús Gallardo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Roberto Alvarado",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "César Huerta",
+              "position": "Sturm"
+            },
+            {
+              "name": "Luis Romo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jorge Sánchez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Obed Vargas",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Álvaro Fidalgo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Israel Reyes",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mateo Chávez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Érik Lira",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Carlos Acevedo",
+              "position": "Torwart"
+            },
+            {
+              "name": "Raúl Rangel",
+              "position": "Torwart"
+            },
+            {
+              "name": "Guillermo Martínez",
+              "position": "Sturm"
+            },
+            {
+              "name": "Brian Gutiérrez",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Armando González",
+              "position": "Sturm"
+            }
+          ]
+        },
+        {
+          "land": "Südafrika",
+          "trainer": "Hugo Broos",
+          "verbandGegruendet": 1991,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 60,
+          "kontinentalverband": "CAF",
+          "kader": [
+            {
+              "name": "Ronwen Williams",
+              "position": "Torwart"
+            },
+            {
+              "name": "Lyle Foster",
+              "position": "Sturm"
+            },
+            {
+              "name": "Teboho Mokoena",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Themba Zwane",
+              "position": "Sturm"
+            },
+            {
+              "name": "Relebohile Mofokeng",
+              "position": "Sturm"
+            },
+            {
+              "name": "Oswin Appollis",
+              "position": "Sturm"
+            },
+            {
+              "name": "Thapelo Maseko",
+              "position": "Sturm"
+            },
+            {
+              "name": "Evidence Makgopa",
+              "position": "Sturm"
+            },
+            {
+              "name": "Iqraam Rayners",
+              "position": "Sturm"
+            },
+            {
+              "name": "Aubrey Modiba",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Khuliso Mudau",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mbekezeli Mbokazi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Sphephelo Sithole",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nkosinathi Sibisi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ime Okon",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Thalente Mbatha",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Tshepang Moremi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jayden Adams",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Samukele Kabini",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Khulumani Ndamane",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Olwethu Makhanya",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ricardo Goss",
+              "position": "Torwart"
+            },
+            {
+              "name": "Sipho Chaine",
+              "position": "Torwart"
+            },
+            {
+              "name": "Thabang Matuludi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kamogelo Sebelebele",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Bradley Cross",
+              "position": "Abwehr"
+            }
+          ]
+        },
+        {
+          "land": "Südkorea",
+          "trainer": "Hong Myung-bo",
+          "verbandGegruendet": 1933,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 25,
+          "kontinentalverband": "AFC",
+          "kader": [
+            {
+              "name": "Son Heung-min",
+              "position": "Sturm"
+            },
+            {
+              "name": "Kim Min-jae",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Lee Kang-in",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Hwang Hee-chan",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Hwang In-beom",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Lee Jae-sung",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Cho Gue-sung",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jo Hyeon-woo",
+              "position": "Torwart"
+            },
+            {
+              "name": "Kim Seung-gyu",
+              "position": "Torwart"
+            },
+            {
+              "name": "Oh Hyeon-gyu",
+              "position": "Sturm"
+            },
+            {
+              "name": "Paik Seung-ho",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jens Castrop",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Yang Hyun-jun",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Bae Jun-ho",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Seol Young-woo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kim Moon-hwan",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Eom Ji-sung",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Lee Dong-gyeong",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Kim Jin-gyu",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Lee Tae-seok",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Park Jin-seob",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Lee Han-beom",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kim Tae-hyeon",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Song Bum-keun",
+              "position": "Torwart"
+            },
+            {
+              "name": "Lee Ki-hyuk",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Cho Wi-je",
+              "position": "Abwehr"
+            }
+          ]
+        },
+        {
+          "land": "Tschechien",
+          "trainer": "Miroslav Koubek",
+          "verbandGegruendet": 1901,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 40,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Patrik Schick",
+              "position": "Sturm"
+            },
+            {
+              "name": "Tomáš Souček",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Vladimír Coufal",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Adam Hložek",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ladislav Krejčí",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Matěj Kovář",
+              "position": "Torwart"
+            },
+            {
+              "name": "Pavel Šulc",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Vladimír Darida",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Lukáš Provod",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jan Kuchta",
+              "position": "Sturm"
+            },
+            {
+              "name": "Tomáš Chorý",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mojmír Chytil",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jindřich Staněk",
+              "position": "Torwart"
+            },
+            {
+              "name": "Tomáš Holeš",
+              "position": "Abwehr"
+            },
+            {
+              "name": "David Zima",
+              "position": "Abwehr"
+            },
+            {
+              "name": "David Jurásek",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Michal Sadílek",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Robin Hranáč",
+              "position": "Abwehr"
+            },
+            {
+              "name": "David Douděra",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Lukáš Červ",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jaroslav Zelený",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Hugo Sochůrek",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Lukáš Horníček",
+              "position": "Torwart"
+            },
+            {
+              "name": "Štěpán Chaloupek",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Alexandr Sojka",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Denis Višinský",
+              "position": "Mittelfeld"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gruppe": "B",
+      "teams": [
+        {
+          "land": "Kanada",
+          "trainer": "Jesse Marsch",
+          "verbandGegruendet": 1912,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 30,
+          "kontinentalverband": "CONCACAF",
+          "kader": [
+            {
+              "name": "Alphonso Davies",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jonathan David",
+              "position": "Sturm"
+            },
+            {
+              "name": "Cyle Larin",
+              "position": "Sturm"
+            },
+            {
+              "name": "Tajon Buchanan",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Stephen Eustáquio",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alistair Johnston",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ismaël Koné",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Moïse Bombito",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jonathan Osorio",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Richie Laryea",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Derek Cornelius",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Maxime Crépeau",
+              "position": "Torwart"
+            },
+            {
+              "name": "Dayne St. Clair",
+              "position": "Torwart"
+            },
+            {
+              "name": "Liam Millar",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jacob Shaffelburg",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Tani Oluwaseyi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ali Ahmed",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Promise David",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mathieu Choinière",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Niko Sigur",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Luc de Fougerolles",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nathan Saliba",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jayden Nelson",
+              "position": "Sturm"
+            },
+            {
+              "name": "Joel Waterman",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Alfie Jones",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Owen Goodman",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Bosnien und Herzegowina",
+          "trainer": "Sergej Barbarez",
+          "verbandGegruendet": 1992,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 64,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Edin Džeko",
+              "position": "Sturm"
+            },
+            {
+              "name": "Sead Kolašinac",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ermedin Demirović",
+              "position": "Sturm"
+            },
+            {
+              "name": "Amar Dedić",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nikola Vasilj",
+              "position": "Torwart"
+            },
+            {
+              "name": "Haris Tabaković",
+              "position": "Sturm"
+            },
+            {
+              "name": "Dennis Hadžikadunić",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nikola Katić",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Benjamin Tahirović",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Esmir Bajraktarević",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Kerim Alajbegović",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Tarik Muharemović",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Amir Hadžiahmetović",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Armin Gigović",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ivan Šunjić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Samed Baždar",
+              "position": "Sturm"
+            },
+            {
+              "name": "Amar Memić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ivan Bašić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nihad Mujakić",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Dženis Burnić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jovo Lukić",
+              "position": "Sturm"
+            },
+            {
+              "name": "Stjepan Radeljić",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Martin Zlomislić",
+              "position": "Torwart"
+            },
+            {
+              "name": "Ermin Mahmić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Arjan Malić",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mladen Jurkas",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Katar",
+          "trainer": "Julen Lopetegui",
+          "verbandGegruendet": 1960,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 57,
+          "kontinentalverband": "AFC",
+          "kader": [
+            {
+              "name": "Akram Afif",
+              "position": "Sturm"
+            },
+            {
+              "name": "Almoez Ali",
+              "position": "Sturm"
+            },
+            {
+              "name": "Hassan Al-Haydos",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mohammed Muntari",
+              "position": "Sturm"
+            },
+            {
+              "name": "Boualem Khoukhi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Abdulaziz Hatem",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Karim Boudiaf",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Pedro Miguel",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Meshaal Barsham",
+              "position": "Torwart"
+            },
+            {
+              "name": "Edmilson Junior",
+              "position": "Sturm"
+            },
+            {
+              "name": "Homam Ahmed",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Lucas Mendes",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ahmed Alaaeldin",
+              "position": "Sturm"
+            },
+            {
+              "name": "Assim Madibo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Yusuf Abdurisag",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jassem Gaber",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ahmed Fathy",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Sultan Al-Brake",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Salah Zakaria",
+              "position": "Torwart"
+            },
+            {
+              "name": "Ahmed Al-Ganehi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mahmud Abunada",
+              "position": "Torwart"
+            },
+            {
+              "name": "Issa Laye",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Tahsin Jamshid",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ayoub Al-Oui",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Al-Hashmi Al-Hussain",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mohamed Al-Mannai",
+              "position": "Mittelfeld"
+            }
+          ]
+        },
+        {
+          "land": "Schweiz",
+          "trainer": "Murat Yakin",
+          "verbandGegruendet": 1895,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 19,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Granit Xhaka",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Manuel Akanji",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Gregor Kobel",
+              "position": "Torwart"
+            },
+            {
+              "name": "Breel Embolo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Denis Zakaria",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Dan Ndoye",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ricardo Rodriguez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Noah Okafor",
+              "position": "Sturm"
+            },
+            {
+              "name": "Remo Freuler",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ardon Jashari",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nico Elvedi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Zeki Amdouni",
+              "position": "Sturm"
+            },
+            {
+              "name": "Rubén Vargas",
+              "position": "Sturm"
+            },
+            {
+              "name": "Djibril Sow",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Johan Manzambi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Silvan Widmer",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Fabian Rieder",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Michel Aebischer",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Yvon Mvogo",
+              "position": "Torwart"
+            },
+            {
+              "name": "Christian Fassnacht",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Miro Muheim",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Eray Cömert",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Cedric Itten",
+              "position": "Sturm"
+            },
+            {
+              "name": "Aurèle Amenda",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Luca Jaquez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Marvin Keller",
+              "position": "Torwart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gruppe": "C",
+      "teams": [
+        {
+          "land": "Brasilien",
+          "trainer": "Carlo Ancelotti",
+          "verbandGegruendet": 1914,
+          "wmTitel": 5,
+          "fifaWeltranglistenplatz": 6,
+          "kontinentalverband": "CONMEBOL",
+          "kader": [
+            {
+              "name": "Neymar",
+              "position": "Sturm"
+            },
+            {
+              "name": "Vinícius Júnior",
+              "position": "Sturm"
+            },
+            {
+              "name": "Raphinha",
+              "position": "Sturm"
+            },
+            {
+              "name": "Casemiro",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alisson",
+              "position": "Torwart"
+            },
+            {
+              "name": "Marquinhos",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Endrick",
+              "position": "Sturm"
+            },
+            {
+              "name": "Bruno Guimarães",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Matheus Cunha",
+              "position": "Sturm"
+            },
+            {
+              "name": "Gabriel Martinelli",
+              "position": "Sturm"
+            },
+            {
+              "name": "Gabriel Magalhães",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Danilo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Lucas Paquetá",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ederson",
+              "position": "Torwart"
+            },
+            {
+              "name": "Alex Sandro",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Bremer",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Fabinho",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Roger Ibañez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Igor Thiago",
+              "position": "Sturm"
+            },
+            {
+              "name": "Léo Pereira",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Douglas Santos",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Luiz Henrique",
+              "position": "Sturm"
+            },
+            {
+              "name": "Rayan",
+              "position": "Sturm"
+            },
+            {
+              "name": "Éderson",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Danilo Santos",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Weverton",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Marokko",
+          "trainer": "Mohamed Ouahbi",
+          "verbandGegruendet": 1955,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 7,
+          "kontinentalverband": "CAF",
+          "kader": [
+            {
+              "name": "Achraf Hakimi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Brahim Díaz",
+              "position": "Sturm"
+            },
+            {
+              "name": "Yassine Bounou",
+              "position": "Torwart"
+            },
+            {
+              "name": "Noussair Mazraoui",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Sofyan Amrabat",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Bilal El Khannouss",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Azzedine Ounahi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ayoub El Kaabi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Chadi Riad",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ismael Saibari",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Soufiane Rahimi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Neil El Aynaoui",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Chemsdine Talbi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Issa Diop",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ayyoub Bouaddi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Zakaria El Ouahdi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Anass Salah-Eddine",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Munir El Kajoui",
+              "position": "Torwart"
+            },
+            {
+              "name": "Reda Tagnaouti",
+              "position": "Torwart"
+            },
+            {
+              "name": "Youssef Belammari",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Redouane Halhal",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Samir El Mourabet",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Gessime Yassine",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ayoube Amaimouni",
+              "position": "Sturm"
+            },
+            {
+              "name": "Amine Sbaï",
+              "position": "Sturm"
+            },
+            {
+              "name": "Marwane Saâdane",
+              "position": "Abwehr"
+            }
+          ]
+        },
+        {
+          "land": "Haiti",
+          "trainer": "Sébastien Migné",
+          "verbandGegruendet": 1904,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 83,
+          "kontinentalverband": "CONCACAF",
+          "kader": [
+            {
+              "name": "Jean-Ricner Bellegarde",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Wilson Isidor",
+              "position": "Sturm"
+            },
+            {
+              "name": "Frantzdy Pierrot",
+              "position": "Sturm"
+            },
+            {
+              "name": "Duckens Nazon",
+              "position": "Sturm"
+            },
+            {
+              "name": "Derrick Etienne",
+              "position": "Sturm"
+            },
+            {
+              "name": "Danley Jean Jacques",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ruben Providence",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ricardo Adé",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Hannes Delcroix",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Carlens Arcus",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Yassin Fortuné",
+              "position": "Sturm"
+            },
+            {
+              "name": "Josué Casimir",
+              "position": "Sturm"
+            },
+            {
+              "name": "Lenny Joseph",
+              "position": "Sturm"
+            },
+            {
+              "name": "Louicius Don Deedson",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jérôme Duverne",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Johny Placide",
+              "position": "Torwart"
+            },
+            {
+              "name": "Martin Expérience",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Carl-Fred Sainté",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Duke Lacroix",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Dominique Simon",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Garven Metusala",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Wilguens Paugain",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Keeto Thermoncy",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Woodensky Pierre",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alexandre Pierre",
+              "position": "Torwart"
+            },
+            {
+              "name": "Josué Duverger",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Schottland",
+          "trainer": "Steve Clarke",
+          "verbandGegruendet": 1873,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 42,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Andrew Robertson",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Scott McTominay",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Kieran Tierney",
+              "position": "Abwehr"
+            },
+            {
+              "name": "John McGinn",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Che Adams",
+              "position": "Sturm"
+            },
+            {
+              "name": "Lawrence Shankland",
+              "position": "Sturm"
+            },
+            {
+              "name": "Lewis Ferguson",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ben Gannon-Doak",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Craig Gordon",
+              "position": "Torwart"
+            },
+            {
+              "name": "Angus Gunn",
+              "position": "Torwart"
+            },
+            {
+              "name": "Ryan Christie",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Grant Hanley",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jack Hendry",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Aaron Hickey",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nathan Patterson",
+              "position": "Abwehr"
+            },
+            {
+              "name": "John Souttar",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Scott McKenna",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kenny McLean",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Lyndon Dykes",
+              "position": "Sturm"
+            },
+            {
+              "name": "George Hirst",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ross Stewart",
+              "position": "Sturm"
+            },
+            {
+              "name": "Anthony Ralston",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Dom Hyam",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Liam Kelly",
+              "position": "Torwart"
+            },
+            {
+              "name": "Findlay Curtis",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Tyler Fletcher",
+              "position": "Mittelfeld"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gruppe": "D",
+      "teams": [
+        {
+          "land": "Vereinigte Staaten",
+          "trainer": "Mauricio Pochettino",
+          "verbandGegruendet": 1913,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 17,
+          "kontinentalverband": "CONCACAF",
+          "kader": [
+            {
+              "name": "Christian Pulisic",
+              "position": "Sturm"
+            },
+            {
+              "name": "Weston McKennie",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Tyler Adams",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Antonee Robinson",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Gio Reyna",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Folarin Balogun",
+              "position": "Sturm"
+            },
+            {
+              "name": "Tim Weah",
+              "position": "Sturm"
+            },
+            {
+              "name": "Chris Richards",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Sergiño Dest",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ricardo Pepi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Malik Tillman",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Brenden Aaronson",
+              "position": "Sturm"
+            },
+            {
+              "name": "Matt Turner",
+              "position": "Torwart"
+            },
+            {
+              "name": "Tim Ream",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Joe Scally",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Haji Wright",
+              "position": "Sturm"
+            },
+            {
+              "name": "Alex Freeman",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mark McKenzie",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Cristian Roldan",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Miles Robinson",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Sebastian Berhalter",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Auston Trusty",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Alejandro Zendejas",
+              "position": "Sturm"
+            },
+            {
+              "name": "Max Arfsten",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Matt Freese",
+              "position": "Torwart"
+            },
+            {
+              "name": "Chris Brady",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Paraguay",
+          "trainer": "Gustavo Alfaro",
+          "verbandGegruendet": 1906,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 40,
+          "kontinentalverband": "CONMEBOL",
+          "kader": [
+            {
+              "name": "Miguel Almirón",
+              "position": "Sturm"
+            },
+            {
+              "name": "Julio Enciso",
+              "position": "Sturm"
+            },
+            {
+              "name": "Diego Gómez",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Gustavo Gómez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Omar Alderete",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Antonio Sanabria",
+              "position": "Sturm"
+            },
+            {
+              "name": "Andrés Cubas",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Fabián Balbuena",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ramón Sosa",
+              "position": "Sturm"
+            },
+            {
+              "name": "Júnior Alonso",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Damián Bobadilla",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alejandro Romero Gamarra",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Matías Galarza",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Braian Ojeda",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Gustavo Caballero",
+              "position": "Sturm"
+            },
+            {
+              "name": "Isidro Pitta",
+              "position": "Sturm"
+            },
+            {
+              "name": "Álex Arce",
+              "position": "Sturm"
+            },
+            {
+              "name": "Gabriel Ávalos",
+              "position": "Sturm"
+            },
+            {
+              "name": "Maurício Magalhães",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "José Canale",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Juan José Cáceres",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Gustavo Velázquez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Alexandro Maidana",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Gatito Fernández",
+              "position": "Torwart"
+            },
+            {
+              "name": "Orlando Gill",
+              "position": "Torwart"
+            },
+            {
+              "name": "Gastón Olveira",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Australien",
+          "trainer": "Tony Popovic",
+          "verbandGegruendet": 1961,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 27,
+          "kontinentalverband": "AFC",
+          "kader": [
+            {
+              "name": "Mathew Ryan",
+              "position": "Torwart"
+            },
+            {
+              "name": "Harry Souttar",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jackson Irvine",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mathew Leckie",
+              "position": "Sturm"
+            },
+            {
+              "name": "Nestory Irankunda",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jordan Bos",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Cristian Volpato",
+              "position": "Sturm"
+            },
+            {
+              "name": "Alessandro Circati",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mohamed Touré",
+              "position": "Sturm"
+            },
+            {
+              "name": "Connor Metcalfe",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ajdin Hrustić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Awer Mabil",
+              "position": "Sturm"
+            },
+            {
+              "name": "Aziz Behich",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Cameron Burgess",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Milos Degenek",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Aiden O'Neill",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nishan Velupillay",
+              "position": "Sturm"
+            },
+            {
+              "name": "Cameron Devlin",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Kai Trewin",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jason Geria",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jacob Italiano",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Paul Okon-Engstler",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Tete Yengi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Lucas Herrington",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Paul Izzo",
+              "position": "Torwart"
+            },
+            {
+              "name": "Patrick Beach",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Türkei",
+          "trainer": "Vincenzo Montella",
+          "verbandGegruendet": 1923,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 22,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Arda Güler",
+              "position": "Sturm"
+            },
+            {
+              "name": "Hakan Çalhanoğlu",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Kenan Yıldız",
+              "position": "Sturm"
+            },
+            {
+              "name": "Kerem Aktürkoğlu",
+              "position": "Sturm"
+            },
+            {
+              "name": "Merih Demiral",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ferdi Kadıoğlu",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Uğurcan Çakır",
+              "position": "Torwart"
+            },
+            {
+              "name": "Altay Bayındır",
+              "position": "Torwart"
+            },
+            {
+              "name": "Zeki Çelik",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Çağlar Söyüncü",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ozan Kabak",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Salih Özcan",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Orkun Kökçü",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Barış Alper Yılmaz",
+              "position": "Sturm"
+            },
+            {
+              "name": "İrfan Can Kahveci",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mert Müldür",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Can Uzun",
+              "position": "Sturm"
+            },
+            {
+              "name": "Kaan Ayhan",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Yunus Akgün",
+              "position": "Sturm"
+            },
+            {
+              "name": "Abdülkerim Bardakcı",
+              "position": "Abwehr"
+            },
+            {
+              "name": "İsmail Yüksek",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Deniz Gül",
+              "position": "Sturm"
+            },
+            {
+              "name": "Eren Elmalı",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Samet Akaydın",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Oğuz Aydın",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mert Günok",
+              "position": "Torwart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gruppe": "E",
+      "teams": [
+        {
+          "land": "Deutschland",
+          "trainer": "Julian Nagelsmann",
+          "verbandGegruendet": 1900,
+          "wmTitel": 4,
+          "fifaWeltranglistenplatz": 10,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Manuel Neuer",
+              "position": "Torwart"
+            },
+            {
+              "name": "Joshua Kimmich",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jamal Musiala",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Florian Wirtz",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Antonio Rüdiger",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kai Havertz",
+              "position": "Sturm"
+            },
+            {
+              "name": "Leroy Sané",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jonathan Tah",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Leon Goretzka",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nick Woltemade",
+              "position": "Sturm"
+            },
+            {
+              "name": "David Raum",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nico Schlotterbeck",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Deniz Undav",
+              "position": "Sturm"
+            },
+            {
+              "name": "Aleksandar Pavlović",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Waldemar Anton",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Angelo Stiller",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Malick Thiaw",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Felix Nmecha",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Lennart Karl",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nathaniel Brown",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Pascal Groß",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nadiem Amiri",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Maximilian Beier",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jamie Leweling",
+              "position": "Sturm"
+            },
+            {
+              "name": "Oliver Baumann",
+              "position": "Torwart"
+            },
+            {
+              "name": "Alexander Nübel",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Elfenbeinküste",
+          "trainer": "Emerse Faé",
+          "verbandGegruendet": 1960,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 34,
+          "kontinentalverband": "CAF",
+          "kader": [
+            {
+              "name": "Franck Kessié",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Amad Diallo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Nicolas Pépé",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ibrahim Sangaré",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Simon Adingra",
+              "position": "Sturm"
+            },
+            {
+              "name": "Wilfried Singo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Odilon Kossounou",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Evan Ndicka",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Seko Fofana",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ousmane Diomande",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Yan Diomande",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ange-Yoan Bonny",
+              "position": "Sturm"
+            },
+            {
+              "name": "Evann Guessand",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jean-Michaël Seri",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ghislain Konan",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Elye Wahi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Guéla Doué",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Emmanuel Agbadou",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Oumar Diakité",
+              "position": "Sturm"
+            },
+            {
+              "name": "Christ Inao Oulaï",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Bazoumana Touré",
+              "position": "Sturm"
+            },
+            {
+              "name": "Parfait Guiagon",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Christopher Opéri",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Yahia Fofana",
+              "position": "Torwart"
+            },
+            {
+              "name": "Alban Lafont",
+              "position": "Torwart"
+            },
+            {
+              "name": "Mohamed Koné",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Ecuador",
+          "trainer": "Sebastián Beccacece",
+          "verbandGegruendet": 1925,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 23,
+          "kontinentalverband": "CONMEBOL",
+          "kader": [
+            {
+              "name": "Moisés Caicedo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Enner Valencia",
+              "position": "Sturm"
+            },
+            {
+              "name": "Piero Hincapié",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Willian Pacho",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Pervis Estupiñán",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Gonzalo Plata",
+              "position": "Sturm"
+            },
+            {
+              "name": "Kendry Páez",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ángelo Preciado",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Alan Franco",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Félix Torres",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kevin Rodríguez",
+              "position": "Sturm"
+            },
+            {
+              "name": "Joel Ordóñez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nilson Angulo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jackson Porozo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Anthony Valencia",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jordy Caicedo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Alan Minda",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Yaimar Medina",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Pedro Vite",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jordy Alcívar",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Denil Castillo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "John Yeboah",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jeremy Arévalo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Hernán Galíndez",
+              "position": "Torwart"
+            },
+            {
+              "name": "Moisés Ramírez",
+              "position": "Torwart"
+            },
+            {
+              "name": "Gonzalo Valle",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Curaçao",
+          "trainer": "Dick Advocaat",
+          "verbandGegruendet": 1921,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 82,
+          "kontinentalverband": "CONCACAF",
+          "kader": [
+            {
+              "name": "Tahith Chong",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Leandro Bacuna",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Sontje Hansen",
+              "position": "Sturm"
+            },
+            {
+              "name": "Juninho Bacuna",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jürgen Locadia",
+              "position": "Sturm"
+            },
+            {
+              "name": "Gervane Kastaneer",
+              "position": "Sturm"
+            },
+            {
+              "name": "Joshua Brenet",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Armando Obispo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Riechedly Bazoer",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Eloy Room",
+              "position": "Torwart"
+            },
+            {
+              "name": "Kenji Gorré",
+              "position": "Sturm"
+            },
+            {
+              "name": "Brandley Kuwas",
+              "position": "Sturm"
+            },
+            {
+              "name": "Shurandy Sambo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jeremy Antonisse",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ar'jany Martha",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Godfried Roemeratoe",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jearl Margaritha",
+              "position": "Sturm"
+            },
+            {
+              "name": "Tyrese Noslin",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Roshon van Eijma",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Juriën Gaari",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Sherel Floranus",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Deveron Fonville",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kevin Felida",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Livano Comenencia",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Tyrick Bodak",
+              "position": "Torwart"
+            },
+            {
+              "name": "Trevor Doornbusch",
+              "position": "Torwart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gruppe": "F",
+      "teams": [
+        {
+          "land": "Niederlande",
+          "trainer": "Ronald Koeman",
+          "verbandGegruendet": 1889,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 7,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Virgil van Dijk",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Memphis Depay",
+              "position": "Sturm"
+            },
+            {
+              "name": "Cody Gakpo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Frenkie de Jong",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Denzel Dumfries",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ryan Gravenberch",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Tijjani Reijnders",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jurriën Timber",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nathan Aké",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Teun Koopmeiners",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Wout Weghorst",
+              "position": "Sturm"
+            },
+            {
+              "name": "Donyell Malen",
+              "position": "Sturm"
+            },
+            {
+              "name": "Micky van de Ven",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jorrel Hato",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Noa Lang",
+              "position": "Sturm"
+            },
+            {
+              "name": "Justin Kluivert",
+              "position": "Sturm"
+            },
+            {
+              "name": "Crysencio Summerville",
+              "position": "Sturm"
+            },
+            {
+              "name": "Bart Verbruggen",
+              "position": "Torwart"
+            },
+            {
+              "name": "Brian Brobbey",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mats Wieffer",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jan Paul van Hecke",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Quinten Timber",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Marten de Roon",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Guus Til",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mark Flekken",
+              "position": "Torwart"
+            },
+            {
+              "name": "Robin Roefs",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Japan",
+          "trainer": "Hajime Moriyasu",
+          "verbandGegruendet": 1921,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 18,
+          "kontinentalverband": "AFC",
+          "kader": [
+            {
+              "name": "Takefusa Kubo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Wataru Endo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ritsu Doan",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ayase Ueda",
+              "position": "Sturm"
+            },
+            {
+              "name": "Yuto Nagatomo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Daichi Kamada",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ko Itakura",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Takehiro Tomiyasu",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Junya Ito",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ao Tanaka",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Hiroki Ito",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Keito Nakamura",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Daizen Maeda",
+              "position": "Sturm"
+            },
+            {
+              "name": "Zion Suzuki",
+              "position": "Torwart"
+            },
+            {
+              "name": "Shogo Taniguchi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Koki Ogawa",
+              "position": "Sturm"
+            },
+            {
+              "name": "Tsuyoshi Watanabe",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Yukinari Sugawara",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kaishu Sano",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Yuito Suzuki",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ayumu Seko",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Junnosuke Suzuki",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Keisuke Goto",
+              "position": "Sturm"
+            },
+            {
+              "name": "Kento Shiogai",
+              "position": "Sturm"
+            },
+            {
+              "name": "Keisuke Osako",
+              "position": "Torwart"
+            },
+            {
+              "name": "Tomoki Hayakawa",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Schweden",
+          "trainer": "Graham Potter",
+          "verbandGegruendet": 1904,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 38,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Alexander Isak",
+              "position": "Sturm"
+            },
+            {
+              "name": "Viktor Gyökeres",
+              "position": "Sturm"
+            },
+            {
+              "name": "Victor Lindelöf",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Lucas Bergvall",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Anthony Elanga",
+              "position": "Sturm"
+            },
+            {
+              "name": "Yasin Ayari",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mattias Svanberg",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Isak Hien",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Emil Holm",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Gabriel Gudmundsson",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Carl Starfelt",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jesper Karlström",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Hjalmar Ekdal",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ken Sema",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Gustaf Lagerbielke",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Daniel Svensson",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Benjamin Nygren",
+              "position": "Sturm"
+            },
+            {
+              "name": "Gustaf Nilsson",
+              "position": "Sturm"
+            },
+            {
+              "name": "Besfort Zeneli",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Taha Ali",
+              "position": "Sturm"
+            },
+            {
+              "name": "Alexander Bernhardsson",
+              "position": "Sturm"
+            },
+            {
+              "name": "Kristoffer Nordfeldt",
+              "position": "Torwart"
+            },
+            {
+              "name": "Viktor Johansson",
+              "position": "Torwart"
+            },
+            {
+              "name": "Jacob Widell Zetterström",
+              "position": "Torwart"
+            },
+            {
+              "name": "Eric Smith",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Elliot Stroud",
+              "position": "Abwehr"
+            }
+          ]
+        },
+        {
+          "land": "Tunesien",
+          "trainer": "Sabri Lamouchi",
+          "verbandGegruendet": 1957,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 44,
+          "kontinentalverband": "CAF",
+          "kader": [
+            {
+              "name": "Ellyes Skhiri",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Hannibal Mejbri",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Khalil Ayari",
+              "position": "Sturm"
+            },
+            {
+              "name": "Anis Ben Slimane",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rani Khedira",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Montassar Talbi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Elias Achouri",
+              "position": "Sturm"
+            },
+            {
+              "name": "Dylan Bronn",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ali Abdi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ismaël Gharbi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Sebastian Tounekti",
+              "position": "Sturm"
+            },
+            {
+              "name": "Yan Valery",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Elias Saad",
+              "position": "Sturm"
+            },
+            {
+              "name": "Omar Rekik",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Firas Chaouat",
+              "position": "Sturm"
+            },
+            {
+              "name": "Hazem Mastouri",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mohamed Hadj-Mahmoud",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Adem Arous",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mortadha Ben Ouanes",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rayan Elloumi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mohamed Amine Ben Hamida",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Moutaz Neffati",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Raed Chikhaoui",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Aymen Dahmen",
+              "position": "Torwart"
+            },
+            {
+              "name": "Sabri Ben Hessen",
+              "position": "Torwart"
+            },
+            {
+              "name": "Abdelmouhib Chamakh",
+              "position": "Torwart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gruppe": "G",
+      "teams": [
+        {
+          "land": "Belgien",
+          "trainer": "Rudi Garcia",
+          "verbandGegruendet": 1895,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 9,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Kevin De Bruyne",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Romelu Lukaku",
+              "position": "Sturm"
+            },
+            {
+              "name": "Thibaut Courtois",
+              "position": "Torwart"
+            },
+            {
+              "name": "Youri Tielemans",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jeremy Doku",
+              "position": "Sturm"
+            },
+            {
+              "name": "Leandro Trossard",
+              "position": "Sturm"
+            },
+            {
+              "name": "Axel Witsel",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Amadou Onana",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Charles De Ketelaere",
+              "position": "Sturm"
+            },
+            {
+              "name": "Thomas Meunier",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Timothy Castagne",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Zeno Debast",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Alexis Saelemaekers",
+              "position": "Sturm"
+            },
+            {
+              "name": "Hans Vanaken",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Dodi Lukebakio",
+              "position": "Sturm"
+            },
+            {
+              "name": "Koni De Winter",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nicolas Raskin",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Diego Moreira",
+              "position": "Sturm"
+            },
+            {
+              "name": "Matias Fernandez Pardo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Brandon Mechele",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Arthur Theate",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Maxim De Cuyper",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Joaquin Seys",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nathan Ngoy",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Senne Lammens",
+              "position": "Torwart"
+            },
+            {
+              "name": "Mike Penders",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Ägypten",
+          "trainer": "Hossam Hassan",
+          "verbandGegruendet": 1921,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 29,
+          "kontinentalverband": "CAF",
+          "kader": [
+            {
+              "name": "Mohamed Salah",
+              "position": "Sturm"
+            },
+            {
+              "name": "Omar Marmoush",
+              "position": "Sturm"
+            },
+            {
+              "name": "Trézéguet",
+              "position": "Sturm"
+            },
+            {
+              "name": "Zizo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mohamed El Shenawy",
+              "position": "Torwart"
+            },
+            {
+              "name": "Mohamed Abdelmonem",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Hamza Abdelkarim",
+              "position": "Sturm"
+            },
+            {
+              "name": "Emam Ashour",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ibrahim Adel",
+              "position": "Sturm"
+            },
+            {
+              "name": "Yasser Ibrahim",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ahmed Fatouh",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mohamed Hany",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ramy Rabia",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Hamdy Fathy",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mohanad Lasheen",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Marwan Attia",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Karim Hafez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Hossam Abdelmaguid",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mostafa Ziko",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mahmoud Saber",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nabil Emad (Donga)",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Tarek Alaa",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Haissem Hassan",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mostafa Shobeir",
+              "position": "Torwart"
+            },
+            {
+              "name": "El Mahdy Soliman",
+              "position": "Torwart"
+            },
+            {
+              "name": "Mohamed Alaa",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Iran",
+          "trainer": "Amir Ghalenoei",
+          "verbandGegruendet": 1920,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 20,
+          "kontinentalverband": "AFC",
+          "kader": [
+            {
+              "name": "Mehdi Taremi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Alireza Jahanbakhsh",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alireza Beiranvand",
+              "position": "Torwart"
+            },
+            {
+              "name": "Ehsan Hajsafi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Saman Ghoddos",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Saeid Ezatolahi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ramin Rezaeian",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mohammad Mohebi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Milad Mohammadi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Shojae Khalilzadeh",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Hossein Kanaanizadegan",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mehdi Ghayedi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rouzbeh Cheshmi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mehdi Torabi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Amirhossein Hosseinzadeh",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ali Alipour",
+              "position": "Sturm"
+            },
+            {
+              "name": "Hossein Hosseini",
+              "position": "Torwart"
+            },
+            {
+              "name": "Payam Niazmand",
+              "position": "Torwart"
+            },
+            {
+              "name": "Saleh Hardani",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ali Nemati",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Shahriyar Moghanlou",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mohammad Ghorbani",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Aria Yousefi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Amirmohammad Razzaghinia",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Danial Eiri",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Dennis Dargahi",
+              "position": "Sturm"
+            }
+          ]
+        },
+        {
+          "land": "Neuseeland",
+          "trainer": "Darren Bazeley",
+          "verbandGegruendet": 1891,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 85,
+          "kontinentalverband": "OFC",
+          "kader": [
+            {
+              "name": "Chris Wood",
+              "position": "Sturm"
+            },
+            {
+              "name": "Tommy Smith",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kosta Barbarouses",
+              "position": "Sturm"
+            },
+            {
+              "name": "Marko Stamenić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Michael Boxall",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Liberato Cacace",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Sarpreet Singh",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Eli Just",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ben Waine",
+              "position": "Sturm"
+            },
+            {
+              "name": "Matt Garbett",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Tyler Bindon",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Callum McCowatt",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ryan Thomas",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alex Rufer",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Joe Bell",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Tim Payne",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Francis De Vries",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nando Pijnaker",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Finn Surman",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jesse Randall",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ben Old",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Callan Elliot",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Lachlan Bayliss",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Max Crocombe",
+              "position": "Torwart"
+            },
+            {
+              "name": "Alex Paulsen",
+              "position": "Torwart"
+            },
+            {
+              "name": "Michael Woud",
+              "position": "Torwart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gruppe": "H",
+      "teams": [
+        {
+          "land": "Spanien",
+          "trainer": "Luis de la Fuente",
+          "verbandGegruendet": 1913,
+          "wmTitel": 1,
+          "fifaWeltranglistenplatz": 2,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Lamine Yamal",
+              "position": "Sturm"
+            },
+            {
+              "name": "Rodri",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Pedri",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nico Williams",
+              "position": "Sturm"
+            },
+            {
+              "name": "Dani Olmo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ferran Torres",
+              "position": "Sturm"
+            },
+            {
+              "name": "Fabián Ruiz",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mikel Merino",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mikel Oyarzabal",
+              "position": "Sturm"
+            },
+            {
+              "name": "Gavi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Martín Zubimendi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Marc Cucurella",
+              "position": "Abwehr"
+            },
+            {
+              "name": "David Raya",
+              "position": "Torwart"
+            },
+            {
+              "name": "Pedro Porro",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Aymeric Laporte",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Alejandro Grimaldo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Unai Simón",
+              "position": "Torwart"
+            },
+            {
+              "name": "Joan García",
+              "position": "Torwart"
+            },
+            {
+              "name": "Pau Cubarsí",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Marcos Llorente",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Eric García",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Alex Baena",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Marc Pubill",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Yeremy Pino",
+              "position": "Sturm"
+            },
+            {
+              "name": "Borja Iglesias",
+              "position": "Sturm"
+            },
+            {
+              "name": "Víctor Muñoz",
+              "position": "Sturm"
+            }
+          ]
+        },
+        {
+          "land": "Uruguay",
+          "trainer": "Marcelo Bielsa",
+          "verbandGegruendet": 1900,
+          "wmTitel": 2,
+          "fifaWeltranglistenplatz": 16,
+          "kontinentalverband": "CONMEBOL",
+          "kader": [
+            {
+              "name": "Federico Valverde",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Darwin Núñez",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ronald Araújo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "José María Giménez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Manuel Ugarte",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rodrigo Bentancur",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Giorgian de Arrascaeta",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nicolás de la Cruz",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Fernando Muslera",
+              "position": "Torwart"
+            },
+            {
+              "name": "Facundo Pellistri",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mathías Olivera",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Sergio Rochet",
+              "position": "Torwart"
+            },
+            {
+              "name": "Guillermo Varela",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Matías Viña",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Joaquín Piquerez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Maximiliano Araújo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Brian Rodríguez",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rodrigo Zalazar",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Sebastián Cáceres",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Emiliano Martínez",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rodrigo Aguirre",
+              "position": "Sturm"
+            },
+            {
+              "name": "Federico Viñas",
+              "position": "Sturm"
+            },
+            {
+              "name": "Agustín Canobbio",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Juan Manuel Sanabria",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Santiago Bueno",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Santiago Mele",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Saudi-Arabien",
+          "trainer": "Georgios Donis",
+          "verbandGegruendet": 1956,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 61,
+          "kontinentalverband": "AFC",
+          "kader": [
+            {
+              "name": "Salem Al-Dawsari",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mohammed Kanno",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Firas Al-Buraikan",
+              "position": "Sturm"
+            },
+            {
+              "name": "Saud Abdulhamid",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Saleh Al Shehri",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mohammed Al Owais",
+              "position": "Torwart"
+            },
+            {
+              "name": "Abdullah Al Hamdan",
+              "position": "Sturm"
+            },
+            {
+              "name": "Nasser Al Dawsari",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Abdulelah Al Amri",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Hassan Tambakti",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ali Lajami",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Abdullah Al Khaibari",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Sultan Mandash",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Hassan Kadesh",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ziyad Al Johani",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ali Majrashi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nawaf Al Aqidi",
+              "position": "Torwart"
+            },
+            {
+              "name": "Jehad Thikri",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Moteb Al Harbi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nawaf Boushal",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Musab Al Juwayr",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alaa Al Hajji",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Khalid Al Ghannam",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ayman Yahya",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mohammed Abu Al Shamat",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ahmed Al Kassar",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Kap Verde",
+          "trainer": "Pedro 'Bubista' Brito",
+          "verbandGegruendet": 1982,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 67,
+          "kontinentalverband": "CAF",
+          "kader": [
+            {
+              "name": "Ryan Mendes",
+              "position": "Sturm"
+            },
+            {
+              "name": "Vozinha",
+              "position": "Torwart"
+            },
+            {
+              "name": "Dailon Livramento",
+              "position": "Sturm"
+            },
+            {
+              "name": "Logan Costa",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jovane Cabral",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Garry Rodrigues",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jamiro Monteiro",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Roberto 'Pico' Lopes",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ianique 'Stopira' Tavares",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Deroy Duarte",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Kevin Pina",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nuno da Costa",
+              "position": "Sturm"
+            },
+            {
+              "name": "Wagner Pina",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Steven Moreira",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Sidny Lopes Cabral",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Diney Borges",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kelvin Pires",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Telmo Arcanjo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Laros Duarte",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Yannick Semedo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Willy Semedo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Helio Varela",
+              "position": "Sturm"
+            },
+            {
+              "name": "Gilson Benchimol",
+              "position": "Sturm"
+            },
+            {
+              "name": "Joao Paulo Fernandes",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Marcio Rosa",
+              "position": "Torwart"
+            },
+            {
+              "name": "CJ Dos Santos",
+              "position": "Torwart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gruppe": "I",
+      "teams": [
+        {
+          "land": "Frankreich",
+          "trainer": "Didier Deschamps",
+          "verbandGegruendet": 1919,
+          "wmTitel": 2,
+          "fifaWeltranglistenplatz": 3,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Kylian Mbappé",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ousmane Dembélé",
+              "position": "Sturm"
+            },
+            {
+              "name": "Désiré Doué",
+              "position": "Sturm"
+            },
+            {
+              "name": "Michael Olise",
+              "position": "Sturm"
+            },
+            {
+              "name": "Rayan Cherki",
+              "position": "Sturm"
+            },
+            {
+              "name": "Bradley Barcola",
+              "position": "Sturm"
+            },
+            {
+              "name": "Marcus Thuram",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mike Maignan",
+              "position": "Torwart"
+            },
+            {
+              "name": "Jules Koundé",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Dayot Upamecano",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ibrahima Konaté",
+              "position": "Abwehr"
+            },
+            {
+              "name": "William Saliba",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Theo Hernandez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Lucas Hernandez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Aurélien Tchouaméni",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "N'Golo Kanté",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Adrien Rabiot",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Warren Zaïre-Emery",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Manu Koné",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Lucas Digne",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Malo Gusto",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Maxence Lacroix",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jean-Philippe Mateta",
+              "position": "Sturm"
+            },
+            {
+              "name": "Maghnes Akliouche",
+              "position": "Sturm"
+            },
+            {
+              "name": "Brice Samba",
+              "position": "Torwart"
+            },
+            {
+              "name": "Robin Risser",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Senegal",
+          "trainer": "Pape Thiaw",
+          "verbandGegruendet": 1960,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 15,
+          "kontinentalverband": "CAF",
+          "kader": [
+            {
+              "name": "Sadio Mané",
+              "position": "Sturm"
+            },
+            {
+              "name": "Kalidou Koulibaly",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Idrissa Gana Gueye",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ismaïla Sarr",
+              "position": "Sturm"
+            },
+            {
+              "name": "Nicolas Jackson",
+              "position": "Sturm"
+            },
+            {
+              "name": "Iliman Ndiaye",
+              "position": "Sturm"
+            },
+            {
+              "name": "Pape Matar Sarr",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Habib Diarra",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Krépin Diatta",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Édouard Mendy",
+              "position": "Torwart"
+            },
+            {
+              "name": "Lamine Camara",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Pape Gueye",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ibrahim Mbaye",
+              "position": "Sturm"
+            },
+            {
+              "name": "Moussa Niakhaté",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ismaïl Jakobs",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Bamba Dieng",
+              "position": "Sturm"
+            },
+            {
+              "name": "Pathé Ciss",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Cherif Ndiaye",
+              "position": "Sturm"
+            },
+            {
+              "name": "Assane Diao",
+              "position": "Sturm"
+            },
+            {
+              "name": "Abdoulaye Seck",
+              "position": "Abwehr"
+            },
+            {
+              "name": "El Hadji Malick Diouf",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mamadou Sarr",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Antoine Mendy",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Bara Sapoko Ndiaye",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mory Diaw",
+              "position": "Torwart"
+            },
+            {
+              "name": "Yehvann Diouf",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Norwegen",
+          "trainer": "Ståle Solbakken",
+          "verbandGegruendet": 1902,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 31,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Erling Haaland",
+              "position": "Sturm"
+            },
+            {
+              "name": "Martin Ødegaard",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Antonio Nusa",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alexander Sørloth",
+              "position": "Sturm"
+            },
+            {
+              "name": "Oscar Bobb",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Sander Berge",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jørgen Strand Larsen",
+              "position": "Sturm"
+            },
+            {
+              "name": "Kristoffer Ajer",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Julian Ryerson",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Andreas Schjelderup",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Fredrik Aursnes",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Leo Østigård",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kristian Thorstvedt",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jens Petter Hauge",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Thelo Aasgaard",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Patrick Berg",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Morten Thorsby",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "David Møller Wolfe",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Fredrik Bjørkan",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Marcus Holmgren Pedersen",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Torbjørn Heggem",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Sondre Langås",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Henrik Falchener",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ørjan Nyland",
+              "position": "Torwart"
+            },
+            {
+              "name": "Egil Selvik",
+              "position": "Torwart"
+            },
+            {
+              "name": "Sander Tangvik",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Irak",
+          "trainer": "Graham Arnold",
+          "verbandGegruendet": 1948,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 58,
+          "kontinentalverband": "AFC",
+          "kader": [
+            {
+              "name": "Ali Al-Hamadi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Aymen Hussein",
+              "position": "Sturm"
+            },
+            {
+              "name": "Amir Al-Ammari",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Zidane Iqbal",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ali Jassim",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ali Yousef",
+              "position": "Sturm"
+            },
+            {
+              "name": "Mohanad Ali",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jalal Hassan",
+              "position": "Torwart"
+            },
+            {
+              "name": "Hussein Ali",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Youssef Amyn",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ahmed Qasem",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Kevin Yakob",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Aimar Sher",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ibrahim Bayesh",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Marko Farji",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Manaf Younis",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ahmed Yahya",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mustafa Saadoon",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Zaid Tahseen",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Rebin Sulaka",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Akam Hashim",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Merchas Doski",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Zaid Ismail",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Frans Putros",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Fahad Talib",
+              "position": "Torwart"
+            },
+            {
+              "name": "Ahmed Basil",
+              "position": "Torwart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gruppe": "J",
+      "teams": [
+        {
+          "land": "Argentinien",
+          "trainer": "Lionel Scaloni",
+          "verbandGegruendet": 1893,
+          "wmTitel": 3,
+          "fifaWeltranglistenplatz": 1,
+          "kontinentalverband": "CONMEBOL",
+          "kader": [
+            {
+              "name": "Lionel Messi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Julián Álvarez",
+              "position": "Sturm"
+            },
+            {
+              "name": "Lautaro Martínez",
+              "position": "Sturm"
+            },
+            {
+              "name": "Emiliano Martínez",
+              "position": "Torwart"
+            },
+            {
+              "name": "Enzo Fernández",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alexis Mac Allister",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rodrigo De Paul",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Cristian Romero",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nicolás Otamendi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Lisandro Martínez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nahuel Molina",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Leandro Paredes",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Giovani Lo Celso",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nicolás González",
+              "position": "Sturm"
+            },
+            {
+              "name": "Nico Paz",
+              "position": "Sturm"
+            },
+            {
+              "name": "Thiago Almada",
+              "position": "Sturm"
+            },
+            {
+              "name": "Gonzalo Montiel",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nicolás Tagliafico",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Exequiel Palacios",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Giuliano Simeone",
+              "position": "Sturm"
+            },
+            {
+              "name": "Valentín Barco",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Leonardo Balerdi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Facundo Medina",
+              "position": "Abwehr"
+            },
+            {
+              "name": "José Manuel López",
+              "position": "Sturm"
+            },
+            {
+              "name": "Gerónimo Rulli",
+              "position": "Torwart"
+            },
+            {
+              "name": "Juan Musso",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Österreich",
+          "trainer": "Ralf Rangnick",
+          "verbandGegruendet": 1904,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 24,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "David Alaba",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Marko Arnautovic",
+              "position": "Sturm"
+            },
+            {
+              "name": "Marcel Sabitzer",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Konrad Laimer",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Christoph Baumgartner",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Xaver Schlager",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nicolas Seiwald",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Kevin Danso",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Paul Wanner",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Carney Chukwuemeka",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Sasa Kalajdzic",
+              "position": "Sturm"
+            },
+            {
+              "name": "Michael Gregoritsch",
+              "position": "Sturm"
+            },
+            {
+              "name": "Patrick Wimmer",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Florian Grillitsch",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Stefan Posch",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Philipp Lienhart",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Marco Friedl",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Romano Schmid",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alessandro Schopf",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "David Affengruber",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Alexander Prass",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Phillipp Mwene",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Michael Svoboda",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Alexander Schlager",
+              "position": "Torwart"
+            },
+            {
+              "name": "Patrick Pentz",
+              "position": "Torwart"
+            },
+            {
+              "name": "Florian Wiegele",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Algerien",
+          "trainer": "Vladimir Petković",
+          "verbandGegruendet": 1962,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 28,
+          "kontinentalverband": "CAF",
+          "kader": [
+            {
+              "name": "Riyad Mahrez",
+              "position": "Sturm"
+            },
+            {
+              "name": "Aïssa Mandi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Rayan Aït-Nouri",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Amine Gouiri",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ramy Bensebaïni",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mohamed Amoura",
+              "position": "Sturm"
+            },
+            {
+              "name": "Nabil Bentaleb",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ibrahim Maza",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Houssem Aouar",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Luca Zidane",
+              "position": "Torwart"
+            },
+            {
+              "name": "Farès Chaïbi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Anis Hadj Moussa",
+              "position": "Sturm"
+            },
+            {
+              "name": "Hicham Boudaoui",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ramiz Zerrouki",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nadhir Benbouali",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jaouen Hadjam",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Adil Boulbina",
+              "position": "Sturm"
+            },
+            {
+              "name": "Farès Ghedjemis",
+              "position": "Sturm"
+            },
+            {
+              "name": "Yacine Titraoui",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rafik Belghali",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Samir Chergui",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Zineddine Belaïd",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Achref Abada",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mohamed Amine Tougaï",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Oussama Benbot",
+              "position": "Torwart"
+            },
+            {
+              "name": "Melvin Mastil",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Jordanien",
+          "trainer": "Jamal Sellami",
+          "verbandGegruendet": 1949,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 63,
+          "kontinentalverband": "AFC",
+          "kader": [
+            {
+              "name": "Musa Al-Tamari",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ali Olwan",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ihsan Haddad",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Yazan Al-Arab",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Noor Al-Rawabdeh",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mahmoud Al-Mardi",
+              "position": "Sturm"
+            },
+            {
+              "name": "Nizar Al-Rashdan",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mohammad Abu Zrayq",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ibrahim Sabra",
+              "position": "Sturm"
+            },
+            {
+              "name": "Odeh Al-Fakhouri",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ibrahim Sa'deh",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rajaei Ayed",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mohammad Abu Hashish",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Abdallah Nasib",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Husam Abu Dahab",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mohammad Abualnadi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Amer Jamous",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Mohammad Al-Dawoud",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ali Azaizeh",
+              "position": "Sturm"
+            },
+            {
+              "name": "Salim Obaid",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Saed Al-Rosan",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Anas Badawi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mohannad Abu Taha",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Yazeed Abulaila",
+              "position": "Torwart"
+            },
+            {
+              "name": "Nour Bani Attiah",
+              "position": "Torwart"
+            },
+            {
+              "name": "Abdallah Al-Fakhouri",
+              "position": "Torwart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gruppe": "K",
+      "teams": [
+        {
+          "land": "Portugal",
+          "trainer": "Roberto Martínez",
+          "verbandGegruendet": 1914,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 5,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Cristiano Ronaldo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Bruno Fernandes",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Vitinha",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rafael Leão",
+              "position": "Sturm"
+            },
+            {
+              "name": "João Neves",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nuno Mendes",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Bernardo Silva",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rúben Dias",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Gonçalo Ramos",
+              "position": "Sturm"
+            },
+            {
+              "name": "Pedro Neto",
+              "position": "Sturm"
+            },
+            {
+              "name": "João Cancelo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "João Félix",
+              "position": "Sturm"
+            },
+            {
+              "name": "Diogo Dalot",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Matheus Nunes",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Diogo Costa",
+              "position": "Torwart"
+            },
+            {
+              "name": "José Sá",
+              "position": "Torwart"
+            },
+            {
+              "name": "Francisco Conceição",
+              "position": "Sturm"
+            },
+            {
+              "name": "Rúben Neves",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Gonçalo Inácio",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Francisco Trincão",
+              "position": "Sturm"
+            },
+            {
+              "name": "Nélson Semedo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Renato Veiga",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Gonçalo Guedes",
+              "position": "Sturm"
+            },
+            {
+              "name": "Tomás Araújo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Samu Costa",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rui Silva",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Kolumbien",
+          "trainer": "Néstor Lorenzo",
+          "verbandGegruendet": 1924,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 13,
+          "kontinentalverband": "CONMEBOL",
+          "kader": [
+            {
+              "name": "James Rodríguez",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Luis Díaz",
+              "position": "Sturm"
+            },
+            {
+              "name": "Davinson Sánchez",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jhon Arias",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Richard Ríos",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Yerry Mina",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Luis Suárez",
+              "position": "Sturm"
+            },
+            {
+              "name": "David Ospina",
+              "position": "Torwart"
+            },
+            {
+              "name": "Jhon Córdoba",
+              "position": "Sturm"
+            },
+            {
+              "name": "Daniel Muñoz",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jefferson Lerma",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jhon Lucumí",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Juan Fernando Quintero",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Johan Mojica",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jorge Carrascal",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Santiago Arias",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Juan Camilo Hernández",
+              "position": "Sturm"
+            },
+            {
+              "name": "Déiver Machado",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Carlos Andrés Gómez",
+              "position": "Sturm"
+            },
+            {
+              "name": "Willer Ditta",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kevin Castaño",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Gustavo Puerta",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Juan Camilo Portilla",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jaminton Campaz",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Camilo Vargas",
+              "position": "Torwart"
+            },
+            {
+              "name": "Álvaro Montero",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "DR Kongo",
+          "trainer": "Sébastien Desabre",
+          "verbandGegruendet": 1919,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 46,
+          "kontinentalverband": "CAF",
+          "kader": [
+            {
+              "name": "Yoane Wissa",
+              "position": "Sturm"
+            },
+            {
+              "name": "Chancel Mbemba",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Aaron Wan-Bissaka",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Cédric Bakambu",
+              "position": "Sturm"
+            },
+            {
+              "name": "Gaël Kakuta",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Fiston Mayele",
+              "position": "Sturm"
+            },
+            {
+              "name": "Noah Sadiki",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Axel Tuanzebe",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Théo Bongonda",
+              "position": "Sturm"
+            },
+            {
+              "name": "Arthur Masuaku",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Simon Banza",
+              "position": "Sturm"
+            },
+            {
+              "name": "Edo Kayembe",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Meschak Elia",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Charles Pickel",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Samuel Moutoussamy",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Nathanaël Mbuku",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Joris Kayembe",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Gédéon Kalulu",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Dylan Batubinsika",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Steve Kapuadi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Aaron Tshibola",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Ngal'ayel Mukau",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Brian Cipenga",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Lionel Mpasi",
+              "position": "Torwart"
+            },
+            {
+              "name": "Timothy Fayulu",
+              "position": "Torwart"
+            },
+            {
+              "name": "Matthieu Epolo",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Usbekistan",
+          "trainer": "Fabio Cannavaro",
+          "verbandGegruendet": 1946,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 50,
+          "kontinentalverband": "AFC",
+          "kader": [
+            {
+              "name": "Abdukodir Khusanov",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Eldor Shomurodov",
+              "position": "Sturm"
+            },
+            {
+              "name": "Abbosbek Fayzullayev",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Otabek Shukurov",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Igor Sergeev",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jaloliddin Masharipov",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Oston Urunov",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Odiljon Hamrobekov",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Dostonbek Khamdamov",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jamshid Iskanderov",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Khojiakbar Alijonov",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Farrukh Sayfiev",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Rustam Ashurmatov",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Umar Eshmurodov",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Sherzod Nasrullaev",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Akmal Mozgovoy",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Azizjon Ganiev",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Azizbek Amonov",
+              "position": "Sturm"
+            },
+            {
+              "name": "Abdulla Abdullaev",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Avazbek Ulmasaliev",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jakhongir Urozov",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Behruz Karimov",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Sherzod Esanov",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Utkir Yusupov",
+              "position": "Torwart"
+            },
+            {
+              "name": "Abduvohid Nematov",
+              "position": "Torwart"
+            },
+            {
+              "name": "Botirali Ergashev",
+              "position": "Torwart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gruppe": "L",
+      "teams": [
+        {
+          "land": "England",
+          "trainer": "Thomas Tuchel",
+          "verbandGegruendet": 1863,
+          "wmTitel": 1,
+          "fifaWeltranglistenplatz": 4,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Harry Kane",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jude Bellingham",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Bukayo Saka",
+              "position": "Sturm"
+            },
+            {
+              "name": "Declan Rice",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Marcus Rashford",
+              "position": "Sturm"
+            },
+            {
+              "name": "John Stones",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jordan Pickford",
+              "position": "Torwart"
+            },
+            {
+              "name": "Kobbie Mainoo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Reece James",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Eberechi Eze",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Anthony Gordon",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ollie Watkins",
+              "position": "Sturm"
+            },
+            {
+              "name": "Ivan Toney",
+              "position": "Sturm"
+            },
+            {
+              "name": "Noni Madueke",
+              "position": "Sturm"
+            },
+            {
+              "name": "Marc Guéhi",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jordan Henderson",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Morgan Rogers",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ezri Konsa",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Dan Burn",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Trevoh Chalobah",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Elliot Anderson",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jarell Quansah",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Djed Spence",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nico O'Reilly",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Dean Henderson",
+              "position": "Torwart"
+            },
+            {
+              "name": "James Trafford",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Kroatien",
+          "trainer": "Zlatko Dalić",
+          "verbandGegruendet": 1912,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 11,
+          "kontinentalverband": "UEFA",
+          "kader": [
+            {
+              "name": "Luka Modrić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Josko Gvardiol",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mateo Kovačić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ivan Perišić",
+              "position": "Sturm"
+            },
+            {
+              "name": "Andrej Kramarić",
+              "position": "Sturm"
+            },
+            {
+              "name": "Nikola Vlašić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Josip Stanišić",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Luka Sučić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Petar Sučić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Josip Šutalo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Mario Pašalić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Martin Baturina",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Duje Ćaleta-Car",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Dominik Livaković",
+              "position": "Torwart"
+            },
+            {
+              "name": "Ante Budimir",
+              "position": "Sturm"
+            },
+            {
+              "name": "Luka Vušković",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Marin Pongračić",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Petar Musa",
+              "position": "Sturm"
+            },
+            {
+              "name": "Igor Matanović",
+              "position": "Sturm"
+            },
+            {
+              "name": "Kristijan Jakić",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Martin Erlić",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Nikola Moro",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Toni Fruk",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Marco Pašalić",
+              "position": "Sturm"
+            },
+            {
+              "name": "Dominik Kotarski",
+              "position": "Torwart"
+            },
+            {
+              "name": "Ivor Pandur",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Ghana",
+          "trainer": "Carlos Queiroz",
+          "verbandGegruendet": 1957,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 74,
+          "kontinentalverband": "CAF",
+          "kader": [
+            {
+              "name": "Antoine Semenyo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Iñaki Williams",
+              "position": "Sturm"
+            },
+            {
+              "name": "Thomas Partey",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Jordan Ayew",
+              "position": "Sturm"
+            },
+            {
+              "name": "Abdul Fatawu Issahaku",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Kamaldeen Sulemana",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ernest Nuamah",
+              "position": "Sturm"
+            },
+            {
+              "name": "Lawrence Ati-Zigi",
+              "position": "Torwart"
+            },
+            {
+              "name": "Baba Abdul Rahman",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Abdul Mumin",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Gideon Mensah",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Alidu Seidu",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Elisha Owusu",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Brandon Thomas-Asante",
+              "position": "Sturm"
+            },
+            {
+              "name": "Jerome Opoku",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Marvin Senaya",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kojo Oppong Peprah",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Augustine Boakye",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Derrick Luckassen",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jonas Adjetey",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Kwasi Sibo",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Caleb Yirenkyi",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Christopher Bonsu Baah",
+              "position": "Sturm"
+            },
+            {
+              "name": "Prince Kwabena Adu",
+              "position": "Sturm"
+            },
+            {
+              "name": "Benjamin Asare",
+              "position": "Torwart"
+            },
+            {
+              "name": "Joseph Anang",
+              "position": "Torwart"
+            }
+          ]
+        },
+        {
+          "land": "Panama",
+          "trainer": "Thomas Christiansen",
+          "verbandGegruendet": 1937,
+          "wmTitel": 0,
+          "fifaWeltranglistenplatz": 33,
+          "kontinentalverband": "CONCACAF",
+          "kader": [
+            {
+              "name": "Adalberto Carrasquilla",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Aníbal Godoy",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Alberto Quintero",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Yoel Bárcenas",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Ismael Díaz",
+              "position": "Sturm"
+            },
+            {
+              "name": "Cecilio Waterman",
+              "position": "Sturm"
+            },
+            {
+              "name": "José Fajardo",
+              "position": "Sturm"
+            },
+            {
+              "name": "Fidel Escobar",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Amir Murillo",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Eric Davis",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Luis Mejía",
+              "position": "Torwart"
+            },
+            {
+              "name": "César Yanis",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Carlos Harvey",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "José Luis Rodríguez",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Rolando Blackburn",
+              "position": "Sturm"
+            },
+            {
+              "name": "Tomás Rodríguez",
+              "position": "Sturm"
+            },
+            {
+              "name": "Azarías Londoño",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "Andrés Andrade",
+              "position": "Abwehr"
+            },
+            {
+              "name": "José Córdoba",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Edgardo Fariña",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Orlando Mosquera",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Jiovany Ramos",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Roderick Miller",
+              "position": "Abwehr"
+            },
+            {
+              "name": "Cristián Martínez",
+              "position": "Mittelfeld"
+            },
+            {
+              "name": "César Blackman",
+              "position": "Torwart"
+            },
+            {
+              "name": "Jorge Gutiérrez",
+              "position": "Torwart"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
