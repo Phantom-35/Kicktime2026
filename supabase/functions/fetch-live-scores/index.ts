@@ -151,7 +151,7 @@ Deno.serve(async (req: Request) => {
       cached = (data as any) ?? null;
     }
 
-    if (cached) {
+    if (cached && !force) {
       const age = Date.now() - new Date(cached.fetched_at).getTime();
       if (age < ttl) {
         const merged = mergeOverrides(cached.payload?.response ?? [], overrides);
