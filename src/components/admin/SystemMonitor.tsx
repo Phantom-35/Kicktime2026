@@ -95,7 +95,22 @@ export function SystemMonitor() {
           {" · "}
           Auto-Vorschlag: {autoPhase ? `Phase ${autoPhase} (${KO_PHASES[autoPhase].label})` : "R32 hardgecodet"}
         </div>
+        <Button
+          size="sm"
+          variant="default"
+          className="w-full text-[11px] h-9 gap-2 mt-2"
+          onClick={runForceFetch}
+          disabled={forcing}
+        >
+          {forcing ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Zap className="h-3.5 w-3.5" />
+          )}
+          Force Fetch (aktive Route — Cache umgehen)
+        </Button>
       </div>
+
 
       {/* Manueller Override */}
       <div className="rounded-xl border border-border bg-background/60 p-3 space-y-2">
