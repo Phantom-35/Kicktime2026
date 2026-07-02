@@ -20,6 +20,7 @@ export function SystemMonitor() {
 
   const [, tick] = useState(0);
   const [syncing, setSyncing] = useState(false);
+  const [forcing, setForcing] = useState(false);
   useEffect(() => {
     const id = window.setInterval(() => tick((n) => n + 1), 30_000);
     return () => window.clearInterval(id);
@@ -40,6 +41,27 @@ export function SystemMonitor() {
       toast.error(err instanceof Error ? err.message : String(err));
     } finally {
       setSyncing(false);
+    }
+  };
+
+  const runForceFetch = async () => {
+    setForcing(true);
+    try {
+      const res = await forceFetchActivePhase(activeKoPhase);
+      if (res.error) {
+        toast.error(`Force-Fetch fehlgeschlagen: ${res.error}`);
+      } else {
+        toast.success(
+          `Frisch geladen: ${res.fixtures.length} Fixtures` +
+            (res.koPhase ? ` (Phase /${res.koPhase})` : " (Gruppen/R32)"),
+        );
+        const stored = await fetchAllStoredFixtures();
+        if (stored.length > 0) applyLiveFixturesToStore(stored);
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : String(err));
+    } finally {
+      setForcing(false);
     }
   };
 
