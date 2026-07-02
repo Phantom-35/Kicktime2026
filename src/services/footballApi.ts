@@ -20,12 +20,15 @@ export type LiveFixture = {
   utcTimestamp?: string;
   stadium?: string;
   city?: string;
+  /** OpenLigaDB matchID – Fallback-Matcher, wenn Team-Namen leer sind. */
+  matchId?: string;
 };
 
 export type FetchMode = "idle" | "live";
 
 type RawFixture = {
   fixture?: {
+    id?: string | number;
     date?: string;
     status?: { short?: string; elapsed?: number | null };
     venue?: { name?: string | null; city?: string | null };
