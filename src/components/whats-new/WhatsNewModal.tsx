@@ -17,8 +17,8 @@ const FEATURES: Feature[] = [
   },
   {
     icon: RefreshCw,
-    title: "🔄 Force-Fetch im Admin-Panel",
-    text: "Neuer Button in der System-Übersicht: umgeht den 5-Minuten-Cache und zieht die aktive Route sofort frisch.",
+    title: "🔄 Schneller Live-Refresh",
+    text: "Der 5-Minuten-Cache kann intern umgangen werden, um aktive Spiele sofort frisch zu ziehen.",
   },
 ];
 
