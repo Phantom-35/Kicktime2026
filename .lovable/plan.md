@@ -1,59 +1,90 @@
-## Ziel
-Im Turnier-Status-Tab (`/turnier`) werden die Länderkarten anklickbar. Ein Klick öffnet ein Bottom-Sheet mit Team-Header, Basis-Fakten und nach Positionen gruppiertem Kader. Optik passt zum Dark/Neon-Design. Bestehende Logik im Turnier-Status-Tab bleibt unangetastet.
+# Update v7.9.0 — Plan
 
-## 1. Kader-Daten integrieren
-- Upload `wm2026_kader.json` als App-Daten unter `src/data/wm2026_kader.json` ablegen (statisches JSON, ~5.4k Zeilen — nur bei Bedarf importiert).
-- Neues Modul `src/data/squads.ts`:
-  - Baut beim ersten Zugriff eine `Map<Code, TeamSquad>` per `apiNameToCode()` aus `src/utils/teamMapping.ts`, damit deutsche Ländernamen aus dem JSON auf unsere 3-Letter-Codes gemappt werden.
-  - Export: `getTeamSquad(code: string): TeamSquad | null`.
-  - `TeamSquad`-Typ: `{ trainer, verbandGegruendet, wmTitel, fifaWeltranglistenplatz, kontinentalverband, kader: { Torwart: Player[]; Abwehr: Player[]; Mittelfeld: Player[]; Sturm: Player[] } }`.
-  - Import des JSON per **dynamischem Import** in `getTeamSquad`, damit das JSON erst beim ersten Öffnen eines Sheets in den Bundle-Chunk geladen wird (Lazy Loading, kein Overhead beim Rendern der Länder-Liste).
+## Bug 1: Ergebnisse werden nicht angezeigt (obwohl API sie liefert)
 
-## 2. Neue Komponente `TeamDetailSheet`
-Datei: `src/components/team/TeamDetailSheet.tsx`.
-- Nutzt shadcn `Sheet` von unten (`side="bottom"`) mit abgerundeten oberen Kanten, `bg-card/95 backdrop-blur`, Neon-Akzent-Border (`border-primary/30`), max. Höhe `85vh`, scrollbar.
-- Props: `open`, `onOpenChange`, `team: Team`, `alive`, `eliminatedIn?`.
-- Header:
-  - Große Flagge (Emoji, `text-6xl`), Team-Name als `h2`, Statusbadge (grün „Noch im Rennen" oder rot „Ausgeschieden – <Runde>").
-  - Zwei prominente Badges/Chips: 🏆 „X WM-Titel" und 📊 „FIFA #<Platz>" mit Neon-Border/Glow.
-- Basis-Info-Grid (2 Spalten, kompakte Kacheln):
-  - Trainer, Kontinentalverband, Verband gegründet, Kadergröße.
-  - Kachel-Stil: `rounded-xl border border-border bg-background/60 p-3`, kleiner Label + größerer Wert.
-- Kader-Sektion:
-  - `Tabs` (shadcn) mit den 4 Positionen: `Torwart · Abwehr · Mittelfeld · Sturm`. Tab-Label enthält Zähler in Klammern.
-  - Pro Tab: `ul` mit einer Zeile pro Spieler (nummeriert), kompakte Karten `rounded-lg bg-background/40 border border-border/50 px-3 py-2`.
-  - Falls Positionsgruppe leer → dezenter Hinweis.
-- Fallback: Falls `getTeamSquad(code)` `null` liefert (unwahrscheinlich, aber defensiv), zeige nur Header + Basis-Info-Grid ohne Kader und Text „Kader-Infos nicht verfügbar".
+**Root Cause:** In `src/services/footballApi.ts::normalize()` werden Zeilen mit
+`teams.home.name` oder `teams.away.name === null` per `if (!teamA || !teamB) continue;`
+komplett verworfen. Beim `full-store`-Modus liefert die Edge Function für alte
+KO-Slots (die noch keine Teams hatten, als sie persistiert wurden) aber genau
+solche Payloads. Dadurch werden auch die aktuellen Ergebnisse fürs Sechzehntel
+still ignoriert.
 
-## 3. Turnier-Seite anpassen
-Datei: `src/routes/turnier.tsx`.
-- Lokaler State `const [selected, setSelected] = useState<TeamStatus | null>(null)`.
-- Beide `<li>`-Blöcke (alive + eliminated) werden zu `<button>`-Wrappern (semantisch `<li><button …>`), rufen `setSelected({team, alive, eliminatedIn})`.
-- Visuell: unverändertes Styling + `hover:border-primary/50 active:scale-[0.98] transition` und `cursor-pointer`.
-- Am Seitenende `<TeamDetailSheet open={!!selected} onOpenChange={(v)=>!v && setSelected(null)} …>`.
-- Import der Sheet-Komponente per **lazy** (`React.lazy` + `<Suspense fallback={null}>`), damit die JSON-Kader-Daten wirklich erst on-click geladen werden.
+Zusätzlich: `applyUpdateInternal` blockiert Score-Updates, wenn `cur.status`
+bereits fälschlich auf `finished` steht (Score-Field wird nur via
+`finishMatchFromApi` gesetzt, aber der Guard in Zeile 233 kappt neue `liveScore`
+zu `undefined`, bevor `finishMatchFromApi` läuft).
 
-## 4. WhatsNew-Modal aktualisieren
-Datei: `src/components/whats-new/WhatsNewModal.tsx`
-- Neuer `FEATURES`-Array-Inhalt für v7.8 mit einem Eintrag zum klickbaren Turnier-Status inkl. Kader-Ansicht (Icon `Users` aus `lucide-react`).
-- Rest des Modals unverändert.
+**Fix:**
+- `normalize()`: Zeilen ohne Teamnamen werden nicht mehr komplett verworfen —
+  wenn `matchID` und Score/Status brauchbar sind, wird nur der Score-Teil in ein
+  separates `LiveFixture` (mit `matchId` statt Team-Codes) durchgereicht. Alter-
+  nativ: `normalize()` liefert `matchId` mit, und `applyLiveFixturesToStore`
+  paart zusätzlich auf ID.
+- Einfachere Lösung (wird umgesetzt): `normalize()` behält den Skip, aber die
+  Edge Function `rowToFixture()` liefert Team-Namen aus `match_results`
+  (persistiert) — für Sechzehntelfinale müssen wir sicherstellen dass beim
+  Persistieren die Namen aus dem Static-Override kommen. Da R32 clientseitig
+  hardgecodet ist (`ko-static.ts`), ist die einfachste Behebung: Beim Empfang
+  einer `LiveFixture` ohne Team-Match zusätzlich per `matchId` (falls verfügbar)
+  matchen. Wir erweitern das Fixture-Schema um `matchId` und matchen erst per
+  Team-Codes, dann per ID.
+- `applyUpdateInternal`: Bei `cur.status === "finished" && !cur.score` (Loading-
+  Placeholder-State) den Finished-Lock nicht anwenden — Score/Status dürfen
+  überschrieben werden.
 
-Datei: `src/lib/version.ts`
-- `APP_VERSION = "7.8.0"`.
+## Bug 3: Falscher Status "Ergebnis wird geladen" bei zukünftigen Spielen
 
-## 5. Nicht anfassen
-- Bestehende Turnier-Status-Berechnung (`src/lib/tournament-status.ts`) und Live-Daten-/DB-Logik aus v7.7.
-- Match-Store, Edge Functions, Telemetrie.
+**Root Cause:** OpenLigaDB liefert für neu angelegte KO-Slots gelegentlich
+`matchIsFinished: true` (ohne Score), weil das Match dort administrativ als
+"nicht vorhanden" markiert wird. Die Edge Function mappt das auf `FT`, das
+Frontend erzeugt daraus einen `finished`-State ohne Score → im Detail-Sheet
+erscheint "Ergebnis wird geladen…", obwohl der Anpfiff erst morgen um 01:00 ist.
 
-## Technische Details
-- **Lazy Load**: `wm2026_kader.json` wird nur via `await import("@/data/wm2026_kader.json")` innerhalb `getTeamSquad` geladen. Die Map wird nach erstem Load gecached (`let indexCache: Map | null`).
-- **Mapping-Sicherheit**: Wenn ein Ländername im JSON von `apiNameToCode` nicht erkannt wird → Console-Warning, Team überspringen. Alle 48 WM-Teams sind in `TEAM_MAPPINGS` bereits enthalten inkl. deutscher Namen.
-- **Keine neuen Abhängigkeiten**; `Sheet`, `Tabs`, `Badge` sind über shadcn bereits verfügbar (bei Bedarf via bestehendes Muster in `src/components/ui/`).
+**Fix (Zeitzonen-hart & doppelt abgesichert):**
+- `normalize()` in `footballApi.ts`: Wenn `kickoff > now`, wird `status` IMMER
+  auf `scheduled` gezwungen — egal was die API sagt. Zusätzlich wird
+  `liveScore` in diesem Fall verworfen (kein Fake-0:0).
+- `MatchDetailSheet.tsx`: Die "Ergebnis wird geladen…"-Nachricht erscheint nur
+  noch, wenn `Date.now() >= kickoff + 115min` (also das Spiel real vorbei sein
+  MÜSSTE). Sonst wird der Score-Block gar nicht gerendert.
 
-## Betroffene Dateien
-- neu: `src/data/wm2026_kader.json` (Upload)
-- neu: `src/data/squads.ts`
-- neu: `src/components/team/TeamDetailSheet.tsx`
-- edit: `src/routes/turnier.tsx`
-- edit: `src/components/whats-new/WhatsNewModal.tsx`
-- edit: `src/lib/version.ts`
+Beide Guards zusammen verhindern jeden Zeitzonen-/Datumsdreher.
+
+## Feature 2: Force-Fetch-Button im Admin-Dashboard
+
+- Edge Function: Neuer Body-Parameter `force: true` — überspringt den 5-Min-
+  Cache-Read und zwingt einen frischen Upstream-Call. Cache wird trotzdem neu
+  geschrieben. Wenn `force` gesetzt, wird der aktuell aktive `koPhase`-URL
+  gezogen (oder Default), Cache-Bypass gilt nur für diesen einen Call.
+- `footballApi.ts`: Neuer Export `forceFetchActivePhase(koPhase)` — ruft die
+  Edge Function mit `{ mode: "live", koPhase, force: true }` und lädt danach
+  den full-store neu.
+- `SystemMonitor.tsx`: Prominenter Button "🔄 Force Fetch (aktive Route)"
+  über dem Fehler-Log; zeigt Toast mit Ergebnis (Anzahl Fixtures + URL) und
+  triggert danach `applyLiveFixturesToStore`.
+
+## Datei-Änderungen
+
+- `src/lib/version.ts` — auf `7.9.0`.
+- `src/components/WhatsNewModal.tsx` — v7.9-Eintrag.
+- `supabase/functions/fetch-live-scores/index.ts` — `force`-Parameter,
+  Cache-Bypass wenn gesetzt. Kein Schema-Change, keine RLS-Änderung.
+- `src/services/footballApi.ts`
+  - `normalize()`: Zeit-basierte Status-Härtung (kickoff > now → scheduled,
+    kein Fake-Score).
+  - `LiveFixture`-Typ + `RawFixture` bekommen optionales `matchId`.
+  - `applyLiveFixturesToStore()`: Zweite Match-Runde via `matchId` (falls
+    Team-Match fehlschlägt) — behebt Bug 1 für hardgecodete R32-Slots.
+  - Neuer Export `forceFetchActivePhase(koPhase)`.
+- `src/store/match-store.ts::applyUpdateInternal`: Wenn `cur.status ===
+  "finished" && !cur.score`, gilt der Finished-Lock nicht — neue API-Daten
+  dürfen den Zombie-State überschreiben.
+- `src/components/match/MatchDetailSheet.tsx`: "Ergebnis wird geladen…" nur
+  noch, wenn `Date.now() >= kickoff + 115min`.
+- `src/components/admin/SystemMonitor.tsx`: Force-Fetch-Button.
+
+## Keine SQL-/Supabase-Änderungen nötig
+
+Diese v7.9.0-Runde ist rein Code-seitig — die bestehenden Tabellen
+(`match_results`, `match_overrides`, `live_fixtures_cache`) reichen aus. Kein
+Migration-Skript, keine RLS-Anpassung, kein Cron.
