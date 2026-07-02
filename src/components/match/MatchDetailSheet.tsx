@@ -122,7 +122,7 @@ export function MatchDetailSheet({
         <div className="px-4 pb-6 overflow-y-auto space-y-5">
 
           {/* Score (finished) with spoiler */}
-          {match.status === "finished" && !match.score && (
+          {match.status === "finished" && !match.score && Date.now() >= new Date(match.utcTimestamp).getTime() + 115 * 60 * 1000 && (
             <div className="rounded-2xl border border-border bg-card p-4 text-center">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                 Endstand
