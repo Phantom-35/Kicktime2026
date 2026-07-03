@@ -4,6 +4,7 @@ import type { Match, MatchStage, Broadcaster } from "@/data/matches";
 import { KO_STATIC_OVERRIDES } from "@/data/ko-static";
 import { calculateTableStandings } from "@/lib/standings";
 import { applyTvOverride } from "@/lib/tv-overrides";
+import { isPlaceholderTeam } from "@/lib/ko-phase";
 
 export type MatchStatus = "scheduled" | "live" | "finished";
 
@@ -26,6 +27,11 @@ export type LiveUpdate = {
   utcTimestamp?: string;
   stadium?: string;
   city?: string;
+  /** Wenn gesetzt und der aktuelle Slot einen Platzhalter-Code trägt, werden
+   *  teamA/teamB durch echte Nationalcodes ersetzt. Echte Codes werden nie
+   *  überschrieben. */
+  teamA?: string;
+  teamB?: string;
 };
 
 type State = {
