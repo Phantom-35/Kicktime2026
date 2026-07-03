@@ -216,10 +216,12 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
             (m.teamA === f.teamB && m.teamB === f.teamA),
         )
       : undefined;
+    let matchedById = false;
     if (!match && f.matchId) {
       match = all.find(
         (m) => (m as { apiMatchId?: string }).apiMatchId === f.matchId,
       );
+      matchedById = !!match;
     }
     if (!match) continue;
     const flipped = !!f.teamA && match.teamA !== f.teamA;
@@ -227,6 +229,9 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
       f.liveScore && flipped
         ? { a: f.liveScore.b, b: f.liveScore.a }
         : f.liveScore;
+    // Bracket-Upgrade nur, wenn wir via matchId gepaart haben — dann darf die
+    // API die Platzhalter-Codes im Slot ersetzen. Bei Team-Match sind teamA/B
+    // per Definition schon echte Codes; kein Upgrade nötig.
     state.applyApiUpdate(match.id, {
       status: f.status,
       liveScore,
@@ -234,6 +239,8 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
       utcTimestamp: f.utcTimestamp,
       stadium: f.stadium,
       city: f.city,
+      ...(matchedById && f.teamA ? { teamA: f.teamA } : {}),
+      ...(matchedById && f.teamB ? { teamB: f.teamB } : {}),
     });
     if (f.status === "finished" && liveScore) {
       state.finishMatchFromApi(match.id, liveScore);
