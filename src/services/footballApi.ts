@@ -248,4 +248,104 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
   }
 }
 
+/**
+ * Bracket-Prefetch-Anwendung: Für eine bestimmte KO-Phase (z. B. "r16")
+ * werden API-Fixtures mit echten Team-Codes auf die lokalen Placeholder-
+ * Slots angewandt. Paar-Reihenfolge: (1) Team-Match, (2) Kickoff ±6h,
+ * (3) chronologischer Index innerhalb der Phase.
+ */
+export function applyBracketUpgradeFromApi(
+  stage: "r16" | "qf" | "sf" | "third" | "final",
+  fixtures: LiveFixture[],
+): number {
+  const realFixtures = fixtures.filter(
+    (f) => f.teamA && f.teamB && f.utcTimestamp,
+  );
+  if (realFixtures.length === 0) return 0;
+
+  const state = useMatchStore.getState();
+  const slots = Object.values(state.matches)
+    .filter((m) => m.stage === stage)
+    .sort(
+      (a, b) =>
+        new Date(a.utcTimestamp).getTime() - new Date(b.utcTimestamp).getTime(),
+    );
+  if (slots.length === 0) return 0;
+
+  const sortedFixtures = [...realFixtures].sort(
+    (a, b) =>
+      new Date(a.utcTimestamp!).getTime() - new Date(b.utcTimestamp!).getTime(),
+  );
+
+  const used = new Set<string>();
+  let upgraded = 0;
+  const SIX_HOURS = 6 * 60 * 60 * 1000;
+
+  const tryUpgrade = (slot: (typeof slots)[number], f: LiveFixture) => {
+    const flipped = slot.teamA !== f.teamA && slot.teamB === f.teamA;
+    const liveScore =
+      f.liveScore && flipped
+        ? { a: f.liveScore.b, b: f.liveScore.a }
+        : f.liveScore;
+    const teamA = flipped ? f.teamB : f.teamA;
+    const teamB = flipped ? f.teamA : f.teamB;
+    state.applyApiUpdate(slot.id, {
+      status: f.status,
+      liveScore,
+      matchMinute: f.matchMinute,
+      utcTimestamp: f.utcTimestamp,
+      stadium: f.stadium,
+      city: f.city,
+      teamA,
+      teamB,
+    });
+    if (f.status === "finished" && liveScore) {
+      state.finishMatchFromApi(slot.id, liveScore);
+    }
+    used.add(slot.id);
+    upgraded++;
+  };
+
+  // Pass 1: exakter Team-Match
+  for (const f of sortedFixtures) {
+    const slot = slots.find(
+      (m) =>
+        !used.has(m.id) &&
+        ((m.teamA === f.teamA && m.teamB === f.teamB) ||
+          (m.teamA === f.teamB && m.teamB === f.teamA)),
+    );
+    if (slot) tryUpgrade(slot, f);
+  }
+
+  // Pass 2: Kickoff ±6h
+  for (const f of sortedFixtures) {
+    if (used.size === slots.length) break;
+    const fTs = new Date(f.utcTimestamp!).getTime();
+    const slot = slots.find(
+      (m) =>
+        !used.has(m.id) &&
+        Math.abs(new Date(m.utcTimestamp).getTime() - fTs) <= SIX_HOURS,
+    );
+    if (slot) tryUpgrade(slot, f);
+  }
+
+  // Pass 3: chronologischer Index-Fallback
+  const remainingSlots = slots.filter((m) => !used.has(m.id));
+  const remainingFixtures = sortedFixtures.filter((f) => {
+    // Skip fixtures already consumed via prior passes
+    return !slots.some(
+      (m) =>
+        used.has(m.id) &&
+        ((m.teamA === f.teamA && m.teamB === f.teamB) ||
+          (m.teamA === f.teamB && m.teamB === f.teamA)),
+    );
+  });
+  const pairs = Math.min(remainingSlots.length, remainingFixtures.length);
+  for (let i = 0; i < pairs; i++) {
+    tryUpgrade(remainingSlots[i], remainingFixtures[i]);
+  }
+
+  return upgraded;
+}
+
 export { getTeam };
