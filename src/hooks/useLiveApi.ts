@@ -139,6 +139,36 @@ export function useLiveApi(): void {
       }
     };
 
+    // Bracket-Prefetch: Sobald die aktive Phase steht, prüfen wir die
+    // Nachfolge-Route (z. B. /5 für R16), um Platzhalter-Slots automatisch
+    // durch echte Sieger zu ersetzen, sobald die API sie liefert. Throttle
+    // pro Phase (30 min), damit wir die API nicht unnötig belasten.
+    const runBracketPrefetch = async () => {
+      const nextPhase = getNextPhaseForBracketPrefetch(matches, koPhase);
+      if (nextPhase == null) return;
+      const info = getKoPhaseInfo(nextPhase);
+      if (!info || info.stage === "r32") return;
+      try {
+        const throttleKey = `${LAST_BRACKET_PREFETCH_KEY}-${nextPhase}`;
+        const last = Number(localStorage.getItem(throttleKey) ?? "0");
+        if (Date.now() - last < BRACKET_PREFETCH_MS) return;
+        const res = await fetchLiveWorldCupData("idle", nextPhase);
+        if (cancelled) return;
+        if (res.error) {
+          logApiError(res.url ?? "unknown", res.error, nextPhase);
+          return;
+        }
+        localStorage.setItem(throttleKey, String(Date.now()));
+        if (res.fixtures.length === 0) return;
+        applyBracketUpgradeFromApi(
+          info.stage as "r16" | "qf" | "sf" | "third" | "final",
+          res.fixtures,
+        );
+      } catch (err) {
+        logApiError("network", err instanceof Error ? err.message : String(err), nextPhase);
+      }
+    };
+
     // Initial-Sync: wenn die DB leer ist, einmalig die Gruppenphase abziehen.
     const bootstrap = async () => {
       const count = await loadFullStore();
