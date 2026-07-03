@@ -183,10 +183,14 @@ export function useLiveApi(): void {
         }
       }
       if (inLiveWindow) {
-        runLive();
-        intervalRef.current = window.setInterval(runLive, LIVE_POLL_MS);
+        await runLive();
+        await runBracketPrefetch();
+        intervalRef.current = window.setInterval(() => {
+          runLive().then(runBracketPrefetch);
+        }, LIVE_POLL_MS);
       } else {
-        runIdle();
+        await runIdle();
+        await runBracketPrefetch();
       }
     };
 
