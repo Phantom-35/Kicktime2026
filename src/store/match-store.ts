@@ -299,6 +299,8 @@ function applyUpdateInternal(
       cur.utcTimestamp === merged.utcTimestamp &&
       cur.stadium === merged.stadium &&
       cur.city === merged.city &&
+      cur.teamA === merged.teamA &&
+      cur.teamB === merged.teamB &&
       cur.manualAt === merged.manualAt &&
       cur.lastApiSignature === merged.lastApiSignature
     ) {
