@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import {
+  applyBracketUpgradeFromApi,
   applyLiveFixturesToStore,
   fetchAllStoredFixtures,
   fetchLiveWorldCupData,
@@ -9,7 +10,12 @@ import {
   syncGroupPhase,
 } from "@/services/footballApi";
 import { fetchMatchOverrides, applyOverridesToStore } from "@/lib/match-overrides";
-import { determineActiveKoPhase, type KoPhaseNum } from "@/lib/ko-phase";
+import {
+  determineActiveKoPhase,
+  getKoPhaseInfo,
+  getNextPhaseForBracketPrefetch,
+  type KoPhaseNum,
+} from "@/lib/ko-phase";
 
 const INITIAL_SYNC_KEY = "kicktime-initial-sync-done";
 
