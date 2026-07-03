@@ -231,6 +231,15 @@ function applyUpdateInternal(
       ...(u.utcTimestamp !== undefined ? { utcTimestamp: u.utcTimestamp } : {}),
       ...(u.stadium !== undefined ? { stadium: u.stadium } : {}),
       ...(u.city !== undefined ? { city: u.city } : {}),
+      // Bracket-Upgrade: Platzhalter-Codes (z.B. "W:m-073|m-074", "1A") werden
+      // durch echte Nationalcodes ersetzt, sobald die API sie liefert. Echte
+      // Codes bleiben unangetastet — kein Team-Swap durch API-Fehlpayload.
+      ...(u.teamA && isPlaceholderTeam(cur.teamA) && !isPlaceholderTeam(u.teamA)
+        ? { teamA: u.teamA }
+        : {}),
+      ...(u.teamB && isPlaceholderTeam(cur.teamB) && !isPlaceholderTeam(u.teamB)
+        ? { teamB: u.teamB }
+        : {}),
     };
 
     // Guard: never demote a finished match back to live/scheduled via either
