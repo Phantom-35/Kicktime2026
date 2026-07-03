@@ -12,6 +12,18 @@
  */
 
 import type { RuntimeMatch } from "@/store/match-store";
+import { REAL_TEAMS } from "@/data/teams";
+
+const REAL_TEAM_CODES = new Set(REAL_TEAMS.map((t) => t.code));
+
+/**
+ * Ist der Team-Code ein Platzhalter (kein echter Nationalcode)?
+ * Beispiele: "W:m-073|m-074", "L101", "1A", "3C-D-E-F", "A2".
+ */
+export function isPlaceholderTeam(code: string | undefined | null): boolean {
+  if (!code) return true;
+  return !REAL_TEAM_CODES.has(code);
+}
 
 export type KoPhaseNum = 4 | 5 | 6 | 7 | 8 | 9;
 
