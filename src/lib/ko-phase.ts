@@ -78,3 +78,25 @@ export function getKoPhaseInfo(num: KoPhaseNum | null): KoPhaseInfo | null {
   if (num == null) return null;
   return KO_PHASES[num] ?? null;
 }
+
+/**
+ * Liefert die nächste KO-Phase, deren Slots noch Platzhalter-Teams enthalten
+ * — als Prefetch-Kandidat, um Bracket-Slots automatisch aufzulösen, sobald
+ * die API die echten Sieger liefert. Gibt null zurück, wenn nichts zu tun ist.
+ */
+export function getNextPhaseForBracketPrefetch(
+  matches: RuntimeMatch[],
+  activePhase: KoPhaseNum | null,
+): KoPhaseNum | null {
+  for (const info of KO_PHASE_LIST) {
+    if (info.num === 4) continue; // R32 ist hardgecodet
+    if (activePhase != null && info.num <= activePhase) continue;
+    const list = matches.filter((m) => m.stage === info.stage);
+    if (list.length === 0) return info.num;
+    const hasPlaceholder = list.some(
+      (m) => isPlaceholderTeam(m.teamA) || isPlaceholderTeam(m.teamB),
+    );
+    if (hasPlaceholder) return info.num;
+  }
+  return null;
+}
