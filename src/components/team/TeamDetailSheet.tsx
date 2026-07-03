@@ -43,7 +43,7 @@ export default function TeamDetailSheet({ open, onOpenChange, team, alive, elimi
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        className="rounded-t-3xl border-t-2 border-primary/30 bg-card/95 backdrop-blur-xl max-h-[88vh] overflow-y-auto p-0"
+        className="rounded-t-3xl border-t-2 border-primary/30 bg-card/95 backdrop-blur-xl max-h-[88vh] overflow-y-auto p-0 [&>button.absolute]:h-12 [&>button.absolute]:w-12 [&>button.absolute]:rounded-full [&>button.absolute]:flex [&>button.absolute]:items-center [&>button.absolute]:justify-center [&>button.absolute]:top-2 [&>button.absolute]:right-2 [&>button.absolute]:bg-background/70 [&>button.absolute]:backdrop-blur [&>button.absolute]:border [&>button.absolute]:border-border/60"
       >
         {/* Header */}
         <SheetHeader className="p-5 pb-3 space-y-3 text-left">

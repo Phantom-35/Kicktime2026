@@ -3,7 +3,7 @@ import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { useAppStore } from "@/store/app-store";
 import { getBroadcastersForMatch, hasAnyFreeTv, hasMagentaTv } from "@/lib/broadcaster";
-import { getMatchPhaseLabel } from "@/lib/match-phase";
+import { getMatchPhaseLabel, getStageLabel } from "@/lib/match-phase";
 import { Tv, MapPin } from "lucide-react";
 
 type MatchLike = Match & {
@@ -55,7 +55,7 @@ export function MatchCard({
             </span>
           ) : (
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent text-accent-foreground border border-accent ring-1 ring-accent/40 shadow-sm">
-              KO-Runde
+              {getStageLabel(match.stage)}
             </span>
           )}
 
