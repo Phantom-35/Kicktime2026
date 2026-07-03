@@ -4,6 +4,7 @@ import type { Match, MatchStage, Broadcaster } from "@/data/matches";
 import { KO_STATIC_OVERRIDES } from "@/data/ko-static";
 import { calculateTableStandings } from "@/lib/standings";
 import { applyTvOverride } from "@/lib/tv-overrides";
+import { isPlaceholderTeam } from "@/lib/ko-phase";
 
 export type MatchStatus = "scheduled" | "live" | "finished";
 
@@ -26,6 +27,11 @@ export type LiveUpdate = {
   utcTimestamp?: string;
   stadium?: string;
   city?: string;
+  /** Wenn gesetzt und der aktuelle Slot einen Platzhalter-Code trägt, werden
+   *  teamA/teamB durch echte Nationalcodes ersetzt. Echte Codes werden nie
+   *  überschrieben. */
+  teamA?: string;
+  teamB?: string;
 };
 
 type State = {
@@ -225,6 +231,15 @@ function applyUpdateInternal(
       ...(u.utcTimestamp !== undefined ? { utcTimestamp: u.utcTimestamp } : {}),
       ...(u.stadium !== undefined ? { stadium: u.stadium } : {}),
       ...(u.city !== undefined ? { city: u.city } : {}),
+      // Bracket-Upgrade: Platzhalter-Codes (z.B. "W:m-073|m-074", "1A") werden
+      // durch echte Nationalcodes ersetzt, sobald die API sie liefert. Echte
+      // Codes bleiben unangetastet — kein Team-Swap durch API-Fehlpayload.
+      ...(u.teamA && isPlaceholderTeam(cur.teamA) && !isPlaceholderTeam(u.teamA)
+        ? { teamA: u.teamA }
+        : {}),
+      ...(u.teamB && isPlaceholderTeam(cur.teamB) && !isPlaceholderTeam(u.teamB)
+        ? { teamB: u.teamB }
+        : {}),
     };
 
     // Guard: never demote a finished match back to live/scheduled via either
@@ -284,6 +299,8 @@ function applyUpdateInternal(
       cur.utcTimestamp === merged.utcTimestamp &&
       cur.stadium === merged.stadium &&
       cur.city === merged.city &&
+      cur.teamA === merged.teamA &&
+      cur.teamB === merged.teamB &&
       cur.manualAt === merged.manualAt &&
       cur.lastApiSignature === merged.lastApiSignature
     ) {

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useAppStore } from "@/store/app-store";
 import { useMatchStore, selectMatchList } from "@/store/match-store";
 import {
+  applyBracketUpgradeFromApi,
   applyLiveFixturesToStore,
   fetchAllStoredFixtures,
   fetchLiveWorldCupData,
@@ -9,7 +10,12 @@ import {
   syncGroupPhase,
 } from "@/services/footballApi";
 import { fetchMatchOverrides, applyOverridesToStore } from "@/lib/match-overrides";
-import { determineActiveKoPhase, type KoPhaseNum } from "@/lib/ko-phase";
+import {
+  determineActiveKoPhase,
+  getKoPhaseInfo,
+  getNextPhaseForBracketPrefetch,
+  type KoPhaseNum,
+} from "@/lib/ko-phase";
 
 const INITIAL_SYNC_KEY = "kicktime-initial-sync-done";
 
@@ -18,6 +24,8 @@ const LIVE_POLL_MS = 5 * 60 * 1000; // 5 min — OpenLigaDB cadence
 const LIVE_BUFFER_MS = 15 * 60 * 1000; // ±15min around kickoff/end
 const LAST_IDLE_KEY = "kicktime-last-idle-fetch";
 const MATCH_DURATION_MS = 115 * 60 * 1000;
+const BRACKET_PREFETCH_MS = 30 * 60 * 1000; // Nachfolge-Phase max. alle 30 min prüfen
+const LAST_BRACKET_PREFETCH_KEY = "kicktime-last-bracket-prefetch";
 
 /**
  * Adaptive poller. Manual admin overrides are applied AFTER upstream so they
@@ -131,6 +139,36 @@ export function useLiveApi(): void {
       }
     };
 
+    // Bracket-Prefetch: Sobald die aktive Phase steht, prüfen wir die
+    // Nachfolge-Route (z. B. /5 für R16), um Platzhalter-Slots automatisch
+    // durch echte Sieger zu ersetzen, sobald die API sie liefert. Throttle
+    // pro Phase (30 min), damit wir die API nicht unnötig belasten.
+    const runBracketPrefetch = async () => {
+      const nextPhase = getNextPhaseForBracketPrefetch(matches, koPhase);
+      if (nextPhase == null) return;
+      const info = getKoPhaseInfo(nextPhase);
+      if (!info || info.stage === "r32") return;
+      try {
+        const throttleKey = `${LAST_BRACKET_PREFETCH_KEY}-${nextPhase}`;
+        const last = Number(localStorage.getItem(throttleKey) ?? "0");
+        if (Date.now() - last < BRACKET_PREFETCH_MS) return;
+        const res = await fetchLiveWorldCupData("idle", nextPhase);
+        if (cancelled) return;
+        if (res.error) {
+          logApiError(res.url ?? "unknown", res.error, nextPhase);
+          return;
+        }
+        localStorage.setItem(throttleKey, String(Date.now()));
+        if (res.fixtures.length === 0) return;
+        applyBracketUpgradeFromApi(
+          info.stage as "r16" | "qf" | "sf" | "third" | "final",
+          res.fixtures,
+        );
+      } catch (err) {
+        logApiError("network", err instanceof Error ? err.message : String(err), nextPhase);
+      }
+    };
+
     // Initial-Sync: wenn die DB leer ist, einmalig die Gruppenphase abziehen.
     const bootstrap = async () => {
       const count = await loadFullStore();
@@ -145,10 +183,14 @@ export function useLiveApi(): void {
         }
       }
       if (inLiveWindow) {
-        runLive();
-        intervalRef.current = window.setInterval(runLive, LIVE_POLL_MS);
+        await runLive();
+        await runBracketPrefetch();
+        intervalRef.current = window.setInterval(() => {
+          runLive().then(runBracketPrefetch);
+        }, LIVE_POLL_MS);
       } else {
-        runIdle();
+        await runIdle();
+        await runBracketPrefetch();
       }
     };
 

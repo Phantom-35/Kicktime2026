@@ -12,6 +12,18 @@
  */
 
 import type { RuntimeMatch } from "@/store/match-store";
+import { REAL_TEAMS } from "@/data/teams";
+
+const REAL_TEAM_CODES = new Set(REAL_TEAMS.map((t) => t.code));
+
+/**
+ * Ist der Team-Code ein Platzhalter (kein echter Nationalcode)?
+ * Beispiele: "W:m-073|m-074", "L101", "1A", "3C-D-E-F", "A2".
+ */
+export function isPlaceholderTeam(code: string | undefined | null): boolean {
+  if (!code) return true;
+  return !REAL_TEAM_CODES.has(code);
+}
 
 export type KoPhaseNum = 4 | 5 | 6 | 7 | 8 | 9;
 
@@ -65,4 +77,26 @@ export function determineActiveKoPhase(matches: RuntimeMatch[]): KoPhaseNum | nu
 export function getKoPhaseInfo(num: KoPhaseNum | null): KoPhaseInfo | null {
   if (num == null) return null;
   return KO_PHASES[num] ?? null;
+}
+
+/**
+ * Liefert die nächste KO-Phase, deren Slots noch Platzhalter-Teams enthalten
+ * — als Prefetch-Kandidat, um Bracket-Slots automatisch aufzulösen, sobald
+ * die API die echten Sieger liefert. Gibt null zurück, wenn nichts zu tun ist.
+ */
+export function getNextPhaseForBracketPrefetch(
+  matches: RuntimeMatch[],
+  activePhase: KoPhaseNum | null,
+): KoPhaseNum | null {
+  for (const info of KO_PHASE_LIST) {
+    if (info.num === 4) continue; // R32 ist hardgecodet
+    if (activePhase != null && info.num <= activePhase) continue;
+    const list = matches.filter((m) => m.stage === info.stage);
+    if (list.length === 0) return info.num;
+    const hasPlaceholder = list.some(
+      (m) => isPlaceholderTeam(m.teamA) || isPlaceholderTeam(m.teamB),
+    );
+    if (hasPlaceholder) return info.num;
+  }
+  return null;
 }

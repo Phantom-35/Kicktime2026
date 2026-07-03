@@ -1,90 +1,68 @@
-# Update v7.9.0 — Plan
+## v7.10.0 — Rundenlabels, größere Close-Hitbox, automatische Bracket-Resolution
 
-## Bug 1: Ergebnisse werden nicht angezeigt (obwohl API sie liefert)
+### 1) Turnier-Runden auf Match Cards (Spiele-Tab)
 
-**Root Cause:** In `src/services/footballApi.ts::normalize()` werden Zeilen mit
-`teams.home.name` oder `teams.away.name === null` per `if (!teamA || !teamB) continue;`
-komplett verworfen. Beim `full-store`-Modus liefert die Edge Function für alte
-KO-Slots (die noch keine Teams hatten, als sie persistiert wurden) aber genau
-solche Payloads. Dadurch werden auch die aktuellen Ergebnisse fürs Sechzehntel
-still ignoriert.
+`src/components/match/MatchCard.tsx`: KO-Badge zeigt statt generisch „KO-Runde" den echten Runden-Namen an. Mapping via zentraler Helper-Funktion in `src/lib/match-phase.ts`:
 
-Zusätzlich: `applyUpdateInternal` blockiert Score-Updates, wenn `cur.status`
-bereits fälschlich auf `finished` steht (Score-Field wird nur via
-`finishMatchFromApi` gesetzt, aber der Guard in Zeile 233 kappt neue `liveScore`
-zu `undefined`, bevor `finishMatchFromApi` läuft).
+```
+r32   → "Sechzehntelfinale"
+r16   → "Achtelfinale"
+qf    → "Viertelfinale"
+sf    → "Halbfinale"
+third → "Spiel um Platz 3"
+final → "Finale"
+```
 
-**Fix:**
-- `normalize()`: Zeilen ohne Teamnamen werden nicht mehr komplett verworfen —
-  wenn `matchID` und Score/Status brauchbar sind, wird nur der Score-Teil in ein
-  separates `LiveFixture` (mit `matchId` statt Team-Codes) durchgereicht. Alter-
-  nativ: `normalize()` liefert `matchId` mit, und `applyLiveFixturesToStore`
-  paart zusätzlich auf ID.
-- Einfachere Lösung (wird umgesetzt): `normalize()` behält den Skip, aber die
-  Edge Function `rowToFixture()` liefert Team-Namen aus `match_results`
-  (persistiert) — für Sechzehntelfinale müssen wir sicherstellen dass beim
-  Persistieren die Namen aus dem Static-Override kommen. Da R32 clientseitig
-  hardgecodet ist (`ko-static.ts`), ist die einfachste Behebung: Beim Empfang
-  einer `LiveFixture` ohne Team-Match zusätzlich per `matchId` (falls verfügbar)
-  matchen. Wir erweitern das Fixture-Schema um `matchId` und matchen erst per
-  Team-Codes, dann per ID.
-- `applyUpdateInternal`: Bei `cur.status === "finished" && !cur.score` (Loading-
-  Placeholder-State) den Finished-Lock nicht anwenden — Score/Status dürfen
-  überschrieben werden.
+Neuer Helper `getStageLabel(stage)` — dient auch als Mapping für API-Kürzel („1/16", „1/8", „QF" etc.), falls die API sie liefert. Kein API-seitiges Renaming nötig, weil `match.stage` bereits der kanonische Wert ist. Badge bleibt visuell (accent, uppercase, tracking-wider) — nur Text ändert sich. Long-Labels bleiben durch das kompakte Layout lesbar.
 
-## Bug 3: Falscher Status "Ergebnis wird geladen" bei zukünftigen Spielen
+### 2) Vergrößerte Close-Hitbox im Team-Detail-Sheet (Status-Tab)
 
-**Root Cause:** OpenLigaDB liefert für neu angelegte KO-Slots gelegentlich
-`matchIsFinished: true` (ohne Score), weil das Match dort administrativ als
-"nicht vorhanden" markiert wird. Die Edge Function mappt das auf `FT`, das
-Frontend erzeugt daraus einen `finished`-State ohne Score → im Detail-Sheet
-erscheint "Ergebnis wird geladen…", obwohl der Anpfiff erst morgen um 01:00 ist.
+Der Close-Button wird vom `SheetContent` in shadcn automatisch gerendert (fix positioniert `top-4 right-4` mit 16×16 Icon). Für Touch-Bedienung zu klein.
 
-**Fix (Zeitzonen-hart & doppelt abgesichert):**
-- `normalize()` in `footballApi.ts`: Wenn `kickoff > now`, wird `status` IMMER
-  auf `scheduled` gezwungen — egal was die API sagt. Zusätzlich wird
-  `liveScore` in diesem Fall verworfen (kein Fake-0:0).
-- `MatchDetailSheet.tsx`: Die "Ergebnis wird geladen…"-Nachricht erscheint nur
-  noch, wenn `Date.now() >= kickoff + 115min` (also das Spiel real vorbei sein
-  MÜSSTE). Sonst wird der Score-Block gar nicht gerendert.
+Änderung in `src/components/team/TeamDetailSheet.tsx`:
+- `SheetContent` bekommt `className="… [&>button]:h-12 [&>button]:w-12 [&>button]:rounded-full [&>button]:flex [&>button]:items-center [&>button]:justify-center"` – das trifft den automatisch injizierten Close-Button und pusht seine klickbare Fläche auf 48×48 px, ohne das Icon selbst zu vergrößern (das X-Icon in shadcn ist absolut, bleibt bei 4×4).
+- Alternative konsequenter: Wir überschreiben in derselben Datei mit einem Tailwind-Attribute-Selector `[&>button.absolute]` und setzen `p-3` + `-m-2` (visueller Reset, größere Hitbox). Ergebnis identisch, Icon bleibt elegant klein zentriert.
 
-Beide Guards zusammen verhindern jeden Zeitzonen-/Datumsdreher.
+Kein globaler Eingriff in `src/components/ui/sheet.tsx` — nur lokal auf das Team-Sheet, damit andere Sheets ihre bestehende Optik behalten.
 
-## Feature 2: Force-Fetch-Button im Admin-Dashboard
+### 3) Automatische Bracket-Resolution über Folge-API-Routen
 
-- Edge Function: Neuer Body-Parameter `force: true` — überspringt den 5-Min-
-  Cache-Read und zwingt einen frischen Upstream-Call. Cache wird trotzdem neu
-  geschrieben. Wenn `force` gesetzt, wird der aktuell aktive `koPhase`-URL
-  gezogen (oder Default), Cache-Bypass gilt nur für diesen einen Call.
-- `footballApi.ts`: Neuer Export `forceFetchActivePhase(koPhase)` — ruft die
-  Edge Function mit `{ mode: "live", koPhase, force: true }` und lädt danach
-  den full-store neu.
-- `SystemMonitor.tsx`: Prominenter Button "🔄 Force Fetch (aktive Route)"
-  über dem Fehler-Log; zeigt Toast mit Ergebnis (Anzahl Fixtures + URL) und
-  triggert danach `applyLiveFixturesToStore`.
+Ziel: Sobald z. B. das Sechzehntelfinale beendet ist, sollen die R16-Platzhalter (`W:m-073|m-074` etc.) automatisch durch die echten Teams aus der API-Route `/5` ersetzt werden — analog für QF (`/6`), SF (`/7`), Third (`/8`), Final (`/9`).
 
-## Datei-Änderungen
+**Erkennungslogik für Platzhalter** (neue Helper in `src/lib/ko-phase.ts`):
+```ts
+isPlaceholderTeam(code) → true, wenn der Code KEIN echter Team-Code aus REAL_TEAMS ist
+                                 (typische Muster: "W:…", "L:…", "1A", "2B", "3C-D-E-F")
+```
 
-- `src/lib/version.ts` — auf `7.9.0`.
-- `src/components/WhatsNewModal.tsx` — v7.9-Eintrag.
-- `supabase/functions/fetch-live-scores/index.ts` — `force`-Parameter,
-  Cache-Bypass wenn gesetzt. Kein Schema-Change, keine RLS-Änderung.
-- `src/services/footballApi.ts`
-  - `normalize()`: Zeit-basierte Status-Härtung (kickoff > now → scheduled,
-    kein Fake-Score).
-  - `LiveFixture`-Typ + `RawFixture` bekommen optionales `matchId`.
-  - `applyLiveFixturesToStore()`: Zweite Match-Runde via `matchId` (falls
-    Team-Match fehlschlägt) — behebt Bug 1 für hardgecodete R32-Slots.
-  - Neuer Export `forceFetchActivePhase(koPhase)`.
-- `src/store/match-store.ts::applyUpdateInternal`: Wenn `cur.status ===
-  "finished" && !cur.score`, gilt der Finished-Lock nicht — neue API-Daten
-  dürfen den Zombie-State überschreiben.
-- `src/components/match/MatchDetailSheet.tsx`: "Ergebnis wird geladen…" nur
-  noch, wenn `Date.now() >= kickoff + 115min`.
-- `src/components/admin/SystemMonitor.tsx`: Force-Fetch-Button.
+**Neuer Poller-Modus in `useLiveApi.ts`**:
+Nach jedem erfolgreichen Live-Fetch der aktuell aktiven Phase prüfen wir für die *nächste* KO-Phase, ob deren API-Route bereits echte Teams liefert. Wenn ja → Fetch dieser Route (Cache: 5 min, gleiche Edge Function mit `koPhase`-Parameter) und via `applyLiveFixturesToStore` einspielen. Da die Route `matchId`s liefert und wir sekundär auf `matchId` matchen, werden die Slots im lokalen Store überschrieben, sobald ein Match dort gepaart werden kann.
 
-## Keine SQL-/Supabase-Änderungen nötig
+**Neuer Store-Fluss** (`src/store/match-store.ts`):
+- Erweiterung von `applyApiUpdate` um optionale Team-Codes: Wenn der aktuelle Match einen Placeholder-Team-Code trägt und die API einen echten Code liefert, wird `teamA`/`teamB` überschrieben. Bei bereits echten Teams greift der Guard und schützt vor versehentlichem Überschreiben.
+- Der bestehende `finishMatchFromApi` bleibt unverändert.
 
-Diese v7.9.0-Runde ist rein Code-seitig — die bestehenden Tabellen
-(`match_results`, `match_overrides`, `live_fixtures_cache`) reichen aus. Kein
-Migration-Skript, keine RLS-Anpassung, kein Cron.
+**Erweiterung `applyLiveFixturesToStore`** (`src/services/footballApi.ts`):
+- Beim Match via `matchId` wird zusätzlich `teamA`/`teamB` mitgegeben (`upgradePlaceholders: true`), sodass R16-Slots mit „W:m-073|m-074" durch die echten Nationalcodes ersetzt werden.
+
+**Erweiterung `determineActiveKoPhase`**:
+- Zusätzlich Rückgabe einer optionalen „next phase to prefetch" (z. B. wenn R32 fertig ist, während R16 als aktive Phase läuft, prefetchen wir /6 nur einmal pro 30 min, um Platzhalter für QF vorzubereiten).
+- Konkret: Neuer Export `getNextPhaseForBracketPrefetch(matches, activePhase)` — liefert die nächste Phase, deren Slots aktuell noch Platzhalter enthalten.
+
+**Anpassung Edge Function `supabase/functions/fetch-live-scores/index.ts`**:
+- Kein Schema-Change. Der bestehende `koPhase`-Parameter wird weiterhin genutzt; für Prefetch nutzen wir dieselbe Route mit einem separaten Cache-Key (bereits via `wm26-ko-X` gegeben). Ergebnisse landen ebenfalls in `match_results`, aber nur wenn Team-Namen vorhanden sind — Placeholder-Slots werden nicht in die DB persistiert (Guard in `persistFixtures`).
+
+### Dateiübersicht
+
+- `src/lib/match-phase.ts` — neuer Export `getStageLabel(stage)`.
+- `src/components/match/MatchCard.tsx` — Badge nutzt `getStageLabel`.
+- `src/components/team/TeamDetailSheet.tsx` — `SheetContent` bekommt Hitbox-Klassen für den Close-Button.
+- `src/lib/ko-phase.ts` — `isPlaceholderTeam`, `getNextPhaseForBracketPrefetch`.
+- `src/services/footballApi.ts` — `applyLiveFixturesToStore` upgraded Platzhalter-Team-Codes.
+- `src/store/match-store.ts` — `applyApiUpdate` erlaubt Team-Code-Upgrade nur bei Placeholder-Ausgangszustand.
+- `src/hooks/useLiveApi.ts` — nach Haupt-Fetch zusätzlicher Prefetch der nächsten Phase.
+- `src/components/whats-new/WhatsNewModal.tsx` + `src/lib/version.ts` — v7.10.0 Eintrag.
+
+### Keine SQL-/Supabase-Änderungen nötig
+
+Die bestehenden Tabellen (`match_results`, `match_overrides`, `live_fixtures_cache`) reichen. Edge Function wird nicht neu deployt, da wir am Contract nichts ändern.
