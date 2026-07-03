@@ -24,6 +24,8 @@ const LIVE_POLL_MS = 5 * 60 * 1000; // 5 min — OpenLigaDB cadence
 const LIVE_BUFFER_MS = 15 * 60 * 1000; // ±15min around kickoff/end
 const LAST_IDLE_KEY = "kicktime-last-idle-fetch";
 const MATCH_DURATION_MS = 115 * 60 * 1000;
+const BRACKET_PREFETCH_MS = 30 * 60 * 1000; // Nachfolge-Phase max. alle 30 min prüfen
+const LAST_BRACKET_PREFETCH_KEY = "kicktime-last-bracket-prefetch";
 
 /**
  * Adaptive poller. Manual admin overrides are applied AFTER upstream so they
