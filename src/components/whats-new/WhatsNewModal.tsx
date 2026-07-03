@@ -1,24 +1,24 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Clock, RefreshCw } from "lucide-react";
+import { Trophy, MousePointerClick, Workflow } from "lucide-react";
 
-type Feature = { icon: typeof CheckCircle2; title: string; text: string };
+type Feature = { icon: typeof Trophy; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
-    icon: CheckCircle2,
-    title: "✅ Ergebnisse zuverlässig sichtbar",
-    text: "Spielresultate aus dem Sechzehntelfinale erscheinen jetzt sofort im Frontend – auch bei hardgecodeten Paarungen.",
+    icon: Trophy,
+    title: "🏆 Runden-Labels auf Match-Karten",
+    text: "Statt „KO-Runde“ zeigt jede Karte jetzt klar Sechzehntel-, Achtel-, Viertel-, Halbfinale oder Finale an.",
   },
   {
-    icon: Clock,
-    title: "🕒 Kein falscher „Laden…“-Hinweis mehr",
-    text: "Zukünftige Spiele bleiben strikt als „noch nicht gestartet“ markiert, egal was die API vorab meldet.",
+    icon: MousePointerClick,
+    title: "👉 Größerer Schließen-Bereich",
+    text: "Das Kreuz im Länder-Detail-Sheet trifft sich jetzt auch auf dem Handy komfortabel (48×48 px Hitbox).",
   },
   {
-    icon: RefreshCw,
-    title: "🔄 Schneller Live-Refresh",
-    text: "Der 5-Minuten-Cache kann intern umgangen werden, um aktive Spiele sofort frisch zu ziehen.",
+    icon: Workflow,
+    title: "🔄 Automatisches Bracket",
+    text: "Sobald die nächste K.o.-Runde in der API steht, ersetzt die App die Platzhalter automatisch mit den echten Teams.",
   },
 ];
 
