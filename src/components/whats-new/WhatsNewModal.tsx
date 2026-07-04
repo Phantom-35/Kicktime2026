@@ -6,6 +6,11 @@ type Feature = { icon: typeof Trophy; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
+    icon: Workflow,
+    title: "🛠️ Bugfix: Achtelfinal-Teams",
+    text: "Platzhalter wie „Sieger Spiel 73“ werden jetzt automatisch durch die realen Teams ersetzt, sobald die API sie liefert.",
+  },
+  {
     icon: Trophy,
     title: "🏆 Runden-Labels auf Match-Karten",
     text: "Statt „KO-Runde“ zeigt jede Karte jetzt klar Sechzehntel-, Achtel-, Viertel-, Halbfinale oder Finale an.",
@@ -14,11 +19,6 @@ const FEATURES: Feature[] = [
     icon: MousePointerClick,
     title: "👉 Größerer Schließen-Bereich",
     text: "Das Kreuz im Länder-Detail-Sheet trifft sich jetzt auch auf dem Handy komfortabel (48×48 px Hitbox).",
-  },
-  {
-    icon: Workflow,
-    title: "🔄 Automatisches Bracket",
-    text: "Sobald die nächste K.o.-Runde in der API steht, ersetzt die App die Platzhalter automatisch mit den echten Teams.",
   },
 ];
 

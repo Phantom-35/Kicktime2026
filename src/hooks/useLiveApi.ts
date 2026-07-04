@@ -108,6 +108,24 @@ export function useLiveApi(): void {
       return stored.length;
     };
 
+    // Direktes Bracket-Upgrade der AKTIVEN Phase aus der frischen Antwort.
+    // Nötig, weil lokale KO-Slots keine apiMatchId tragen und
+    // applyLiveFixturesToStore per Team-Code paart — bei Platzhalter-Codes
+    // ("W:m-073|m-074", "Sieger Spiel 73") schlägt das fehl. Die
+    // Kickoff-±6h-/Index-Fallbacks in applyBracketUpgradeFromApi
+    // lösen die Slots dann zuverlässig auf.
+    const upgradeActivePhase = (res: Awaited<ReturnType<typeof fetchLiveWorldCupData>>) => {
+      if (!res.koPhase || res.koPhase === 4) return;
+      const info = getKoPhaseInfo(res.koPhase as KoPhaseNum);
+      if (!info) return;
+      if (info.stage === "r32") return;
+      if (res.fixtures.length === 0) return;
+      applyBracketUpgradeFromApi(
+        info.stage as "r16" | "qf" | "sf" | "third" | "final",
+        res.fixtures,
+      );
+    };
+
     const runIdle = async () => {
       try {
         const last = Number(localStorage.getItem(LAST_IDLE_KEY) ?? "0");
@@ -119,6 +137,7 @@ export function useLiveApi(): void {
         const res = await fetchLiveWorldCupData("idle", koPhase);
         if (cancelled) return;
         trackResult(res);
+        upgradeActivePhase(res);
         await loadFullStore();
         await applyOverrides();
         localStorage.setItem(LAST_IDLE_KEY, String(Date.now()));
@@ -132,6 +151,7 @@ export function useLiveApi(): void {
         const res = await fetchLiveWorldCupData("live", koPhase);
         if (cancelled) return;
         trackResult(res);
+        upgradeActivePhase(res);
         await loadFullStore();
         await applyOverrides();
       } catch (err) {

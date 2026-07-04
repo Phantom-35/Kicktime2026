@@ -208,6 +208,7 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
   if (fixtures.length === 0) return;
   const state = useMatchStore.getState();
   const all = Object.values(state.matches);
+  const unpaired: LiveFixture[] = [];
   for (const f of fixtures) {
     let match = f.teamA && f.teamB
       ? all.find(
@@ -223,15 +224,16 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
       );
       matchedById = !!match;
     }
-    if (!match) continue;
+    if (!match) {
+      // Kein Team-Match, keine matchId — potenzieller Bracket-Upgrade-Kandidat.
+      if (f.teamA && f.teamB && f.utcTimestamp) unpaired.push(f);
+      continue;
+    }
     const flipped = !!f.teamA && match.teamA !== f.teamA;
     const liveScore =
       f.liveScore && flipped
         ? { a: f.liveScore.b, b: f.liveScore.a }
         : f.liveScore;
-    // Bracket-Upgrade nur, wenn wir via matchId gepaart haben — dann darf die
-    // API die Platzhalter-Codes im Slot ersetzen. Bei Team-Match sind teamA/B
-    // per Definition schon echte Codes; kein Upgrade nötig.
     state.applyApiUpdate(match.id, {
       status: f.status,
       liveScore,
@@ -245,6 +247,29 @@ export function applyLiveFixturesToStore(fixtures: LiveFixture[]): void {
     if (f.status === "finished" && liveScore) {
       state.finishMatchFromApi(match.id, liveScore);
     }
+  }
+
+  // Fallback: Unpaarbare Fixtures via Kickoff-Fenster einer KO-Stage zuordnen
+  // und stage-weise durch die Bracket-Upgrade-Logik laufen lassen. So werden
+  // Platzhalter-Slots (z. B. "W:m-073|m-074") beim Rehydrieren aus
+  // `match_results` durch echte Teams ersetzt, auch ohne apiMatchId am Slot.
+  if (unpaired.length === 0) return;
+  const stages: Array<"r16" | "qf" | "sf" | "third" | "final"> = [
+    "r16", "qf", "sf", "third", "final",
+  ];
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+  for (const stage of stages) {
+    const slots = all.filter((m) => m.stage === stage);
+    if (slots.length === 0) continue;
+    const times = slots.map((m) => new Date(m.utcTimestamp).getTime());
+    const min = Math.min(...times) - ONE_DAY;
+    const max = Math.max(...times) + ONE_DAY;
+    const inWindow = unpaired.filter((f) => {
+      const t = new Date(f.utcTimestamp!).getTime();
+      return t >= min && t <= max;
+    });
+    if (inWindow.length === 0) continue;
+    applyBracketUpgradeFromApi(stage, inWindow);
   }
 }
 
