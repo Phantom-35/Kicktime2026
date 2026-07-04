@@ -1,68 +1,45 @@
-## v7.10.0 — Rundenlabels, größere Close-Hitbox, automatische Bracket-Resolution
+## v7.10.1 — Bugfix: Platzhalter im Achtelfinale werden nicht durch echte Teams ersetzt
 
-### 1) Turnier-Runden auf Match Cards (Spiele-Tab)
+### Ursache
 
-`src/components/match/MatchCard.tsx`: KO-Badge zeigt statt generisch „KO-Runde" den echten Runden-Namen an. Mapping via zentraler Helper-Funktion in `src/lib/match-phase.ts`:
+Zwei zusammenwirkende Regressionen verhindern, dass Slots wie „Sieger Spiel 73" durch die realen Teams (Kolumbien, Ghana, …) ersetzt werden — obwohl die API-Route `/5` sie liefert und das Admin-Panel den Fetch als erfolgreich bestätigt:
 
-```
-r32   → "Sechzehntelfinale"
-r16   → "Achtelfinale"
-qf    → "Viertelfinale"
-sf    → "Halbfinale"
-third → "Spiel um Platz 3"
-final → "Finale"
-```
+1. **`applyLiveFixturesToStore` kann Platzhalter nicht paaren.** Beim Rehydrieren aus `match_results` paart die Funktion nur über (a) exakten Team-Code-Match oder (b) `apiMatchId` auf dem lokalen Match. Die statisch geseedeten R16-Slots aus `world_cup_2026_schedule.json` tragen weder echte Team-Codes noch eine `apiMatchId` — jede Zeile wird verworfen (`if (!match) continue`).
+2. **`runBracketPrefetch` überspringt die aktive Phase.** `getNextPhaseForBracketPrefetch` filtert `info.num <= activePhase`. Sobald der Admin manuell `/5` erzwingt (oder Auto R16 als aktive Phase wählt), wird die einzige Upgrade-Logik mit Kickoff±6h/Index-Fallback (`applyBracketUpgradeFromApi`) für R16 nie aufgerufen. Ergebnis: Platzhalter bleiben stehen, obwohl der Fetch grün ist.
 
-Neuer Helper `getStageLabel(stage)` — dient auch als Mapping für API-Kürzel („1/16", „1/8", „QF" etc.), falls die API sie liefert. Kein API-seitiges Renaming nötig, weil `match.stage` bereits der kanonische Wert ist. Badge bleibt visuell (accent, uppercase, tracking-wider) — nur Text ändert sich. Long-Labels bleiben durch das kompakte Layout lesbar.
+Die Persistenz (`match_results`) ist in Ordnung — die Zeilen enthalten die echten Team-Namen. Es ist ausschließlich der Store-Merge im Frontend, der die Slots nicht upgradet.
 
-### 2) Vergrößerte Close-Hitbox im Team-Detail-Sheet (Status-Tab)
+### Fix
 
-Der Close-Button wird vom `SheetContent` in shadcn automatisch gerendert (fix positioniert `top-4 right-4` mit 16×16 Icon). Für Touch-Bedienung zu klein.
+**`src/hooks/useLiveApi.ts`** — nach jedem `runLive()` / `runIdle()` zusätzlich `applyBracketUpgradeFromApi(stage, res.fixtures)` für die aktive KO-Phase aufrufen (nicht nur für die Nachfolge-Phase). Dadurch werden R16-Slots direkt aus der Antwort von `/5` upgegradet:
 
-Änderung in `src/components/team/TeamDetailSheet.tsx`:
-- `SheetContent` bekommt `className="… [&>button]:h-12 [&>button]:w-12 [&>button]:rounded-full [&>button]:flex [&>button]:items-center [&>button]:justify-center"` – das trifft den automatisch injizierten Close-Button und pusht seine klickbare Fläche auf 48×48 px, ohne das Icon selbst zu vergrößern (das X-Icon in shadcn ist absolut, bleibt bei 4×4).
-- Alternative konsequenter: Wir überschreiben in derselben Datei mit einem Tailwind-Attribute-Selector `[&>button.absolute]` und setzen `p-3` + `-m-2` (visueller Reset, größere Hitbox). Ergebnis identisch, Icon bleibt elegant klein zentriert.
-
-Kein globaler Eingriff in `src/components/ui/sheet.tsx` — nur lokal auf das Team-Sheet, damit andere Sheets ihre bestehende Optik behalten.
-
-### 3) Automatische Bracket-Resolution über Folge-API-Routen
-
-Ziel: Sobald z. B. das Sechzehntelfinale beendet ist, sollen die R16-Platzhalter (`W:m-073|m-074` etc.) automatisch durch die echten Teams aus der API-Route `/5` ersetzt werden — analog für QF (`/6`), SF (`/7`), Third (`/8`), Final (`/9`).
-
-**Erkennungslogik für Platzhalter** (neue Helper in `src/lib/ko-phase.ts`):
 ```ts
-isPlaceholderTeam(code) → true, wenn der Code KEIN echter Team-Code aus REAL_TEAMS ist
-                                 (typische Muster: "W:…", "L:…", "1A", "2B", "3C-D-E-F")
+const upgradeActivePhase = (res: LiveFetchResult) => {
+  if (!res.koPhase || res.koPhase === 4) return;
+  const info = getKoPhaseInfo(res.koPhase);
+  if (!info) return;
+  applyBracketUpgradeFromApi(info.stage as "r16"|"qf"|"sf"|"third"|"final", res.fixtures);
+};
 ```
 
-**Neuer Poller-Modus in `useLiveApi.ts`**:
-Nach jedem erfolgreichen Live-Fetch der aktuell aktiven Phase prüfen wir für die *nächste* KO-Phase, ob deren API-Route bereits echte Teams liefert. Wenn ja → Fetch dieser Route (Cache: 5 min, gleiche Edge Function mit `koPhase`-Parameter) und via `applyLiveFixturesToStore` einspielen. Da die Route `matchId`s liefert und wir sekundär auf `matchId` matchen, werden die Slots im lokalen Store überschrieben, sobald ein Match dort gepaart werden kann.
+Aufruf in `runLive` und `runIdle` direkt nach `trackResult(res)`, vor `loadFullStore()`.
 
-**Neuer Store-Fluss** (`src/store/match-store.ts`):
-- Erweiterung von `applyApiUpdate` um optionale Team-Codes: Wenn der aktuelle Match einen Placeholder-Team-Code trägt und die API einen echten Code liefert, wird `teamA`/`teamB` überschrieben. Bei bereits echten Teams greift der Guard und schützt vor versehentlichem Überschreiben.
-- Der bestehende `finishMatchFromApi` bleibt unverändert.
+**`src/services/footballApi.ts`** — `applyLiveFixturesToStore` bekommt einen dritten Paarungs-Pfad: Wenn weder Team-Match noch matchId greifen, wird pro KO-Stage (r16/qf/sf/third/final) auf `applyBracketUpgradeFromApi` zurückgefallen. Konkret: Fixtures ohne Match werden nach Stage gruppiert (per Zuordnung Kickoff-Datum → Stage über die lokalen Slots) und stage-weise an `applyBracketUpgradeFromApi` weitergereicht.
 
-**Erweiterung `applyLiveFixturesToStore`** (`src/services/footballApi.ts`):
-- Beim Match via `matchId` wird zusätzlich `teamA`/`teamB` mitgegeben (`upgradePlaceholders: true`), sodass R16-Slots mit „W:m-073|m-074" durch die echten Nationalcodes ersetzt werden.
+Alternativ (einfacher & robuster): Wir gruppieren die verbliebenen Fixtures direkt nach dem `utcTimestamp`-Fenster jeder KO-Stage und rufen für jede Stage mit übrig gebliebenen Fixtures `applyBracketUpgradeFromApi` auf.
 
-**Erweiterung `determineActiveKoPhase`**:
-- Zusätzlich Rückgabe einer optionalen „next phase to prefetch" (z. B. wenn R32 fertig ist, während R16 als aktive Phase läuft, prefetchen wir /6 nur einmal pro 30 min, um Platzhalter für QF vorzubereiten).
-- Konkret: Neuer Export `getNextPhaseForBracketPrefetch(matches, activePhase)` — liefert die nächste Phase, deren Slots aktuell noch Platzhalter enthalten.
+**`src/lib/ko-phase.ts`** — Kommentar an `getNextPhaseForBracketPrefetch` präzisieren: Die Funktion bleibt inhaltlich gleich (Prefetch nur für spätere Phasen), weil der neue Upgrade-Pfad in `useLiveApi` die aktive Phase abdeckt.
 
-**Anpassung Edge Function `supabase/functions/fetch-live-scores/index.ts`**:
-- Kein Schema-Change. Der bestehende `koPhase`-Parameter wird weiterhin genutzt; für Prefetch nutzen wir dieselbe Route mit einem separaten Cache-Key (bereits via `wm26-ko-X` gegeben). Ergebnisse landen ebenfalls in `match_results`, aber nur wenn Team-Namen vorhanden sind — Placeholder-Slots werden nicht in die DB persistiert (Guard in `persistFixtures`).
+**`src/lib/version.ts`** — Bump auf `7.10.1`.
+**`src/components/whats-new/WhatsNewModal.tsx`** — Eintrag: „Bugfix: Achtelfinal-Platzhalter werden jetzt automatisch durch die realen Teams ersetzt, sobald die API sie liefert."
 
-### Dateiübersicht
+### Keine Änderungen an Edge Function, DB oder Schema
 
-- `src/lib/match-phase.ts` — neuer Export `getStageLabel(stage)`.
-- `src/components/match/MatchCard.tsx` — Badge nutzt `getStageLabel`.
-- `src/components/team/TeamDetailSheet.tsx` — `SheetContent` bekommt Hitbox-Klassen für den Close-Button.
-- `src/lib/ko-phase.ts` — `isPlaceholderTeam`, `getNextPhaseForBracketPrefetch`.
-- `src/services/footballApi.ts` — `applyLiveFixturesToStore` upgraded Platzhalter-Team-Codes.
-- `src/store/match-store.ts` — `applyApiUpdate` erlaubt Team-Code-Upgrade nur bei Placeholder-Ausgangszustand.
-- `src/hooks/useLiveApi.ts` — nach Haupt-Fetch zusätzlicher Prefetch der nächsten Phase.
-- `src/components/whats-new/WhatsNewModal.tsx` + `src/lib/version.ts` — v7.10.0 Eintrag.
+Persistenz und API-Route funktionieren bereits korrekt. Der Fix ist rein clientseitig im Store-Merge.
 
-### Keine SQL-/Supabase-Änderungen nötig
+### Dateien
 
-Die bestehenden Tabellen (`match_results`, `match_overrides`, `live_fixtures_cache`) reichen. Edge Function wird nicht neu deployt, da wir am Contract nichts ändern.
+- `src/hooks/useLiveApi.ts` — Upgrade-Aufruf für aktive Phase nach jedem Live-/Idle-Fetch.
+- `src/services/footballApi.ts` — `applyLiveFixturesToStore` fällt für unpaarbare Fixtures auf stage-weise Bracket-Upgrade zurück.
+- `src/lib/version.ts` — `APP_VERSION = "7.10.1"`.
+- `src/components/whats-new/WhatsNewModal.tsx` — neuer Changelog-Eintrag.
