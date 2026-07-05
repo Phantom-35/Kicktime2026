@@ -12,14 +12,16 @@ import { SystemMonitor } from "./SystemMonitor";
 
 // (Alte PingRow-Struktur wurde in v7.7 durch push_subscriptions-basierte Zählung ersetzt.)
 
-const PIN = "031011";
-
 export function AdminPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [unlocked, setUnlocked] = useState(false);
+  const [sessionPin, setSessionPin] = useState<string>("");
 
   // Reset PIN lock when the dialog closes
   useEffect(() => {
-    if (!open) setUnlocked(false);
+    if (!open) {
+      setUnlocked(false);
+      setSessionPin("");
+    }
   }, [open]);
 
   return (
@@ -32,7 +34,7 @@ export function AdminPanel({ open, onClose }: { open: boolean; onClose: () => vo
         </DialogHeader>
 
         {!unlocked ? (
-          <PinGate onUnlock={() => setUnlocked(true)} />
+          <PinGate onUnlock={(pin) => { setSessionPin(pin); setUnlocked(true); }} />
         ) : (
           <Tabs defaultValue="telemetry" className="w-full">
             <TabsList className="grid grid-cols-4 w-full h-10 bg-background/60">
@@ -45,7 +47,7 @@ export function AdminPanel({ open, onClose }: { open: boolean; onClose: () => vo
               <TelemetryView />
             </TabsContent>
             <TabsContent value="override" className="mt-3">
-              <LiveOverridePanel pin={PIN} />
+              <LiveOverridePanel pin={sessionPin} />
             </TabsContent>
             <TabsContent value="system" className="mt-3">
               <SystemMonitor />

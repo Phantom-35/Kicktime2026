@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Lock } from "lucide-react";
+import { Lock, Loader2 } from "lucide-react";
 import { haptics } from "@/lib/haptics";
+import { verifyAdminPin } from "@/lib/match-overrides";
 
-const PIN = "031011";
-
-export function PinGate({ onUnlock }: { onUnlock: () => void }) {
+export function PinGate({ onUnlock }: { onUnlock: (pin: string) => void }) {
   const [value, setValue] = useState("");
   const [shake, setShake] = useState(false);
+  const [checking, setChecking] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -15,25 +15,39 @@ export function PinGate({ onUnlock }: { onUnlock: () => void }) {
   }, []);
 
   useEffect(() => {
-    if (value.length !== 6) return;
-    if (value === PIN) {
-      haptics.success();
-      onUnlock();
-    } else {
-      haptics.warn();
-      setShake(true);
-      setTimeout(() => {
-        setShake(false);
-        setValue("");
-        inputRef.current?.focus();
-      }, 350);
-    }
-  }, [value, onUnlock]);
+    if (value.length !== 6 || checking) return;
+    let cancelled = false;
+    setChecking(true);
+    (async () => {
+      const ok = await verifyAdminPin(value);
+      if (cancelled) return;
+      if (ok) {
+        haptics.success();
+        onUnlock(value);
+      } else {
+        haptics.warn();
+        setShake(true);
+        setTimeout(() => {
+          setShake(false);
+          setValue("");
+          inputRef.current?.focus();
+        }, 350);
+      }
+      setChecking(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [value, onUnlock, checking]);
 
   return (
     <div className="py-6 flex flex-col items-center gap-4">
       <div className="h-12 w-12 rounded-full bg-primary/15 flex items-center justify-center">
-        <Lock className="h-5 w-5 text-primary" />
+        {checking ? (
+          <Loader2 className="h-5 w-5 text-primary animate-spin" />
+        ) : (
+          <Lock className="h-5 w-5 text-primary" />
+        )}
       </div>
       <div className="text-center">
         <div className="text-sm font-semibold">Admin-Bereich gesperrt</div>
@@ -54,6 +68,7 @@ export function PinGate({ onUnlock }: { onUnlock: () => void }) {
           onChange={(e) => setValue(e.target.value.replace(/\D/g, "").slice(0, 6))}
           className="sr-only"
           aria-label="PIN"
+          disabled={checking}
         />
         <button
           type="button"

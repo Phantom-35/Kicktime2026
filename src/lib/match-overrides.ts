@@ -1,10 +1,11 @@
 /**
  * Client helpers for the manual admin override layer.
  *
- * Writes go DIRECTLY to the `match_overrides` table via the public Supabase
- * client — no edge function involved. The PIN gate lives in the Admin Panel
- * UI; database-level protection comes from RLS policies you configure in
- * Supabase (see SQL note at the bottom of this file).
+ * Writes go EXCLUSIVELY through the `admin-override` edge function, which
+ * validates the PIN server-side (ADMIN_PIN secret) and uses the service-role
+ * key. The client never holds the PIN in its source and no anon writes to
+ * `match_overrides` are performed here — the RLS policy on that table denies
+ * anon/authenticated INSERT/UPDATE/DELETE.
  */
 
 import { supabase } from "@/integrations/supabase/client";
@@ -20,8 +21,6 @@ export type MatchOverride = {
   is_manual: boolean;
   updated_at: string;
 };
-
-const ADMIN_PIN = "031011";
 
 export async function fetchMatchOverrides(): Promise<MatchOverride[]> {
   try {
@@ -59,9 +58,22 @@ export function applyOverridesToStore(overrides: MatchOverride[]): void {
   }
 }
 
+async function invokeAdmin(body: Record<string, unknown>): Promise<{ ok: boolean; error?: string; data?: any }> {
+  try {
+    const { data, error } = await supabase.functions.invoke("admin-override", { body });
+    if (error) return { ok: false, error: error.message };
+    if (data && typeof data === "object" && (data as any).error) {
+      return { ok: false, error: String((data as any).error) };
+    }
+    return { ok: true, data };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
 
-function clampInt(v: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, Math.floor(v)));
+export async function verifyAdminPin(pin: string): Promise<boolean> {
+  const res = await invokeAdmin({ action: "verify", pin });
+  return res.ok;
 }
 
 export async function setMatchOverride(payload: {
@@ -72,7 +84,6 @@ export async function setMatchOverride(payload: {
   minute: number | null;
   status: "scheduled" | "live" | "finished";
 }): Promise<{ ok: boolean; error?: string }> {
-  if (payload.pin !== ADMIN_PIN) return { ok: false, error: "Unauthorized" };
   if (!payload.matchId) return { ok: false, error: "Invalid payload" };
   if (!Number.isFinite(payload.scoreA) || !Number.isFinite(payload.scoreB)) {
     return { ok: false, error: "Invalid score" };
@@ -81,27 +92,23 @@ export async function setMatchOverride(payload: {
     return { ok: false, error: "Invalid status" };
   }
 
-  const row = {
-    match_id: payload.matchId,
-    score_a: clampInt(payload.scoreA, 0, 50),
-    score_b: clampInt(payload.scoreB, 0, 50),
-    minute: payload.minute === null ? null : clampInt(payload.minute, 0, 120),
+  const res = await invokeAdmin({
+    action: "set",
+    pin: payload.pin,
+    matchId: payload.matchId,
+    scoreA: payload.scoreA,
+    scoreB: payload.scoreB,
+    minute: payload.minute,
     status: payload.status,
-    is_manual: true,
-    updated_at: new Date().toISOString(),
-  };
-
-  const { error } = await supabase
-    .from("match_overrides")
-    .upsert(row, { onConflict: "match_id" });
-  if (error) {
-    console.error("[match-overrides] upsert failed:", error);
-    logError("supabase", `override upsert failed: ${error.message}`);
-    return { ok: false, error: error.message };
+  });
+  if (!res.ok) {
+    logError("supabase", `override upsert failed: ${res.error}`);
+    return res;
   }
 
-  // Direkt im lokalen Store anwenden, damit die UI sofort reagiert.
-  applyOverridesToStore([row as MatchOverride]);
+  // Direkt lokal anwenden — die kanonische Zeile kommt vom Server zurück.
+  const row = (res.data && (res.data as any).row) as MatchOverride | undefined;
+  if (row) applyOverridesToStore([row]);
   return { ok: true };
 }
 
@@ -109,39 +116,30 @@ export async function clearMatchOverride(payload: {
   pin: string;
   matchId: string;
 }): Promise<{ ok: boolean; error?: string }> {
-  if (payload.pin !== ADMIN_PIN) return { ok: false, error: "Unauthorized" };
   if (!payload.matchId) return { ok: false, error: "Invalid payload" };
-
-  const { error } = await supabase
-    .from("match_overrides")
-    .delete()
-    .eq("match_id", payload.matchId);
-  if (error) {
-    console.error("[match-overrides] delete failed:", error);
-    logError("supabase", `override delete failed: ${error.message}`);
-    return { ok: false, error: error.message };
+  const res = await invokeAdmin({
+    action: "clear",
+    pin: payload.pin,
+    matchId: payload.matchId,
+  });
+  if (!res.ok) {
+    logError("supabase", `override delete failed: ${res.error}`);
+    return res;
   }
-  // Sofort lokal entfernen — kein Wackeln, syncWithRealTime füllt Live-Status
-  // beim nächsten Tick wieder aus den Kickoff-Zeiten / API-Daten.
   useMatchStore.getState().clearLiveOverlay(payload.matchId);
   useMatchStore.getState().syncWithRealTime();
   return { ok: true };
 }
 
 /* -----------------------------------------------------------------------------
- * Erforderliche Supabase-Konfiguration (einmalig im SQL-Editor ausführen):
+ * Erforderliche Supabase-Konfiguration (siehe Migration
+ * supabase/migrations/*_lock_match_overrides.sql):
  *
  *   alter table public.match_overrides enable row level security;
- *   grant select, insert, update, delete on public.match_overrides to anon, authenticated;
+ *   grant select on public.match_overrides to anon, authenticated;
+ *   revoke insert, update, delete on public.match_overrides from anon, authenticated;
  *
- *   drop policy if exists "anon read overrides" on public.match_overrides;
- *   create policy "anon read overrides" on public.match_overrides
- *     for select to anon, authenticated using (true);
- *
- *   drop policy if exists "anon write overrides" on public.match_overrides;
- *   create policy "anon write overrides" on public.match_overrides
- *     for all to anon, authenticated using (true) with check (true);
- *
- * Hinweis: Der Schutz liegt damit ausschließlich auf der PIN im Frontend.
- * Wer den anon-Key + die PIN kennt, kann Overrides schreiben.
+ *   -- Nur SELECT ist öffentlich; sämtliche Writes laufen ausschließlich über
+ *   -- die Edge Function `admin-override` (service-role key), die den PIN
+ *   -- serverseitig gegen die ADMIN_PIN-Secret validiert.
  * --------------------------------------------------------------------------- */
