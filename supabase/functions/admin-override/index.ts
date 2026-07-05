@@ -1,9 +1,15 @@
 /**
  * Supabase Edge Function: admin-override
  *
- * Allows the (PIN-protected) Admin Panel to insert or clear manual
- * match overrides in `match_overrides`. PIN is validated server-side
- * as defense-in-depth — never trust the client gate alone.
+ * Sole writer for the `match_overrides` table. The PIN is stored server-side
+ * only (Deno.env ADMIN_PIN) and validated on every request. The client never
+ * ships the PIN in its bundle — it only forwards whatever the operator types
+ * into the Admin Panel PinGate for verification.
+ *
+ * Actions:
+ *   { action: "verify", pin }              → { ok: true } | 401
+ *   { action: "set",    pin, matchId, ... }
+ *   { action: "clear",  pin, matchId }
  */
 
 // deno-lint-ignore-file no-explicit-any
@@ -18,7 +24,12 @@ const CORS_HEADERS = {
   "Access-Control-Max-Age": "86400",
 };
 
-const ADMIN_PIN = "031011";
+function timingSafeEqualStr(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
 
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -31,7 +42,8 @@ serve(async (req: Request) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!supabaseUrl || !supabaseServiceKey) {
+  const adminPin = Deno.env.get("ADMIN_PIN");
+  if (!supabaseUrl || !supabaseServiceKey || !adminPin) {
     return json({ error: "Service not configured" }, 500);
   }
 
@@ -42,12 +54,18 @@ serve(async (req: Request) => {
     return json({ error: "Invalid JSON" }, 400);
   }
 
-  if (body?.pin !== ADMIN_PIN) {
+  const providedPin = typeof body?.pin === "string" ? body.pin : "";
+  if (!timingSafeEqualStr(providedPin, adminPin)) {
     return json({ error: "Unauthorized" }, 401);
   }
 
-  const admin = createClient(supabaseUrl, supabaseServiceKey);
   const action = body?.action;
+
+  if (action === "verify") {
+    return json({ ok: true }, 200);
+  }
+
+  const admin = createClient(supabaseUrl, supabaseServiceKey);
 
   if (action === "set") {
     const matchId = String(body.matchId ?? "");
@@ -61,22 +79,23 @@ serve(async (req: Request) => {
     if (!["scheduled", "live", "finished"].includes(status)) {
       return json({ error: "Invalid status" }, 400);
     }
+    const row = {
+      match_id: matchId,
+      score_a: Math.max(0, Math.min(50, Math.floor(scoreA))),
+      score_b: Math.max(0, Math.min(50, Math.floor(scoreB))),
+      minute: minute === null ? null : Math.max(0, Math.min(120, Math.floor(minute))),
+      status,
+      is_manual: true,
+      updated_at: new Date().toISOString(),
+    };
     const { error } = await admin
       .from("match_overrides")
-      .upsert({
-        match_id: matchId,
-        score_a: Math.max(0, Math.min(50, Math.floor(scoreA))),
-        score_b: Math.max(0, Math.min(50, Math.floor(scoreB))),
-        minute: minute === null ? null : Math.max(0, Math.min(120, Math.floor(minute))),
-        status,
-        is_manual: true,
-        updated_at: new Date().toISOString(),
-      });
+      .upsert(row, { onConflict: "match_id" });
     if (error) {
       console.error("[admin-override] upsert failed:", error);
-      return json({ error: error.message }, 500);
+      return json({ error: "Write failed" }, 500);
     }
-    return json({ ok: true }, 200);
+    return json({ ok: true, row }, 200);
   }
 
   if (action === "clear") {
@@ -88,7 +107,7 @@ serve(async (req: Request) => {
       .eq("match_id", matchId);
     if (error) {
       console.error("[admin-override] delete failed:", error);
-      return json({ error: error.message }, 500);
+      return json({ error: "Delete failed" }, 500);
     }
     return json({ ok: true }, 200);
   }

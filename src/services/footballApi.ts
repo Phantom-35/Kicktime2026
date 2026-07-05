@@ -62,6 +62,7 @@ export async function fetchLiveWorldCupData(
       cache?: "hit" | "miss" | "stale" | "overrides";
       url?: string;
       koPhase?: number | null;
+      retryAfterSec?: number;
     }>("fetch-live-scores", { body: { mode, koPhase, force } });
 
     if (error) {
@@ -93,7 +94,7 @@ export async function fetchLiveWorldCupData(
  * Force-Fetch der aktiven Phase — umgeht den 5-Min-Cache in der Edge Function
  * und zieht die Route sofort frisch. Anschließend sollte
  * `fetchAllStoredFixtures()` aufgerufen werden, um den kompletten Store zu
- * rehydraten.
+ * rehydraten. Serverseitig auf 1 Aufruf/30 s throttled.
  */
 export async function forceFetchActivePhase(
   koPhase: number | null,
@@ -124,7 +125,8 @@ export async function fetchAllStoredFixtures(): Promise<LiveFixture[]> {
 
 /**
  * Triggert einen manuellen Sync der Gruppenphase (wm2026/2026) in die
- * persistente `match_results`-Tabelle. Nutzt keinen Cache.
+ * persistente `match_results`-Tabelle. Serverseitig auf 1 Aufruf/60 s
+ * throttled, um Missbrauch zu verhindern.
  */
 export async function syncGroupPhase(): Promise<{ synced: number; error?: string }> {
   if (!isLiveDataEnabled()) return { synced: 0, error: "Backend nicht konfiguriert" };
@@ -132,6 +134,7 @@ export async function syncGroupPhase(): Promise<{ synced: number; error?: string
     const { data, error } = await supabase.functions.invoke<{
       synced?: number;
       error?: string;
+      retryAfterSec?: number;
     }>("fetch-live-scores", { body: { mode: "sync-groups" } });
     if (error) return { synced: 0, error: error.message };
     if (data?.error) return { synced: data.synced ?? 0, error: data.error };
