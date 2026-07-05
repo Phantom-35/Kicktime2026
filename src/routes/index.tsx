@@ -133,10 +133,10 @@ function Dashboard() {
         {showCountdown && <TournamentCountdown key="countdown" />}
       </AnimatePresence>
       <div className="mb-4 flex items-center justify-between gap-2">
-        <h2 className="text-xl font-bold flex items-center gap-2">
+        <h1 className="text-xl font-bold flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-accent" />
-          Dein WM-Tag
-        </h2>
+          Dein WM-Tag 2026
+        </h1>
         <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-full bg-primary/15 text-primary border border-primary/30">
           {PHASE_LABEL[phase]}
         </span>
