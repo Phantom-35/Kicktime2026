@@ -9,11 +9,13 @@ const TeamDetailSheet = lazy(() => import("@/components/team/TeamDetailSheet"));
 export const Route = createFileRoute("/turnier")({
   head: () => ({
     meta: [
-      { title: "Turnier-Status — KickTime 2026" },
-      { name: "description", content: "Wer ist bei der FIFA WM 2026 noch dabei — und wer ist ausgeschieden?" },
-      { property: "og:title", content: "Turnier-Status — KickTime 2026" },
-      { property: "og:description", content: "Wer ist bei der FIFA WM 2026 noch dabei — und wer ist ausgeschieden?" },
+      { title: "K.-o.-Baum & Turnier-Status der WM 2026 — KickTime" },
+      { name: "description", content: "K.-o.-Baum der FIFA WM 2026 vom Sechzehntelfinale bis zum Finale plus Live-Status jedes Teams — wer ist noch dabei, wer ausgeschieden?" },
+      { property: "og:title", content: "WM 2026 K.-o.-Baum & Team-Status" },
+      { property: "og:description", content: "K.-o.-Runden und Team-Status der FIFA WM 2026 – live aktualisiert." },
+      { property: "og:url", content: "https://kicktime-planer.lovable.app/turnier" },
     ],
+    links: [{ rel: "canonical", href: "https://kicktime-planer.lovable.app/turnier" }],
   }),
   component: TurnierPage,
 });

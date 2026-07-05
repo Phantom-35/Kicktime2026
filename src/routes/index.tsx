@@ -21,7 +21,19 @@ import { CalendarPlus, BellRing, Sparkles } from "lucide-react";
 import { addMatchToCalendar } from "@/lib/calendar";
 import { haptics } from "@/lib/haptics";
 
-export const Route = createFileRoute("/")({ component: Dashboard });
+export const Route = createFileRoute("/")({
+  component: Dashboard,
+  head: () => ({
+    meta: [
+      { title: "KickTime 2026 — Dein WM-Dashboard mit Live-Phase" },
+      { name: "description", content: "Dein persönliches WM-2026-Dashboard: laufende Turnier-Phase, Empfehlungen für deine Teams und Countdown bis zum Anpfiff." },
+      { property: "og:title", content: "KickTime 2026 — Dein WM-Dashboard" },
+      { property: "og:description", content: "Laufende Turnier-Phase, persönliche Empfehlungen und Countdown zur FIFA WM 2026." },
+      { property: "og:url", content: "https://kicktime-planer.lovable.app/" },
+    ],
+    links: [{ rel: "canonical", href: "https://kicktime-planer.lovable.app/" }],
+  }),
+});
 
 function Dashboard() {
   const state = useAppStore();

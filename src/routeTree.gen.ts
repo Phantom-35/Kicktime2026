@@ -13,10 +13,10 @@ import { Route as TurnierRouteImport } from './routes/turnier'
 import { Route as TippsRouteImport } from './routes/tipps'
 import { Route as TabellenRouteImport } from './routes/tabellen'
 import { Route as SpieleRouteImport } from './routes/spiele'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProfilRouteImport } from './routes/profil'
 import { Route as BarsRouteImport } from './routes/bars'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
 
 const TurnierRoute = TurnierRouteImport.update({
   id: '/turnier',
@@ -38,6 +38,11 @@ const SpieleRoute = SpieleRouteImport.update({
   path: '/spiele',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfilRoute = ProfilRouteImport.update({
   id: '/profil',
   path: '/profil',
@@ -53,42 +58,37 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SitemapXmlRoute = SitemapXmlRouteImport.update({
-  id: '/sitemap/xml',
-  path: '/sitemap/xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bars': typeof BarsRoute
   '/profil': typeof ProfilRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
   '/tipps': typeof TippsRoute
   '/turnier': typeof TurnierRoute
-  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bars': typeof BarsRoute
   '/profil': typeof ProfilRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
   '/tipps': typeof TippsRoute
   '/turnier': typeof TurnierRoute
-  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/bars': typeof BarsRoute
   '/profil': typeof ProfilRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/spiele': typeof SpieleRoute
   '/tabellen': typeof TabellenRoute
   '/tipps': typeof TippsRoute
   '/turnier': typeof TurnierRoute
-  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,42 +96,42 @@ export interface FileRouteTypes {
     | '/'
     | '/bars'
     | '/profil'
+    | '/sitemap.xml'
     | '/spiele'
     | '/tabellen'
     | '/tipps'
     | '/turnier'
-    | '/sitemap/xml'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/bars'
     | '/profil'
+    | '/sitemap.xml'
     | '/spiele'
     | '/tabellen'
     | '/tipps'
     | '/turnier'
-    | '/sitemap/xml'
   id:
     | '__root__'
     | '/'
     | '/bars'
     | '/profil'
+    | '/sitemap.xml'
     | '/spiele'
     | '/tabellen'
     | '/tipps'
     | '/turnier'
-    | '/sitemap/xml'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BarsRoute: typeof BarsRoute
   ProfilRoute: typeof ProfilRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SpieleRoute: typeof SpieleRoute
   TabellenRoute: typeof TabellenRoute
   TippsRoute: typeof TippsRoute
   TurnierRoute: typeof TurnierRoute
-  SitemapXmlRoute: typeof SitemapXmlRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -164,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SpieleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profil': {
       id: '/profil'
       path: '/profil'
@@ -185,13 +192,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sitemap/xml': {
-      id: '/sitemap/xml'
-      path: '/sitemap/xml'
-      fullPath: '/sitemap/xml'
-      preLoaderRoute: typeof SitemapXmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -199,11 +199,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BarsRoute: BarsRoute,
   ProfilRoute: ProfilRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SpieleRoute: SpieleRoute,
   TabellenRoute: TabellenRoute,
   TippsRoute: TippsRoute,
   TurnierRoute: TurnierRoute,
-  SitemapXmlRoute: SitemapXmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

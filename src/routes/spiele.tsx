@@ -17,7 +17,19 @@ import { Button } from "@/components/ui/button";
 import { Search, CalendarPlus } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/spiele")({ component: SpielePage });
+export const Route = createFileRoute("/spiele")({
+  component: SpielePage,
+  head: () => ({
+    meta: [
+      { title: "Alle WM-2026-Spiele in deiner Zeitzone — KickTime" },
+      { name: "description", content: "Kompletter Spielplan der FIFA WM 2026: Anstoßzeiten in deiner Zeitzone, Suche nach Team, Stadt oder Datum, Kalender-Export." },
+      { property: "og:title", content: "Alle WM-2026-Spiele in deiner Zeitzone" },
+      { property: "og:description", content: "Kompletter Spielplan mit Anstoßzeiten in deiner Zeitzone, Suche und Kalender-Export." },
+      { property: "og:url", content: "https://kicktime-planer.lovable.app/spiele" },
+    ],
+    links: [{ rel: "canonical", href: "https://kicktime-planer.lovable.app/spiele" }],
+  }),
+});
 
 function SpielePage() {
   const [q, setQ] = useState("");
