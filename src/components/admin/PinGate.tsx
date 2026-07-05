@@ -8,6 +8,7 @@ export function PinGate({ onUnlock }: { onUnlock: (pin: string) => void }) {
   const [shake, setShake] = useState(false);
   const [checking, setChecking] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const checkingRef = useRef(false);
 
   useEffect(() => {
     const t = setTimeout(() => inputRef.current?.focus(), 50);
@@ -15,30 +16,35 @@ export function PinGate({ onUnlock }: { onUnlock: (pin: string) => void }) {
   }, []);
 
   useEffect(() => {
-    if (value.length !== 6 || checking) return;
+    if (value.length !== 6 || checkingRef.current) return;
     let cancelled = false;
+    checkingRef.current = true;
     setChecking(true);
     (async () => {
-      const ok = await verifyAdminPin(value);
-      if (cancelled) return;
-      if (ok) {
-        haptics.success();
-        onUnlock(value);
-      } else {
-        haptics.warn();
-        setShake(true);
-        setTimeout(() => {
-          setShake(false);
-          setValue("");
-          inputRef.current?.focus();
-        }, 350);
+      try {
+        const ok = await verifyAdminPin(value);
+        if (cancelled) return;
+        if (ok) {
+          haptics.success();
+          onUnlock(value);
+        } else {
+          haptics.warn();
+          setShake(true);
+          setTimeout(() => {
+            setShake(false);
+            setValue("");
+            inputRef.current?.focus();
+          }, 350);
+        }
+      } finally {
+        if (!cancelled) setChecking(false);
+        checkingRef.current = false;
       }
-      setChecking(false);
     })();
     return () => {
       cancelled = true;
     };
-  }, [value, onUnlock, checking]);
+  }, [value, onUnlock]);
 
   return (
     <div className="py-6 flex flex-col items-center gap-4">
