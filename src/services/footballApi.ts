@@ -288,6 +288,22 @@ export function applyBracketUpgradeFromApi(
   );
   if (realFixtures.length === 0) return 0;
 
+  // Dedupe: gleiche Team-Paarung / matchId darf nur EINMAL angewandt werden.
+  // Sonst hängt der Index-Fallback (Pass 3) eine zweite Kopie derselben
+  // Begegnung an einen anderen Slot — visuell erscheint das Spiel dann
+  // doppelt (z. B. FRA-MAR zweimal am gleichen Anstoßzeitpunkt).
+  const seenPair = new Set<string>();
+  const seenId = new Set<string>();
+  const deduped: LiveFixture[] = [];
+  for (const f of realFixtures) {
+    const pairKey = [f.teamA, f.teamB].sort().join("|");
+    if (seenPair.has(pairKey)) continue;
+    if (f.matchId && seenId.has(f.matchId)) continue;
+    seenPair.add(pairKey);
+    if (f.matchId) seenId.add(f.matchId);
+    deduped.push(f);
+  }
+
   const state = useMatchStore.getState();
   const slots = Object.values(state.matches)
     .filter((m) => m.stage === stage)
@@ -297,7 +313,7 @@ export function applyBracketUpgradeFromApi(
     );
   if (slots.length === 0) return 0;
 
-  const sortedFixtures = [...realFixtures].sort(
+  const sortedFixtures = [...deduped].sort(
     (a, b) =>
       new Date(a.utcTimestamp!).getTime() - new Date(b.utcTimestamp!).getTime(),
   );
@@ -305,6 +321,16 @@ export function applyBracketUpgradeFromApi(
   const used = new Set<string>();
   let upgraded = 0;
   const SIX_HOURS = 6 * 60 * 60 * 1000;
+
+  // Guard: Existiert diese Team-Paarung bereits in einem Slot der Phase
+  // (belegt oder nicht)? Wenn ja, darf sie NICHT nochmal einem anderen Slot
+  // zugewiesen werden — sonst entsteht ein Duplikat.
+  const pairAlreadyInStage = (f: LiveFixture): boolean =>
+    slots.some(
+      (m) =>
+        (m.teamA === f.teamA && m.teamB === f.teamB) ||
+        (m.teamA === f.teamB && m.teamB === f.teamA),
+    );
 
   const tryUpgrade = (slot: (typeof slots)[number], f: LiveFixture) => {
     const flipped = slot.teamA !== f.teamA && slot.teamB === f.teamA;
@@ -328,6 +354,10 @@ export function applyBracketUpgradeFromApi(
       state.finishMatchFromApi(slot.id, liveScore);
     }
     used.add(slot.id);
+    // Lokale Slot-Kopie mitziehen, damit pairAlreadyInStage in späteren
+    // Pässen die frisch belegte Paarung sieht.
+    slot.teamA = teamA;
+    slot.teamB = teamB;
     upgraded++;
   };
 
@@ -342,9 +372,10 @@ export function applyBracketUpgradeFromApi(
     if (slot) tryUpgrade(slot, f);
   }
 
-  // Pass 2: Kickoff ±6h
+  // Pass 2: Kickoff ±6h — nur wenn die Paarung noch nirgends steht.
   for (const f of sortedFixtures) {
     if (used.size === slots.length) break;
+    if (pairAlreadyInStage(f)) continue;
     const fTs = new Date(f.utcTimestamp!).getTime();
     const slot = slots.find(
       (m) =>
@@ -354,17 +385,10 @@ export function applyBracketUpgradeFromApi(
     if (slot) tryUpgrade(slot, f);
   }
 
-  // Pass 3: chronologischer Index-Fallback
+  // Pass 3: chronologischer Index-Fallback — nur für Paarungen, die noch
+  // NIRGENDS in der Phase existieren.
   const remainingSlots = slots.filter((m) => !used.has(m.id));
-  const remainingFixtures = sortedFixtures.filter((f) => {
-    // Skip fixtures already consumed via prior passes
-    return !slots.some(
-      (m) =>
-        used.has(m.id) &&
-        ((m.teamA === f.teamA && m.teamB === f.teamB) ||
-          (m.teamA === f.teamB && m.teamB === f.teamA)),
-    );
-  });
+  const remainingFixtures = sortedFixtures.filter((f) => !pairAlreadyInStage(f));
   const pairs = Math.min(remainingSlots.length, remainingFixtures.length);
   for (let i = 0; i < pairs; i++) {
     tryUpgrade(remainingSlots[i], remainingFixtures[i]);

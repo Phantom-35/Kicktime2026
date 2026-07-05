@@ -7,6 +7,11 @@ type Feature = { icon: typeof Trophy; title: string; text: string };
 const FEATURES: Feature[] = [
   {
     icon: Workflow,
+    title: "🛠️ Bugfix: Doppelte KO-Spiele",
+    text: "Beim Auflösen der Bracket-Platzhalter wurde dieselbe Begegnung teils zweimal angezeigt (z. B. Frankreich–Marokko doppelt). Der Merge dedupliziert jetzt sauber pro Team-Paarung.",
+  },
+  {
+    icon: Workflow,
     title: "🛠️ Bugfix: Achtelfinal-Teams",
     text: "Platzhalter wie „Sieger Spiel 73“ werden jetzt automatisch durch die realen Teams ersetzt, sobald die API sie liefert.",
   },
