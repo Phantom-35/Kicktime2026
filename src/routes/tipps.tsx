@@ -12,9 +12,13 @@ import type { Match } from "@/data/matches";
 export const Route = createFileRoute("/tipps")({
   head: () => ({
     meta: [
-      { title: "Tipps · KickTime 2026" },
-      { name: "description", content: "Tippe deine WM-Spiele und verfolge deine Trefferquote." },
+      { title: "WM-2026-Tipprunde — deine Vorhersagen | KickTime" },
+      { name: "description", content: "Tippe die Ergebnisse der FIFA WM 2026, behalte deine Trefferquote im Blick und vergleiche deine offenen und abgeschlossenen Tipps." },
+      { property: "og:title", content: "WM-2026-Tipprunde — deine Vorhersagen" },
+      { property: "og:description", content: "Tippe FIFA-WM-2026-Ergebnisse und verfolge deine Trefferquote in einer persönlichen Tipprunde." },
+      { property: "og:url", content: "https://kicktime-planer.lovable.app/tipps" },
     ],
+    links: [{ rel: "canonical", href: "https://kicktime-planer.lovable.app/tipps" }],
   }),
   component: TippsPage,
 });
