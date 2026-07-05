@@ -69,9 +69,42 @@ type StoredRow = {
   updated_at?: string;
 };
 
+// In-memory rate limiter for privileged/write-heavy modes. Not perfect across
+// warm/cold instances, but curbs sustained abuse against the OpenLigaDB
+// upstream and repeated writes to match_results.
+const RATE_WINDOW_MS: Record<string, number> = {
+  "sync-groups": 60_000,
+  "force": 30_000,
+};
+const lastCalledAt = new Map<string, number>();
+
+function rateLimitCheck(key: string): { ok: true } | { ok: false; retryAfterSec: number } {
+  const window = RATE_WINDOW_MS[key];
+  if (!window) return { ok: true };
+  const now = Date.now();
+  const last = lastCalledAt.get(key) ?? 0;
+  const elapsed = now - last;
+  if (elapsed < window) {
+    return { ok: false, retryAfterSec: Math.ceil((window - elapsed) / 1000) };
+  }
+  lastCalledAt.set(key, now);
+  return { ok: true };
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+
+  // Reject fully unauthenticated callers: legitimate frontend requests always
+  // carry the Supabase anon (or user) JWT via Authorization/apikey headers.
+  // This keeps random internet scripts from hammering the function without any
+  // key at all.
+  const authHeader = req.headers.get("authorization") ?? "";
+  const apiKeyHeader = req.headers.get("apikey") ?? "";
+  const hasBearer = /^Bearer\s+\S+/i.test(authHeader) || apiKeyHeader.length > 0;
+  if (!hasBearer) {
+    return json({ error: "Unauthorized" }, 401);
   }
 
   try {
@@ -85,6 +118,20 @@ Deno.serve(async (req: Request) => {
       const kp = Number(body?.koPhase);
       if ([4, 5, 6, 7, 8, 9].includes(kp)) koPhase = kp;
       if (body?.force === true) force = true;
+    }
+
+    // Throttle write-heavy / cache-busting modes so a scripted attacker can't
+    // spam OpenLigaDB fetches and match_results upserts.
+    if (mode === "sync-groups") {
+      const check = rateLimitCheck("sync-groups");
+      if (!check.ok) {
+        return json({ error: "Rate limited", retryAfterSec: check.retryAfterSec, synced: 0 }, 429);
+      }
+    } else if (force) {
+      const check = rateLimitCheck("force");
+      if (!check.ok) {
+        return json({ error: "Rate limited", retryAfterSec: check.retryAfterSec, fixtures: [] }, 429);
+      }
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
