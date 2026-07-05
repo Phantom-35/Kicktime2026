@@ -31,7 +31,20 @@ import { useRef, useState } from "react";
 import { haptics } from "@/lib/haptics";
 import { AdminPanel } from "@/components/admin/AdminPanel";
 
-export const Route = createFileRoute("/profil")({ component: ProfilPage });
+export const Route = createFileRoute("/profil")({
+  component: ProfilPage,
+  head: () => ({
+    meta: [
+      { title: "Profil & Einstellungen — KickTime 2026" },
+      { name: "description", content: "Passe KickTime an: Zeitzone, Lieblings- und interessante Teams, Benachrichtigungen und Spoiler-Schutz für die FIFA WM 2026." },
+      { property: "og:title", content: "KickTime 2026 — Profil & Einstellungen" },
+      { property: "og:description", content: "Zeitzone, Lieblingsteams, Benachrichtigungen und Spoiler-Schutz einstellen." },
+      { property: "og:url", content: "https://kicktime-planer.lovable.app/profil" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://kicktime-planer.lovable.app/profil" }],
+  }),
+});
 
 function ProfilPage() {
   const s = useAppStore();
