@@ -12,7 +12,19 @@ import {
 } from "@/components/ui/select";
 import { MapPin, Navigation, Sparkles, CalendarClock } from "lucide-react";
 
-export const Route = createFileRoute("/bars")({ component: BarsPage });
+export const Route = createFileRoute("/bars")({
+  component: BarsPage,
+  head: () => ({
+    meta: [
+      { title: "Public-Viewing-Bars für die WM 2026 finden — KickTime" },
+      { name: "description", content: "Finde Bars und Public-Viewing-Locations für die FIFA WM 2026 in deiner Stadt – ideal, um Spiele gemeinsam mit Freunden zu schauen." },
+      { property: "og:title", content: "Public-Viewing-Bars für die WM 2026" },
+      { property: "og:description", content: "Bars und Locations für gemeinsames WM-2026-Schauen in deiner Stadt." },
+      { property: "og:url", content: "https://kicktime-planer.lovable.app/bars" },
+    ],
+    links: [{ rel: "canonical", href: "https://kicktime-planer.lovable.app/bars" }],
+  }),
+});
 
 function typeBadgeClasses(type: VenueType): string {
   switch (type) {
