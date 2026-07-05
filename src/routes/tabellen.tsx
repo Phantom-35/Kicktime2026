@@ -20,7 +20,19 @@ import { getLocalParts } from "@/lib/time";
 import type { RuntimeMatch } from "@/store/match-store";
 
 
-export const Route = createFileRoute("/tabellen")({ component: TabellenPage });
+export const Route = createFileRoute("/tabellen")({
+  component: TabellenPage,
+  head: () => ({
+    meta: [
+      { title: "Live-Gruppentabellen der WM 2026 — KickTime" },
+      { name: "description", content: "Aktuelle Gruppentabellen der FIFA WM 2026 mit Live-Updates, Punkten, Torverhältnis und den nächsten Partien jeder Gruppe." },
+      { property: "og:title", content: "WM 2026 — Live-Gruppentabellen" },
+      { property: "og:description", content: "Live-Tabellen aller Gruppen der FIFA WM 2026 mit Punkten und Torverhältnis." },
+      { property: "og:url", content: "https://kicktime-planer.lovable.app/tabellen" },
+    ],
+    links: [{ rel: "canonical", href: "https://kicktime-planer.lovable.app/tabellen" }],
+  }),
+});
 
 function TabellenPage() {
   const matches = useMatchStore(selectMatchList);
