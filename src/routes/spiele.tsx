@@ -89,7 +89,7 @@ function SpielePage() {
 
   return (
     <div className="p-4 pb-6 relative">
-      <h2 className="text-xl font-bold mb-3">Alle Spiele</h2>
+      <h1 className="text-xl font-bold mb-3">Alle Spiele der FIFA WM 2026</h1>
       <LiveNowBar onOpenMatch={(m) => setSelected(m)} />
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

@@ -54,7 +54,7 @@ function TippsPage() {
     <div className="p-4 pb-6 space-y-5">
       <header className="flex items-center gap-2">
         <Trophy className="h-5 w-5 text-primary" />
-        <h2 className="text-xl font-bold">Deine Tipps</h2>
+        <h1 className="text-xl font-bold">Tipprunden zur FIFA WM 2026</h1>
       </header>
 
       {/* Stat card */}

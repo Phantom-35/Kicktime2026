@@ -47,7 +47,7 @@ function BarsPage() {
 
   return (
     <div className="p-4 pb-6">
-      <h2 className="text-xl font-bold mb-1">Gastro-Finder</h2>
+      <h1 className="text-xl font-bold mb-1">Public-Viewing-Bars für die WM 2026</h1>
       <p className="text-xs text-muted-foreground mb-4">
         Public Viewing, Bars & Biergärten zur WM 2026 in Deutschland.
       </p>

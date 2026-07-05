@@ -80,7 +80,7 @@ function TabellenPage() {
   return (
 
     <div className="p-4 pb-24 relative">
-      <h2 className="text-xl font-bold mb-1">Tabellen</h2>
+      <h1 className="text-xl font-bold mb-1">Gruppentabellen der WM 2026</h1>
       <p className="text-sm text-muted-foreground mb-4">
         Gruppenphase WM 2026 — Live-Updates
       </p>

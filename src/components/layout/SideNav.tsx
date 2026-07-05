@@ -33,11 +33,11 @@ export function SideNav() {
   return (
     <aside className="hidden md:flex md:flex-col md:w-60 lg:w-64 shrink-0 sticky top-0 h-screen border-r border-border bg-card/80 backdrop-blur px-4 py-6 gap-6">
       <div className="flex items-center gap-2 px-2">
-        <img src="/logo.png" alt="KickTime" className="h-9 w-9 rounded-lg object-cover" />
-        <h1 className="text-lg font-bold tracking-tight">
+        <img src="/logo.png" alt="KickTime Logo" className="h-9 w-9 rounded-lg object-cover" />
+        <div className="text-lg font-bold tracking-tight">
           Kick<span className="text-primary">Time</span>{" "}
           <span className="text-muted-foreground text-sm">2026</span>
-        </h1>
+        </div>
       </div>
 
       <nav className="flex-1">

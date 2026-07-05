@@ -8,10 +8,10 @@ export function AppHeader() {
   return (
     <header className="md:hidden sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-card/95 backdrop-blur px-4">
       <div className="flex items-center gap-2">
-        <img src="/logo.png" alt="KickTime" className="h-7 w-7 rounded-md object-cover" />
-        <h1 className="text-base font-bold tracking-tight">
+        <img src="/logo.png" alt="KickTime Logo" className="h-7 w-7 rounded-md object-cover" />
+        <div className="text-base font-bold tracking-tight">
           Kick<span className="text-primary">Time</span> 2026
-        </h1>
+        </div>
       </div>
       <label className="flex items-center gap-2 cursor-pointer">
         {spoiler ? (
