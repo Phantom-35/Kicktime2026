@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -17,7 +17,7 @@ import { incrementOpenCount, shouldShowFeedback, markFeedbackShown } from "@/lib
 import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { toast } from "sonner";
-import { CalendarPlus, BellRing, Sparkles } from "lucide-react";
+import { CalendarPlus, BellRing, Sparkles, CheckCircle2, CalendarDays } from "lucide-react";
 import { addMatchToCalendar } from "@/lib/calendar";
 import { haptics } from "@/lib/haptics";
 
@@ -166,35 +166,39 @@ function Dashboard() {
             subtitle="In deinem Zeitfenster – einfach reinsetzen."
             empty="Noch keine perfekten Spiele. Markiere mehr Teams oder erweitere dein Zeitfenster."
           >
-            <Stream
-              matches={perfectSorted}
-              onSelect={setSelected}
-              indicator="perfect"
-              footer={(m) => (
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="flex-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      try {
-                        addMatchToCalendar(m);
-                        haptics.tap();
-                        toast.success("Kalender wird geöffnet…", {
-                          description: getLocalParts(m.utcTimestamp).fullStr,
-                        });
-                      } catch {
-                        toast.error("Konnte Kalender nicht öffnen");
-                      }
-                    }}
-                  >
-                    <CalendarPlus className="h-4 w-4 mr-1.5" /> Zum Kalender hinzufügen
-                  </Button>
-                  <AlarmBell match={m} />
-                </div>
-              )}
-            />
+            {perfectSorted.length === 0 ? (
+              <PerfectEmptyState />
+            ) : (
+              <Stream
+                matches={perfectSorted}
+                onSelect={setSelected}
+                indicator="perfect"
+                footer={(m) => (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="flex-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        try {
+                          addMatchToCalendar(m);
+                          haptics.tap();
+                          toast.success("Kalender wird geöffnet…", {
+                            description: getLocalParts(m.utcTimestamp).fullStr,
+                          });
+                        } catch {
+                          toast.error("Konnte Kalender nicht öffnen");
+                        }
+                      }}
+                    >
+                      <CalendarPlus className="h-4 w-4 mr-1.5" /> Zum Kalender hinzufügen
+                    </Button>
+                    <AlarmBell match={m} />
+                  </div>
+                )}
+              />
+            )}
           </Section>
         </TabsContent>
 
@@ -261,6 +265,31 @@ function Section({
 
 function EmptyHint({ message }: { message: string }) {
   return null; // shown by parent when list empty
+}
+
+function PerfectEmptyState() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/50 p-8 text-center"
+    >
+      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <CheckCircle2 className="h-7 w-7" />
+      </div>
+      <h4 className="mb-1 text-base font-semibold">Alle Spiele dieser Phase abgeschlossen!</h4>
+      <p className="mb-6 max-w-[260px] text-sm text-muted-foreground">
+        Keine ausstehenden Tipps mehr – du hast alles im Blick.
+      </p>
+      <Link to="/spiele">
+        <Button variant="default" size="sm" className="gap-2">
+          <CalendarDays className="h-4 w-4" />
+          Zu den Spielen
+        </Button>
+      </Link>
+    </motion.div>
+  );
 }
 
 function Stream({
