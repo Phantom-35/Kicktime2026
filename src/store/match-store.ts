@@ -272,26 +272,17 @@ function applyUpdateInternal(
     const newSig = signatureOf(merged);
 
     if (source === "api") {
-      const incomingApiSig = signatureOf({
-        status: u.status ?? cur.status,
-        liveScore: u.liveScore ?? cur.liveScore,
-        matchMinute: u.matchMinute ?? cur.matchMinute,
-      });
-
-      // Manual override in place AND API hasn't changed since last poll → ignore stale broadcast.
-      if (cur.manualAt && cur.lastApiSignature === incomingApiSig) {
+      // Manual override in place → API-Updates komplett verwerfen.
+      // Der Lock wird nur durch clearLiveOverlay (Admin entfernt Override)
+      // oder finishMatchFromApi (offizielles Endergebnis) aufgehoben.
+      if (cur.manualAt) {
         return s;
-      }
-
-      // Record this API signature; if it's a real change, drop manual lock.
-      merged.lastApiSignature = incomingApiSig;
-      if (cur.manualAt && cur.lastApiSignature !== incomingApiSig) {
-        merged.manualAt = undefined;
       }
     } else {
       // Manual write: mark precedence.
       merged.manualAt = Date.now();
     }
+
 
     // Equality guard: no UI-visible change → skip set() entirely.
     if (
