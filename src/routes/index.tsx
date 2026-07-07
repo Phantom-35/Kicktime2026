@@ -166,35 +166,39 @@ function Dashboard() {
             subtitle="In deinem Zeitfenster – einfach reinsetzen."
             empty="Noch keine perfekten Spiele. Markiere mehr Teams oder erweitere dein Zeitfenster."
           >
-            <Stream
-              matches={perfectSorted}
-              onSelect={setSelected}
-              indicator="perfect"
-              footer={(m) => (
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="flex-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      try {
-                        addMatchToCalendar(m);
-                        haptics.tap();
-                        toast.success("Kalender wird geöffnet…", {
-                          description: getLocalParts(m.utcTimestamp).fullStr,
-                        });
-                      } catch {
-                        toast.error("Konnte Kalender nicht öffnen");
-                      }
-                    }}
-                  >
-                    <CalendarPlus className="h-4 w-4 mr-1.5" /> Zum Kalender hinzufügen
-                  </Button>
-                  <AlarmBell match={m} />
-                </div>
-              )}
-            />
+            {perfectSorted.length === 0 ? (
+              <PerfectEmptyState />
+            ) : (
+              <Stream
+                matches={perfectSorted}
+                onSelect={setSelected}
+                indicator="perfect"
+                footer={(m) => (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="flex-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        try {
+                          addMatchToCalendar(m);
+                          haptics.tap();
+                          toast.success("Kalender wird geöffnet…", {
+                            description: getLocalParts(m.utcTimestamp).fullStr,
+                          });
+                        } catch {
+                          toast.error("Konnte Kalender nicht öffnen");
+                        }
+                      }}
+                    >
+                      <CalendarPlus className="h-4 w-4 mr-1.5" /> Zum Kalender hinzufügen
+                    </Button>
+                    <AlarmBell match={m} />
+                  </div>
+                )}
+              />
+            )}
           </Section>
         </TabsContent>
 
