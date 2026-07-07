@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -17,7 +17,7 @@ import { incrementOpenCount, shouldShowFeedback, markFeedbackShown } from "@/lib
 import type { Match } from "@/data/matches";
 import { getLocalParts } from "@/lib/time";
 import { toast } from "sonner";
-import { CalendarPlus, BellRing, Sparkles } from "lucide-react";
+import { CalendarPlus, BellRing, Sparkles, CheckCircle2, CalendarDays } from "lucide-react";
 import { addMatchToCalendar } from "@/lib/calendar";
 import { haptics } from "@/lib/haptics";
 
