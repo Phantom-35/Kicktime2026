@@ -1,45 +1,40 @@
-## v7.10.1 — Bugfix: Platzhalter im Achtelfinale werden nicht durch echte Teams ersetzt
+# Fix: Admin-Override wird von API-Poll überschrieben
 
-### Ursache
+## Ursache
 
-Zwei zusammenwirkende Regressionen verhindern, dass Slots wie „Sieger Spiel 73" durch die realen Teams (Kolumbien, Ghana, …) ersetzt werden — obwohl die API-Route `/5` sie liefert und das Admin-Panel den Fetch als erfolgreich bestätigt:
+In `src/store/match-store.ts` → `applyUpdateInternal` gilt aktuell:
 
-1. **`applyLiveFixturesToStore` kann Platzhalter nicht paaren.** Beim Rehydrieren aus `match_results` paart die Funktion nur über (a) exakten Team-Code-Match oder (b) `apiMatchId` auf dem lokalen Match. Die statisch geseedeten R16-Slots aus `world_cup_2026_schedule.json` tragen weder echte Team-Codes noch eine `apiMatchId` — jede Zeile wird verworfen (`if (!match) continue`).
-2. **`runBracketPrefetch` überspringt die aktive Phase.** `getNextPhaseForBracketPrefetch` filtert `info.num <= activePhase`. Sobald der Admin manuell `/5` erzwingt (oder Auto R16 als aktive Phase wählt), wird die einzige Upgrade-Logik mit Kickoff±6h/Index-Fallback (`applyBracketUpgradeFromApi`) für R16 nie aufgerufen. Ergebnis: Platzhalter bleiben stehen, obwohl der Fetch grün ist.
+- Manuelles Update setzt `manualAt = Date.now()`, aber **nicht** `lastApiSignature`.
+- Nächster API-Poll (`applyApiUpdate`) prüft `cur.manualAt && cur.lastApiSignature === incomingApiSig` — weil `lastApiSignature` `undefined` ist, greift der Guard nicht, das API-Payload wird gemergt, und im Anschluss wird `manualAt` sogar aktiv gelöscht (`merged.manualAt = undefined`).
 
-Die Persistenz (`match_results`) ist in Ordnung — die Zeilen enthalten die echten Team-Namen. Es ist ausschließlich der Store-Merge im Frontend, der die Slots nicht upgradet.
+Ergebnis: Toast „Live geschaltet ⚡" erscheint, Score erscheint für einen Frame, dann poppt der API-Wert zurück.
 
-### Fix
+`match_overrides` ist zwar korrekt in Supabase geschrieben (Edge Function funktioniert), aber der laufende Client verwirft ihn sofort. Beim nächsten Reload wird der Override zwar via `fetchMatchOverrides` neu geladen — aber der API-Poll gewinnt danach wieder.
 
-**`src/hooks/useLiveApi.ts`** — nach jedem `runLive()` / `runIdle()` zusätzlich `applyBracketUpgradeFromApi(stage, res.fixtures)` für die aktive KO-Phase aufrufen (nicht nur für die Nachfolge-Phase). Dadurch werden R16-Slots direkt aus der Antwort von `/5` upgegradet:
+## Änderung
 
-```ts
-const upgradeActivePhase = (res: LiveFetchResult) => {
-  if (!res.koPhase || res.koPhase === 4) return;
-  const info = getKoPhaseInfo(res.koPhase);
-  if (!info) return;
-  applyBracketUpgradeFromApi(info.stage as "r16"|"qf"|"sf"|"third"|"final", res.fixtures);
-};
-```
+Regel: **Solange `manualAt` gesetzt ist, gewinnt der manuelle Zustand.** Nur ein „finished"-Signal der API (via `finishMatchFromApi`) oder ein expliziter `clearLiveOverlay` darf ihn ablösen.
 
-Aufruf in `runLive` und `runIdle` direkt nach `trackResult(res)`, vor `loadFullStore()`.
+### `src/store/match-store.ts`
 
-**`src/services/footballApi.ts`** — `applyLiveFixturesToStore` bekommt einen dritten Paarungs-Pfad: Wenn weder Team-Match noch matchId greifen, wird pro KO-Stage (r16/qf/sf/third/final) auf `applyBracketUpgradeFromApi` zurückgefallen. Konkret: Fixtures ohne Match werden nach Stage gruppiert (per Zuordnung Kickoff-Datum → Stage über die lokalen Slots) und stage-weise an `applyBracketUpgradeFromApi` weitergereicht.
+In `applyUpdateInternal`, im `source === "api"`-Zweig:
 
-Alternativ (einfacher & robuster): Wir gruppieren die verbliebenen Fixtures direkt nach dem `utcTimestamp`-Fenster jeder KO-Stage und rufen für jede Stage mit übrig gebliebenen Fixtures `applyBracketUpgradeFromApi` auf.
+- Statt der Signatur-basierten Heuristik: **wenn `cur.manualAt` gesetzt ist, API-Update komplett verwerfen** (`return s`). Kein Merge, kein Löschen von `manualAt`.
+- Die bisherige `lastApiSignature`-Buchhaltung entfällt für diesen Zweig (kann weg oder als reines Debug-Feld bleiben — ich entferne sie).
+- `finishMatchFromApi` bleibt wie er ist (löscht `manualAt` bewusst, damit das Endergebnis der API greifen darf).
 
-**`src/lib/ko-phase.ts`** — Kommentar an `getNextPhaseForBracketPrefetch` präzisieren: Die Funktion bleibt inhaltlich gleich (Prefetch nur für spätere Phasen), weil der neue Upgrade-Pfad in `useLiveApi` die aktive Phase abdeckt.
+`clearMatchOverride` (Client → Edge Function → RLS-Delete) ruft weiterhin `clearLiveOverlay` auf, das setzt `manualAt = undefined` → API übernimmt wieder.
 
-**`src/lib/version.ts`** — Bump auf `7.10.1`.
-**`src/components/whats-new/WhatsNewModal.tsx`** — Eintrag: „Bugfix: Achtelfinal-Platzhalter werden jetzt automatisch durch die realen Teams ersetzt, sobald die API sie liefert."
+### Kein Zeit-TTL
 
-### Keine Änderungen an Edge Function, DB oder Schema
+Bewusst kein automatisches Ablaufen des Locks nach X Minuten — der Admin entscheidet, wann der Override endet (via Trash-Button im `LiveOverridePanel`). Die bestehende „Match-Ende erreicht"-Zwangsfinalisierung in `applyUpdateInternal` (Zeile ~260) bleibt und räumt vergessene Live-Overrides auf.
 
-Persistenz und API-Route funktionieren bereits korrekt. Der Fix ist rein clientseitig im Store-Merge.
+## Verifikation
 
-### Dateien
+1. Typecheck (`bunx tsgo`).
+2. Playwright: PIN eingeben → Live schalten mit z. B. 3:1 → 15 Sek. warten (mehrere API-Polls) → Score bleibt 3:1 auf `/index` und `/spiele`.
+3. Trash-Button drücken → Override entfernt, API-Wert erscheint wieder.
 
-- `src/hooks/useLiveApi.ts` — Upgrade-Aufruf für aktive Phase nach jedem Live-/Idle-Fetch.
-- `src/services/footballApi.ts` — `applyLiveFixturesToStore` fällt für unpaarbare Fixtures auf stage-weise Bracket-Upgrade zurück.
-- `src/lib/version.ts` — `APP_VERSION = "7.10.1"`.
-- `src/components/whats-new/WhatsNewModal.tsx` — neuer Changelog-Eintrag.
+## Betroffene Datei
+
+- `src/store/match-store.ts` (nur `applyUpdateInternal`, ~30 Zeilen)
