@@ -40,19 +40,43 @@ const ROUND_ORDER: EliminatedRound[] = ["final", "third", "sf", "qf", "r16", "r3
 export function computeTeamStatuses(matches: RuntimeMatch[]): TeamStatus[] {
   const eliminatedIn = new Map<string, EliminatedRound>();
 
-  // 1) Gruppen: Nach vollständigem Abschluss scheiden Platz 3 und 4 aus.
-  for (const letter of ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]) {
+  // 1) Gruppen: Nach vollständigem Abschluss scheidet Platz 4 sofort aus.
+  //    Zusätzlich sammeln wir alle Drittplatzierten kompletter Gruppen, um
+  //    am Ende die 4 schlechtesten Gruppendritten auszusortieren (FIFA WM
+  //    2026: Top 2 direkt qualifiziert + 8 beste Gruppendritte → 32 KO-Slots).
+  const GROUP_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+  const thirds: Array<{ code: string; pts: number; gd: number; gf: number }> = [];
+  let completedGroups = 0;
+  for (const letter of GROUP_LETTERS) {
     const groupMatches = matches.filter((m) => m.stage === "group" && m.group === letter);
     if (groupMatches.length === 0) continue;
     const allDone = groupMatches.every((m) => m.status === "finished" && m.score);
     if (!allDone) continue;
+    completedGroups++;
     const standings = calculateTableStandings(letter, groupMatches);
-    // FIFA WM 2026: 32 K.o.-Plätze aus 12 Gruppen — Top 2 direkt + 8 beste Gruppendritte.
-    // Ohne verlässliche „beste Dritte"-Berechnung markieren wir konservativ nur Platz 4 als raus.
-    // Platz 3 bleibt vorerst „alive", bis ein KO-Spiel das Gegenteil beweist.
+    // Platz 4+ (falls es je mehr als 4 gäbe) sofort raus.
     for (let i = 3; i < standings.length; i++) {
       const code = standings[i]?.code;
       if (code) eliminatedIn.set(code, "group");
+    }
+    const third = standings[2];
+    if (third) {
+      thirds.push({ code: third.code, pts: third.pts, gd: third.gd, gf: third.gf });
+    }
+  }
+
+  // Wenn alle 12 Gruppen komplett sind: die 4 schlechtesten Dritten fliegen raus.
+  if (completedGroups === GROUP_LETTERS.length && thirds.length >= 4) {
+    thirds.sort(
+      (x, y) =>
+        y.pts - x.pts ||
+        y.gd - x.gd ||
+        y.gf - x.gf ||
+        x.code.localeCompare(y.code),
+    );
+    // Die schlechtesten 4 (letzte Einträge) sind raus.
+    for (const t of thirds.slice(8)) {
+      if (!eliminatedIn.has(t.code)) eliminatedIn.set(t.code, "group");
     }
   }
 

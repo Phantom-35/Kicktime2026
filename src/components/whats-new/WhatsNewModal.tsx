@@ -6,19 +6,14 @@ type Feature = { icon: typeof Trophy; title: string; text: string };
 
 const FEATURES: Feature[] = [
   {
+    icon: Trophy,
+    title: "🏆 Korrekter Turnier-Status",
+    text: "Die 4 schlechtesten Gruppendritten werden jetzt automatisch als ausgeschieden erkannt — genau wie im echten WM-2026-Modus (Top 2 + 8 beste Dritte).",
+  },
+  {
     icon: Workflow,
     title: "🛠️ Bugfix: Doppelte KO-Spiele",
-    text: "Beim Auflösen der Bracket-Platzhalter wurde dieselbe Begegnung teils zweimal angezeigt (z. B. Frankreich–Marokko doppelt). Der Merge dedupliziert jetzt sauber pro Team-Paarung.",
-  },
-  {
-    icon: Workflow,
-    title: "🛠️ Bugfix: Achtelfinal-Teams",
-    text: "Platzhalter wie „Sieger Spiel 73“ werden jetzt automatisch durch die realen Teams ersetzt, sobald die API sie liefert.",
-  },
-  {
-    icon: Trophy,
-    title: "🏆 Runden-Labels auf Match-Karten",
-    text: "Statt „KO-Runde“ zeigt jede Karte jetzt klar Sechzehntel-, Achtel-, Viertel-, Halbfinale oder Finale an.",
+    text: "Beim Auflösen der Bracket-Platzhalter wurde dieselbe Begegnung teils zweimal angezeigt. Der Merge dedupliziert jetzt sauber pro Team-Paarung.",
   },
   {
     icon: MousePointerClick,
