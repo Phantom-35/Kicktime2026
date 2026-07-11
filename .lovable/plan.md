@@ -1,40 +1,24 @@
-# Fix: Admin-Override wird von API-Poll überschrieben
+## Problem
 
-## Ursache
+`computeTeamStatuses` in `src/lib/tournament-status.ts` markiert in der Gruppenphase konservativ **nur Platz 4** als ausgeschieden. Die WM 2026 hat aber 12 Gruppen mit **Top 2 direkt qualifiziert + 8 besten Gruppendritten** → **4 schlechteste Gruppendritte fliegen raus**. Diese Logik fehlt komplett, weshalb Teams wie Schottland oder Iran (Gruppendritte außerhalb der Top 8) weiter als „Noch im Rennen" angezeigt werden, obwohl sie faktisch draußen sind.
 
-In `src/store/match-store.ts` → `applyUpdateInternal` gilt aktuell:
+Zusätzlich: Für Teams, die als Gruppendritter zwar unter den besten 8 sind, aber im Sechzehntelfinale verlieren, greift die bestehende KO-Loser-Detection bereits — sobald echte Teamcodes in den R32-Slots stehen. Dieser Teil funktioniert, sobald die API die Platzhalter ersetzt (siehe v7.10.x Bracket-Upgrade).
 
-- Manuelles Update setzt `manualAt = Date.now()`, aber **nicht** `lastApiSignature`.
-- Nächster API-Poll (`applyApiUpdate`) prüft `cur.manualAt && cur.lastApiSignature === incomingApiSig` — weil `lastApiSignature` `undefined` ist, greift der Guard nicht, das API-Payload wird gemergt, und im Anschluss wird `manualAt` sogar aktiv gelöscht (`merged.manualAt = undefined`).
+## Fix
 
-Ergebnis: Toast „Live geschaltet ⚡" erscheint, Score erscheint für einen Frame, dann poppt der API-Wert zurück.
+**Datei:** `src/lib/tournament-status.ts`
 
-`match_overrides` ist zwar korrekt in Supabase geschrieben (Edge Function funktioniert), aber der laufende Client verwirft ihn sofort. Beim nächsten Reload wird der Override zwar via `fetchMatchOverrides` neu geladen — aber der API-Poll gewinnt danach wieder.
+1. Beim Iterieren durch die Gruppen: Standings sammeln — pro Gruppe den Drittplatzierten mit seiner Bilanz in ein Array `thirds` legen (nur wenn alle 6 Gruppenspiele beendet sind).
+2. Platz 4 sofort als `group` markieren (wie bisher).
+3. **Neu:** Wenn alle 12 Gruppen komplett sind, `thirds` nach FIFA-Kriterien sortieren (Pts → GD → GF → Team-Code als Tie-Break) und die **schlechtesten 4** als `group` eliminieren. Die besten 8 bleiben „alive" und werden ggf. später per KO-Loser-Detection markiert.
+4. **Fallback für unvollständigen Sync:** Falls noch nicht alle Gruppen fertig sind, aber ein Drittplatzierter mathematisch nicht mehr unter die 8 besten Dritten kommen kann, bleibt er vorerst „alive" (kein Overreach). Der Hauptfix greift, sobald alle Gruppen beendet sind — das ist der Zustand, in dem sich der Nutzer laut Screenshot befindet.
 
-## Änderung
+## Was NICHT geändert wird
 
-Regel: **Solange `manualAt` gesetzt ist, gewinnt der manuelle Zustand.** Nur ein „finished"-Signal der API (via `finishMatchFromApi`) oder ein expliziter `clearLiveOverlay` darf ihn ablösen.
+- Keine DB-Schema-Änderungen. `eliminated`-Status wird weiterhin **rein clientseitig** aus dem Match-Store abgeleitet — das ist die konsistente Single Source of Truth (Ergebnisse leben in `match_results`, Status ist eine reine Ableitung davon). Kein neues API-Feld, kein zusätzlicher Sync-Pfad.
+- Keine Änderung an `standings.ts`, `match-store.ts`, Edge Function.
+- Keine Änderung am Turnier-Tab-UI (`turnier.tsx`) — die Anzeige nutzt bereits `alive`/`eliminatedIn`, sortiert korrekt.
 
-### `src/store/match-store.ts`
+## Version
 
-In `applyUpdateInternal`, im `source === "api"`-Zweig:
-
-- Statt der Signatur-basierten Heuristik: **wenn `cur.manualAt` gesetzt ist, API-Update komplett verwerfen** (`return s`). Kein Merge, kein Löschen von `manualAt`.
-- Die bisherige `lastApiSignature`-Buchhaltung entfällt für diesen Zweig (kann weg oder als reines Debug-Feld bleiben — ich entferne sie).
-- `finishMatchFromApi` bleibt wie er ist (löscht `manualAt` bewusst, damit das Endergebnis der API greifen darf).
-
-`clearMatchOverride` (Client → Edge Function → RLS-Delete) ruft weiterhin `clearLiveOverlay` auf, das setzt `manualAt = undefined` → API übernimmt wieder.
-
-### Kein Zeit-TTL
-
-Bewusst kein automatisches Ablaufen des Locks nach X Minuten — der Admin entscheidet, wann der Override endet (via Trash-Button im `LiveOverridePanel`). Die bestehende „Match-Ende erreicht"-Zwangsfinalisierung in `applyUpdateInternal` (Zeile ~260) bleibt und räumt vergessene Live-Overrides auf.
-
-## Verifikation
-
-1. Typecheck (`bunx tsgo`).
-2. Playwright: PIN eingeben → Live schalten mit z. B. 3:1 → 15 Sek. warten (mehrere API-Polls) → Score bleibt 3:1 auf `/index` und `/spiele`.
-3. Trash-Button drücken → Override entfernt, API-Wert erscheint wieder.
-
-## Betroffene Datei
-
-- `src/store/match-store.ts` (nur `applyUpdateInternal`, ~30 Zeilen)
+Version-Bump auf `7.10.3` + kurzer WhatsNew-Eintrag „Ausgeschiedene Gruppendritte werden korrekt erkannt".
