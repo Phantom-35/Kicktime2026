@@ -12,6 +12,9 @@ import { MatchDetailSheet } from "@/components/match/MatchDetailSheet";
 import { AlarmBell } from "@/components/match/AlarmBell";
 import { LiveNowBar } from "@/components/match/LiveNowBar";
 import { TournamentCountdown } from "@/components/dashboard/TournamentCountdown";
+import { HallOfFameBanner } from "@/components/dashboard/HallOfFameBanner";
+import { WinnerCelebrationOverlay } from "@/components/endgame/WinnerCelebrationOverlay";
+import { useTournamentWinner } from "@/hooks/useTournamentWinner";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { incrementOpenCount, shouldShowFeedback, markFeedbackShown } from "@/lib/open-counter";
 import type { Match } from "@/data/matches";
@@ -127,10 +130,17 @@ function Dashboard() {
     }
   }, []);
 
+  const winner = useTournamentWinner();
+
   return (
     <div className="p-4 pb-6">
+      {winner && <WinnerCelebrationOverlay winner={winner} />}
       <AnimatePresence>
-        {showCountdown && <TournamentCountdown key="countdown" />}
+        {winner ? (
+          <HallOfFameBanner key="hall-of-fame" winner={winner} />
+        ) : (
+          showCountdown && <TournamentCountdown key="countdown" />
+        )}
       </AnimatePresence>
       <div className="mb-4 flex items-center justify-between gap-2">
         <h1 className="text-xl font-bold flex items-center gap-2">
