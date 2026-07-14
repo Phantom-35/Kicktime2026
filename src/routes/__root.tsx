@@ -262,14 +262,17 @@ function RootComponent() {
         <div className="min-h-screen w-full bg-background" />
       )}
       {showSplash && <SplashScreen onDone={handleSplashDone} />}
-      <WhatsNewModal
-        open={whatsNewOpen}
-        version={APP_VERSION}
-        onClose={() => {
-          setWhatsNewOpen(false);
-          setLastSeenVersion(APP_VERSION);
-        }}
-      />
+      {/* WhatsNew-Sheet dauerhaft deaktiviert (User-Request). */}
+      {false && (
+        <WhatsNewModal
+          open={whatsNewOpen}
+          version={APP_VERSION}
+          onClose={() => {
+            setWhatsNewOpen(false);
+            setLastSeenVersion(APP_VERSION);
+          }}
+        />
+      )}
       <Toaster theme={theme} />
     </QueryClientProvider>
   );
