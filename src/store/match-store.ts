@@ -247,17 +247,25 @@ function applyUpdateInternal(
     // change is the final score itself — the status MUST stay "finished".
     // Ausnahme: Wenn cur ein "Zombie"-finished ohne Score ist (z.B. Fehler-
     // Payload), darf ein neues API-Update den Zustand wieder korrigieren.
+    // Ausnahme: Ein MANUELLER Override darf ein fälschlich als "finished"
+    // markiertes Spiel zurück in den Live-Modus schieben (z.B. wenn die API
+    // zu früh "beendet" meldet, das Spiel aber noch läuft / Nachspielzeit /
+    // Verlängerung). API-Updates dürfen finished nicht demoten.
     const curFinishedWithScore = cur.status === "finished" && !!cur.score;
-    if (curFinishedWithScore && merged.status !== "finished") {
+    if (curFinishedWithScore && merged.status !== "finished" && source === "api") {
       merged.status = "finished";
       merged.liveScore = undefined;
       merged.matchMinute = undefined;
     }
+    if (source === "manual" && cur.status === "finished" && merged.status !== "finished") {
+      // Alten "Endstand" verwerfen — UI wartet wieder auf echte Endstand-API.
+      merged.score = undefined;
+    }
 
     // Guard: if the regulation+ET window has elapsed and the incoming update
-    // says "live", auto-promote to "finished". Prevents a stale manual
-    // override from pinning a match in the live state forever.
-    if (merged.status === "live") {
+    // says "live", auto-promote to "finished". Manuelle Overrides sind
+    // hiervon ausgenommen — der Admin weiß, dass das Spiel noch läuft.
+    if (merged.status === "live" && source === "api") {
       const endsAt = new Date(merged.utcTimestamp).getTime() + MATCH_DURATION_MS;
       if (Date.now() >= endsAt) {
         const finalScore = merged.liveScore ?? cur.liveScore ?? cur.score;
