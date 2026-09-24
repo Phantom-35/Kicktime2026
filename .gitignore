@@ -30,3 +30,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+!.env.example
+node_modules/
+dist/
+.wrangler/
