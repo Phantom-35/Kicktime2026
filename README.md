@@ -44,28 +44,6 @@ Manual overrides are smart: the official API result always wins once it reports 
 - **Push:** Web Push (VAPID) via a Supabase Edge Function on a cron schedule
 - **Hosting:** Cloudflare Workers (edge)
 
-## Getting started
-
-```bash
-# install dependencies
-bun install   # or npm install
-
-# create your environment file
-cp .env.example .env
-# then fill in:
-#   VITE_SUPABASE_URL      – your Supabase project URL
-#   VITE_SUPABASE_ANON_KEY – your Supabase anon (public) key
-#   VITE_VAPID_PUBLIC_KEY  – public key for push notifications
-
-# start the dev server
-bun run dev   # or npm run dev
-```
-
-Supabase secrets (never in the frontend) are set in your Supabase dashboard:
-
-- `ADMIN_PIN` – PIN for the admin panel
-- `VAPID_PRIVATE_KEY` – private push key
-- `VAPID_SUBJECT` – contact mailto for push
 
 ## Project structure (short version)
 
@@ -86,3 +64,5 @@ A deep-dive into the full system architecture lives in [KICKTIME_ARCHITECTURE.md
 ## License
 
 Personal project — built for enjoying the World Cup 2026 without missing a beat. 🏆
+
+Copyright Notice: All rights reserved. Downloading, copying, or re-hosting this project to publish or operate it as your own application is strictly prohibited.
