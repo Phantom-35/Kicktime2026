@@ -4,7 +4,7 @@
  *
  * SETUP (einmalig):
  * 1. VAPID-Keypair online generieren (z. B. https://vapidkeys.com).
- * 2. Public-Key HIER eintragen ODER als `VITE_VAPID_PUBLIC_KEY` in der
+ * 2. Public-Key als `VITE_VAPID_PUBLIC_KEY` in der
  *    Lovable-Umgebungsvariable setzen.
  * 3. Private-Key + Subject als Supabase-Secrets eintragen:
  *    - VAPID_PRIVATE_KEY
@@ -13,12 +13,11 @@
  * Der Public-Key ist öffentlich und unkritisch — er darf im Client liegen.
  */
 
-const FALLBACK_PUBLIC_KEY = "BKFWXiVQSxPVui3tUO1t31-bFQ6_pOs1yeJm5Svlxhdk4nLZ14JC0GEkpca1gERR7DutB4PGIwMy0YqX4wLY9wU"; // <-- TODO:hier deinen VAPID Public Key reinkopieren
 
 export function getVapidPublicKey(): string {
   // Vite ersetzt import.meta.env.* zur Build-Zeit
   const fromEnv = (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_VAPID_PUBLIC_KEY) || "";
-  return (fromEnv || FALLBACK_PUBLIC_KEY).trim();
+  return (fromEnv as string).trim();
 }
 
 export function hasVapidPublicKey(): boolean {
