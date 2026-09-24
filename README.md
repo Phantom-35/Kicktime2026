@@ -59,7 +59,7 @@ src/
 supabase/functions/  # edge functions: live scores, push reminders, admin override
 ```
 
-A deep-dive into the full system architecture lives in [KICKTIME_ARCHITECTURE.md](./KICKTIME_ARCHITECTURE.md).
+A deep-dive into the full system architecture lives in [KICKTIME_ARCHITECTURE.md](./KICKTIME_ARCHITECTURE.md).  
 
 ## License
 
